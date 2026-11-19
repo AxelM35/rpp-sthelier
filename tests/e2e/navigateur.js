@@ -22,7 +22,7 @@ export async function fermer() {
 }
 
 /**
- * Ouvre l'application. etat : données placées dans le stockage avant le premier chargement.
+ * Ouvre l'application. etat : données écrites dans le stockage, puis page rechargée.
  * Les boîtes de confirmation sont acceptées, sauf si page.refuserConfirmations vaut vrai ;
  * leurs textes sont mémorisés dans page.confirmations.
  */
@@ -39,18 +39,12 @@ export async function ouvrir({ etat = null, largeur = 1400, hauteur = 900, theme
     page.confirmations.push(d.message());
     return page.refuserConfirmations ? d.dismiss() : d.accept();
   });
-  if (etat) {
-    await page.addInitScript(
-      ([cle, json]) => {
-        if (!sessionStorage.getItem('initialise')) {
-          localStorage.setItem(cle, json);
-          sessionStorage.setItem('initialise', '1');
-        }
-      },
-      [CLE, JSON.stringify(etat)],
-    );
-  }
   await page.goto(URL_APP);
+  if (etat) {
+    // Données écrites une seule fois, puis page rechargée : les rechargements suivants ne les réinjectent pas.
+    await page.evaluate(([cle, json]) => localStorage.setItem(cle, json), [CLE, JSON.stringify(etat)]);
+    await page.reload();
+  }
   return page;
 }
 

@@ -37,7 +37,8 @@ export function vueDocuments(points) {
       .join('') +
     '<span class="sp"></span><button type="button" class="b" data-action="exporterCSV">Exporter en CSV</button>' +
     '<button type="button" class="b p" data-action="imprimer">Imprimer / PDF</button></div>' +
-    '<p class="muted" style="margin-top:8px">Pour obtenir un PDF, choisissez « Enregistrer au format PDF » dans la fenêtre d\'impression.</p></div>' +
+    '<p class="muted" style="margin-top:8px">Pour obtenir un PDF, choisissez « Enregistrer au format PDF » dans la fenêtre d\'impression. ' +
+    "Documents et fichiers exportés contiennent des données personnelles : ne les diffusez qu'aux personnes concernées.</p></div>" +
     '<div class="papier doc">' +
     DOCUMENTS[ui.document].generer(etat) +
     '</div>'

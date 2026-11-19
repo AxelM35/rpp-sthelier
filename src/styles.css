@@ -710,3 +710,25 @@ details.guide li {
     grid-template-columns: 1fr;
   }
 }
+
+/* Données personnelles */
+ul.liste {
+  margin: 0 0 12px;
+  padding-left: 20px;
+}
+ul.liste li {
+  margin: 4px 0;
+}
+button.b.danger-plein {
+  background: var(--bad);
+  border-color: var(--bad);
+  color: var(--surface);
+  font-weight: 600;
+}
+.msg.rappel {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+  justify-content: space-between;
+}

@@ -10,14 +10,14 @@ L'application sert à l'organisateur pour préparer cette soirée : former les b
 
 ## 2. Périmètre et choix techniques
 
-| Sujet | Décision |
-|---|---|
-| Utilisateur | Un seul organisateur, sur un seul poste |
-| Forme | Application web sans serveur : un fichier HTML ouvert dans le navigateur, utilisable hors ligne |
-| Stockage | Local au navigateur, enregistrement automatique |
-| Sauvegarde | Export et import d'un fichier de projet (JSON) pour sauvegarder ou changer de poste |
-| Données personnelles | Aucune donnée d'élève n'est envoyée en ligne |
-| Diffusion aux professeurs et familles | Documents imprimés ou PDF, pas d'accès en ligne |
+| Sujet                                 | Décision                                                                                        |
+| ------------------------------------- | ----------------------------------------------------------------------------------------------- |
+| Utilisateur                           | Un seul organisateur, sur un seul poste                                                         |
+| Forme                                 | Application web sans serveur : un fichier HTML ouvert dans le navigateur, utilisable hors ligne |
+| Stockage                              | Local au navigateur, enregistrement automatique                                                 |
+| Sauvegarde                            | Export et import d'un fichier de projet (JSON) pour sauvegarder ou changer de poste             |
+| Données personnelles                  | Aucune donnée d'élève n'est envoyée en ligne                                                    |
+| Diffusion aux professeurs et familles | Documents imprimés ou PDF, pas d'accès en ligne                                                 |
 
 Hors périmètre : prise de rendez-vous en ligne par les familles, envoi de courriels ou SMS, connexion directe à Pronote ou à l'ENT, comptes utilisateurs.
 
@@ -34,17 +34,17 @@ Hors périmètre : prise de rendez-vous en ligne par les familles, envoi de cour
 
 ### 3.2 Règles
 
-| N° | Règle |
-|---|---|
-| R1 | Un élève a exactement un rendez-vous, avec un seul binôme. |
-| R2 | Les deux professeurs d'un binôme enseignent dans la classe de chaque élève qu'ils reçoivent. |
-| R3 | Un binôme ne reçoit qu'une famille par créneau. |
-| R4 | Un professeur n'appartient qu'à un seul binôme pendant la soirée. |
-| R5 | **Binôme glissant** : un binôme peut recevoir des élèves de deux classes si ses deux professeurs enseignent dans les deux classes. |
-| R6 | Le nombre de créneaux est calculé : (heure de fin − heure de début − pauses) ÷ durée du rendez-vous. |
-| R7 | Un rendez-vous respecte les indisponibilités des professeurs du binôme et de la famille. |
-| R8 | Les élèves d'une même fratrie sont placés sur des créneaux consécutifs ou proches, sans chevauchement. |
-| R9 | Une salle n'est attribuée qu'à un seul binôme. |
+| N°  | Règle                                                                                                                              |
+| --- | ---------------------------------------------------------------------------------------------------------------------------------- |
+| R1  | Un élève a exactement un rendez-vous, avec un seul binôme.                                                                         |
+| R2  | Les deux professeurs d'un binôme enseignent dans la classe de chaque élève qu'ils reçoivent.                                       |
+| R3  | Un binôme ne reçoit qu'une famille par créneau.                                                                                    |
+| R4  | Un professeur n'appartient qu'à un seul binôme pendant la soirée.                                                                  |
+| R5  | **Binôme glissant** : un binôme peut recevoir des élèves de deux classes si ses deux professeurs enseignent dans les deux classes. |
+| R6  | Le nombre de créneaux est calculé : (heure de fin − heure de début − pauses) ÷ durée du rendez-vous.                               |
+| R7  | Un rendez-vous respecte les indisponibilités des professeurs du binôme et de la famille.                                           |
+| R8  | Les élèves d'une même fratrie sont placés sur des créneaux consécutifs ou proches, sans chevauchement.                             |
+| R9  | Une salle n'est attribuée qu'à un seul binôme.                                                                                     |
 
 Les règles R1, R3 et R9 sont bloquantes. Les autres produisent un avertissement que l'organisateur peut choisir d'ignorer (par exemple un binôme dont un professeur n'a pas la classe).
 
@@ -116,16 +116,16 @@ Un indicateur d'avancement signale à chaque étape ce qui reste à faire (élè
 
 ## 7. Hypothèses validées (13 novembre 2026)
 
-| N° | Décision |
-|---|---|
-| H1 | Un professeur appartient à un seul binôme toute la soirée (R4). |
-| H2 | Un binôme glissant couvre au plus deux classes. |
-| H3 | Pour un binôme glissant, les élèves des deux classes alternent librement. |
-| H4 | L'élève est reçu une seule fois, par un seul binôme. |
-| H5 | Une seule soirée pour tout le niveau. |
-| H6 | Pas de battement entre deux rendez-vous. |
-| H7 | Le professeur principal n'a pas de rôle particulier dans la formation des binômes. |
-| H8 | Import CSV et Excel (.xlsx, sans connexion internet) ; les colonnes ne sont pas figées : l'organisateur associe chaque colonne du fichier à une information au moment de l'import. Les formats .xls et .ods sont à réenregistrer en .xlsx. |
+| N°  | Décision                                                                                                                                                                                                                                   |
+| --- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| H1  | Un professeur appartient à un seul binôme toute la soirée (R4).                                                                                                                                                                            |
+| H2  | Un binôme glissant couvre au plus deux classes.                                                                                                                                                                                            |
+| H3  | Pour un binôme glissant, les élèves des deux classes alternent librement.                                                                                                                                                                  |
+| H4  | L'élève est reçu une seule fois, par un seul binôme.                                                                                                                                                                                       |
+| H5  | Une seule soirée pour tout le niveau.                                                                                                                                                                                                      |
+| H6  | Pas de battement entre deux rendez-vous.                                                                                                                                                                                                   |
+| H7  | Le professeur principal n'a pas de rôle particulier dans la formation des binômes.                                                                                                                                                         |
+| H8  | Import CSV et Excel (.xlsx, sans connexion internet) ; les colonnes ne sont pas figées : l'organisateur associe chaque colonne du fichier à une information au moment de l'import. Les formats .xls et .ods sont à réenregistrer en .xlsx. |
 
 ## 8. Critères de réussite
 
@@ -133,7 +133,15 @@ Un indicateur d'avancement signale à chaque étape ce qui reste à faire (élè
 - Aucun élève sans rendez-vous et aucun conflit bloquant dans le planning final.
 - Tous les documents sont lisibles en impression A4 noir et blanc.
 
-## 9. Accessibilité
+## 9. Données personnelles
+
+- Encadré d'information dans l'onglet Soirée : lieu de stockage, données, fichiers, durée de conservation.
+- Rappel d'effacement sur tous les onglets dès le lendemain de la soirée ; durée de conservation recommandée de 30 jours, réglable.
+- « Effacer définitivement » : supprime toutes les données du navigateur, sans retour possible.
+- Rappel du caractère personnel des fichiers à chaque téléchargement.
+- Fiche de traitement pour le DPO : `docs/rgpd.md`.
+
+## 10. Accessibilité
 
 - Toutes les fonctions sont utilisables au clavier, y compris le déplacement des élèves (sélection, puis « Placer ici »).
 - Conformité visée : WCAG 2.1 niveau AA, en thème clair et sombre.

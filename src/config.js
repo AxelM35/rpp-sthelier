@@ -29,3 +29,10 @@ export const SOIREE_PAR_DEFAUT = Object.freeze({
   fin: '20:00',
   duree: 15,
 });
+
+/**
+ * Durée de conservation recommandée des données des élèves après la soirée, en jours.
+ * Au-delà, l'application insiste pour qu'elles soient effacées. À ajuster avec le délégué
+ * à la protection des données de l'établissement.
+ */
+export const CONSERVATION_JOURS = 30;

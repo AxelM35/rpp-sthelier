@@ -3,8 +3,12 @@
 import { creneaux } from '../../algos/creneaux.js';
 import { classesTriees, effectifs } from '../../modele/acces.js';
 import { echapper, formaterHeure } from '../../utils/texte.js';
+import { CONSERVATION_JOURS } from '../../config.js';
+import { etatConservation } from '../../modele/confidentialite.js';
 import { app } from '../app.js';
 import { blocControles, boutonSupprimer, champ } from '../composants.js';
+import { dateCourte } from '../dom.js';
+import { copieDeSecoursPresente } from '../stockage.js';
 
 function premiersPas() {
   return (
@@ -16,7 +20,8 @@ function premiersPas() {
     "<li><b>Binômes</b> : cliquez « Tout générer ». Les binômes que vous composez vous-même sont conservés, l'application complète le reste.</li>" +
     '<li><b>Répartition</b> et <b>Planning</b> : ajustez à la main si besoin ; le cadenas protège un rendez-vous.</li>' +
     '<li><b>Documents</b> : imprimez les plannings et les convocations, ou exportez le planning en Excel.</li>' +
-    '<li>Cliquez régulièrement sur <b>Sauvegarder</b> : sans cela, les données ne sont conservées que dans ce navigateur.</li></ol></details>'
+    '<li>Cliquez régulièrement sur <b>Sauvegarder</b> : sans cela, les données ne sont conservées que dans ce navigateur.</li>' +
+    '<li>Après la soirée, effacez les données des élèves de ce navigateur (encadré « Données personnelles » ci-dessous).</li></ol></details>'
   );
 }
 
@@ -114,6 +119,32 @@ function capaciteSoiree() {
   return h + '</div>';
 }
 
+function donneesPersonnelles() {
+  const { etat } = app;
+  const conservation = etatConservation(etat);
+  const presentes = etat.eleves.length || etat.profs.length || copieDeSecoursPresente();
+  return (
+    '<div class="card" id="donnees-personnelles"><h2>Données personnelles</h2>' +
+    '<ul class="liste">' +
+    "<li><b>Où sont-elles ?</b> Uniquement dans ce navigateur, sur cet ordinateur. L'application ne les envoie nulle part. " +
+    'Toute personne qui utilise ce navigateur avec la même session peut y accéder : sur un poste partagé, effacez-les après usage.</li>' +
+    '<li><b>Lesquelles ?</b> Nom, prénom et classe des élèves, code de fratrie, contraintes horaires des familles, ' +
+    "noms et classes des professeurs. Ne saisissez rien d'autre (pas de motif de rendez-vous ni de commentaire sur un élève).</li>" +
+    '<li><b>Fichiers.</b> Les sauvegardes, les exports Excel et CSV et les documents imprimés contiennent ces données : ' +
+    'rangez-les dans un espace professionnel protégé et supprimez-les quand ils ne servent plus.</li>' +
+    '<li><b>Combien de temps ?</b> Effacez-les au plus tard ' +
+    CONSERVATION_JOURS +
+    ' jours après la soirée' +
+    (conservation ? ', soit le ' + echapper(dateCourte(conservation.limite)) : '') +
+    '.</li></ul>' +
+    (presentes
+      ? '<button type="button" class="b danger-plein" data-action="effacerDefinitivement">Effacer définitivement les données de ce navigateur</button>' +
+        '<p class="note">Efface aussi l\'historique d\'annulation et les copies internes. Les fichiers déjà enregistrés ne sont pas concernés.</p>'
+      : '<p class="note">Aucune donnée personnelle n\'est enregistrée dans ce navigateur.</p>') +
+    '</div>'
+  );
+}
+
 export function vueSoiree(points) {
   return (
     premiersPas() +
@@ -121,6 +152,7 @@ export function vueSoiree(points) {
     parametres() +
     capaciteSoiree() +
     '</div>' +
+    donneesPersonnelles() +
     (points.some((p) => p.onglet === 'soiree') ? '<div style="margin-top:14px">' + blocControles(points, ['soiree']) + '</div>' : '')
   );
 }

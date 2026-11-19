@@ -39,6 +39,7 @@ npx playwright install chromium
 
 - [Cahier des charges](docs/cahier-des-charges.md)
 - [Audit du code et suivi des corrections](docs/audit.md)
+- [Fiche de traitement des données personnelles (RGPD)](docs/rgpd.md)
 
 ## Organisation du code
 
@@ -76,7 +77,7 @@ src/
   styles.css           Feuille de style (thèmes clair et sombre)
 scripts/build.mjs      Assemblage en un fichier unique (esbuild)
 scripts/verifier.mjs   Imports inutilisés, lignes trop longues
-docs/                  Cahier des charges, audit
+docs/                  Cahier des charges, audit, fiche RGPD
 tests/
   unit/                Tests des modules algos, modele, io, utils
   e2e/                 Tests de l'application construite dans un navigateur

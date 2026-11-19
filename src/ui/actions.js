@@ -20,9 +20,10 @@ import { app } from './app.js';
 import { $, annoncer, confirmer, telecharger, toast } from './dom.js';
 import { afficherDialogue, chargerLignes, fermerDialogue, lireFichierImport, ouvrirDialogue } from './dialogueImport.js';
 import { DOCUMENTS } from './documents.js';
-import { annulerDerniereModification, enregistrer, noterSauvegardeFichier } from './stockage.js';
+import { annulerDerniereModification, effacerDefinitivement, enregistrer, noterSauvegardeFichier } from './stockage.js';
 
 const RAPPEL_SAUVEGARDE = ' Pensez à cliquer sur « Sauvegarder » pour garder une copie.';
+const FICHIER_PERSONNEL = 'Fichier téléchargé. Il contient des données personnelles : rangez-le dans un espace protégé.';
 
 /** Avertit avant de remplacer un travail existant ; renvoie vrai pour continuer. */
 function confirmerRegeneration(etendue) {
@@ -100,7 +101,7 @@ export const actions = {
   sauvegarder() {
     telecharger('rencontres-parents-profs.json', JSON.stringify(app.etat, null, 1), 'application/json');
     noterSauvegardeFichier();
-    toast('Sauvegarde téléchargée.');
+    toast('Sauvegarde téléchargée. Elle contient des données personnelles : rangez-la dans un espace protégé.');
   },
   toutEffacer() {
     const { etat } = app;
@@ -112,11 +113,27 @@ export const actions = {
         ' professeurs, ' +
         etat.binomes.length +
         ' binômes) ?\n\n' +
-        "Pensez à cliquer sur « Sauvegarder » avant. Le bouton Annuler permet de revenir en arrière tant que la page n'est pas rechargée.",
+        "Pensez à cliquer sur « Sauvegarder » avant. Le bouton Annuler permet de revenir en arrière tant que la page n'est pas rechargée. " +
+        "Pour ne laisser aucune trace (après la soirée), utilisez plutôt « Effacer définitivement » dans l'onglet Soirée.",
     );
     if (!ok) return;
     app.etat = etatVide();
     app.ui.message = { ok: true, txt: 'Tout a été effacé. Le bouton Annuler permet de revenir en arrière.' };
+  },
+
+  effacerDefinitivement() {
+    const ok = confirmer(
+      'Effacer définitivement toutes les données de ce navigateur (élèves, professeurs, binômes, planning) ?\n\n' +
+        'Cette action ne peut pas être annulée. Les fichiers déjà sauvegardés ou exportés ne sont pas concernés : ' +
+        "supprimez-les vous-même s'ils ne servent plus.",
+    );
+    if (!ok) return;
+    effacerDefinitivement();
+    Object.assign(app.ui, {
+      onglet: 'soiree',
+      selection: null,
+      message: { ok: true, txt: 'Toutes les données ont été effacées de ce navigateur.' },
+    });
   },
 
   // Soirée
@@ -277,8 +294,12 @@ export const actions = {
       return;
     }
     telecharger('planning-rencontres.xlsx', classeurPlanning(app.etat), MIME_XLSX);
+    toast(FICHIER_PERSONNEL);
   },
-  exporterCSV: () => telecharger('planning-rencontres.csv', csvPlanning(app.etat), 'text/csv'),
+  exporterCSV() {
+    telecharger('planning-rencontres.csv', csvPlanning(app.etat), 'text/csv');
+    toast(FICHIER_PERSONNEL);
+  },
   imprimer() {
     const d = DOCUMENTS[app.ui.document];
     $('#print').innerHTML =
@@ -289,6 +310,7 @@ export const actions = {
 
 /** Actions qui ne modifient pas les données (pas d'enregistrement ni d'historique). */
 export const SANS_ENREGISTREMENT = new Set([
+  'effacerDefinitivement',
   'onglet',
   'vuePlanning',
   'choisirDocument',

@@ -30,5 +30,8 @@ export function telecharger(nom, contenu, type) {
   setTimeout(() => URL.revokeObjectURL(lien.href), 2000);
 }
 
+/** « 2026-12-31 » → « 31/12/2026 ». */
+export const dateCourte = (date) => date.split('-').reverse().join('/');
+
 /** Demande de confirmation avant une action destructrice. */
 export const confirmer = (texte) => window.confirm(texte);

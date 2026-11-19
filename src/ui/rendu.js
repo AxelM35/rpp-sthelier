@@ -2,10 +2,11 @@
 // le focus clavier est ensuite replacé sur l'élément équivalent.
 
 import { controler, aCorriger } from '../algos/controles.js';
+import { etatConservation } from '../modele/confidentialite.js';
 import { nomClasse, nomEleve, trouverEleve } from '../modele/acces.js';
 import { echapper } from '../utils/texte.js';
 import { app } from './app.js';
-import { $, annoncer } from './dom.js';
+import { $, annoncer, dateCourte } from './dom.js';
 import { etatSauvegarde } from './stockage.js';
 import { vueBinomes } from './vues/binomes.js';
 import { vueDocuments } from './vues/documents.js';
@@ -51,6 +52,21 @@ function barreSelection() {
   );
 }
 
+/** Rappel d'effacement, affiché sur tous les onglets une fois la soirée passée. */
+function rappelConservation() {
+  const c = etatConservation(app.etat);
+  if (!c) return '';
+  return (
+    '<div class="msg warn rappel"><span>' +
+    (c.depassee
+      ? 'La durée de conservation recommandée est dépassée depuis le ' +
+        dateCourte(c.limite) +
+        '. Effacez les données des élèves de ce navigateur.'
+      : 'La soirée est passée. Pensez à effacer les données des élèves de ce navigateur, au plus tard le ' + dateCourte(c.limite) + '.') +
+    '</span><button type="button" class="b" data-action="effacerDefinitivement">Effacer définitivement</button></div>'
+  );
+}
+
 export function rendre() {
   const { ui } = app;
   const cle = ui.focus || cleFocus(document.activeElement);
@@ -92,7 +108,7 @@ export function rendre() {
   }
   const message = ui.message ? '<div class="msg ' + (ui.message.ok ? 'ok' : 'bad') + '">' + echapper(ui.message.txt) + '</div>' : '';
   const vue = ONGLETS.find(([id]) => id === ui.onglet)[2];
-  $('#main').innerHTML = message + barreSelection() + vue(points);
+  $('#main').innerHTML = rappelConservation() + message + barreSelection() + vue(points);
 
   if (cle) {
     const cible = Array.from(document.querySelectorAll('[data-focus],[data-action],[data-champ]')).find((x) => cleFocus(x) === cle);

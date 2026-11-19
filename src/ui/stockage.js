@@ -65,6 +65,26 @@ export function annulerDerniereModification() {
   return true;
 }
 
+/** Une copie de secours (données illisibles mises de côté au démarrage) est-elle présente ? */
+export const copieDeSecoursPresente = () => Boolean(lireStockage(CLE_SECOURS));
+
+/**
+ * Efface toutes les données de l'application dans ce navigateur : état, copie de secours,
+ * dates de sauvegarde et historique d'annulation. Contrairement à « Tout effacer », rien ne peut être rétabli.
+ */
+export function effacerDefinitivement() {
+  for (const cle of [CLE_STOCKAGE, CLE_META, CLE_SECOURS]) {
+    try {
+      localStorage.removeItem(cle);
+    } catch {
+      /* stockage indisponible : rien à effacer */
+    }
+  }
+  historique.length = 0;
+  app.etat = etatVide();
+  dernierEnregistre = JSON.stringify(app.etat);
+}
+
 // Dates de dernière modification et de dernière sauvegarde en fichier.
 function lireMeta() {
   try {
