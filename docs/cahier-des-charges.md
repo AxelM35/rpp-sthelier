@@ -71,6 +71,7 @@ Les règles R1, R3 et R9 sont bloquantes. Les autres produisent un avertissement
 - F12. Marquer un binôme comme glissant et choisir ses deux classes ; l'application propose les binômes glissants possibles.
 - F13. Attribuer une salle à chaque binôme.
 - F13 bis. Conserver un binôme : un binôme composé à la main, ou marqué « Conservé », est gardé lors d'une nouvelle proposition automatique, qui complète le reste.
+- F13 ter. Comparer plusieurs propositions de binômes (trois, nettement différentes) avec leurs indicateurs : nombre de binômes et de glissants, charge par binôme, professeurs inoccupés, élèves sans place. Choisir l'une d'elles génère la répartition et les horaires.
 - F14. Signaler les professeurs sans binôme et les binômes non conformes à R2.
 
 ### 4.4 Répartition des élèves

@@ -3,9 +3,9 @@
 // Après une action, evenements.js enregistre l'état (sauf actions listées dans SANS_ENREGISTREMENT)
 // puis réaffiche l'onglet.
 
-import { proposerBinomes } from '../algos/binomes.js';
+import { proposerBinomes, proposerVariantes } from '../algos/binomes.js';
 import { deposer } from '../algos/deplacement.js';
-import { genererTout } from '../algos/generation.js';
+import { completerGeneration, genererTout } from '../algos/generation.js';
 import { planifierHoraires } from '../algos/horaires.js';
 import { repartirEleves } from '../algos/repartition.js';
 import { CLASSES_MAX_PAR_BINOME } from '../config.js';
@@ -20,6 +20,7 @@ import { app } from './app.js';
 import { $, annoncer, confirmer, telecharger, toast } from './dom.js';
 import { afficherDialogue, chargerLignes, fermerDialogue, lireFichierImport, ouvrirDialogue } from './dialogueImport.js';
 import { DOCUMENTS } from './documents.js';
+import { LETTRES } from './vues/comparaison.js';
 import { annulerDerniereModification, effacerDefinitivement, enregistrer, noterSauvegardeFichier } from './stockage.js';
 
 const RAPPEL_SAUVEGARDE = ' Pensez à cliquer sur « Sauvegarder » pour garder une copie.';
@@ -218,6 +219,26 @@ export const actions = {
   toutGenerer() {
     if (confirmerRegeneration('binomes')) appliquer(genererTout(app.etat), true);
   },
+  comparerPropositions() {
+    const r = proposerVariantes(app.etat);
+    if (r.erreur) {
+      app.ui.message = r.erreur;
+      return;
+    }
+    app.ui.message = null;
+    app.ui.comparaison = { source: JSON.stringify(app.etat), variantes: r.variantes };
+    app.ui.focus = 'action:choisirProposition|0|';
+    annoncer(r.variantes.length + ' proposition(s) affichée(s) pour comparaison.');
+  },
+  choisirProposition(el) {
+    const i = Number(el.dataset.id);
+    const variante = app.ui.comparaison && app.ui.comparaison.variantes[i];
+    if (!variante || !confirmerRegeneration('binomes')) return;
+    appliquer(completerGeneration(variante), true);
+    app.ui.message = { ...app.ui.message, txt: 'Proposition ' + LETTRES[i] + ' retenue. ' + app.ui.message.txt };
+    app.ui.comparaison = null;
+  },
+  fermerComparaison: () => (app.ui.comparaison = null),
   effacerHoraires: () => app.etat.eleves.forEach((e) => !e.verrou && (e.slot = null)),
 
   // Déplacements et verrous
@@ -311,6 +332,8 @@ export const actions = {
 /** Actions qui ne modifient pas les données (pas d'enregistrement ni d'historique). */
 export const SANS_ENREGISTREMENT = new Set([
   'effacerDefinitivement',
+  'comparerPropositions',
+  'fermerComparaison',
   'onglet',
   'vuePlanning',
   'choisirDocument',

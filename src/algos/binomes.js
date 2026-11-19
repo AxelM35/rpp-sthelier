@@ -27,7 +27,11 @@ export function binomesConserves(etat) {
  * Renvoie un nouvel état (l'état reçu n'est pas modifié) et un rapport { ok, txt }.
  * Les binômes conservés sont gardés ; les élèves des autres binômes perdent binôme et horaire.
  */
-export function proposerBinomes(etatInitial, { alea = creerAlea(GRAINE_PROPOSITION), essais = ESSAIS_PROPOSITION } = {}) {
+/**
+ * Explore de nombreuses compositions possibles. Renvoie { erreur } si aucune proposition n'est possible,
+ * sinon { candidats, fixes } : candidats triés du meilleur au moins bon score.
+ */
+function explorer(etatInitial, { alea, essais }) {
   const etat = copierEtat(etatInitial);
   const liste = creneaux(etat.soiree);
   const n = effectifs(etat);
@@ -35,12 +39,9 @@ export function proposerBinomes(etatInitial, { alea = creerAlea(GRAINE_PROPOSITI
   const classes = etat.classes.filter((c) => n[c.id] > 0).map((c) => c.id);
   const profs = etat.profs.map((p) => ({ p, cs: p.classeIds.filter((c) => classes.includes(c)) })).filter((o) => o.cs.length);
 
-  if (!liste.length) return { etat: etatInitial, rapport: { ok: false, txt: 'Aucun créneau : vérifiez les horaires de la soirée.' } };
+  if (!liste.length) return { erreur: { ok: false, txt: 'Aucun créneau : vérifiez les horaires de la soirée.' } };
   if (!classes.length || profs.length < 2) {
-    return {
-      etat: etatInitial,
-      rapport: { ok: false, txt: 'Il faut des élèves et au moins deux professeurs rattachés à leurs classes.' },
-    };
+    return { erreur: { ok: false, txt: 'Il faut des élèves et au moins deux professeurs rattachés à leurs classes.' } };
   }
 
   const capacites = new Map();
@@ -159,58 +160,117 @@ export function proposerBinomes(etatInitial, { alea = creerAlea(GRAINE_PROPOSITI
     return { bins, q, score, libres: libres.size };
   }
 
-  let meilleur = null;
-  for (let i = 0; i < essais; i++) {
-    const r = construire(i ? 4 : 0, [1, 0, 0.5][i % 3]);
-    if (!meilleur || r.score < meilleur.score) meilleur = r;
-  }
+  const candidats = [];
+  for (let i = 0; i < essais; i++) candidats.push(construire(i ? 4 : 0, [1, 0, 0.5][i % 3]));
+  candidats.sort((a, b) => a.score - b.score); // tri stable : à score égal, l'ordre de construction est conservé
+  return { candidats, fixes: fixes.map((b) => b.id) };
+}
+
+/** Signature d'un binôme proposé (professeurs et classes), pour comparer des propositions. */
+const signatureBin = (b) =>
+  (b.fixe ? b.fixe.profIds : b.profs.map((o) => o.p.id)).slice().sort().join('+') + ':' + b.classeIds.slice().sort().join('+');
+
+/** Nombre de binômes de la proposition a absents de la proposition b. */
+function differences(a, b) {
+  const presents = new Set(b.bins.map(signatureBin));
+  return a.bins.filter((x) => !presents.has(signatureBin(x))).length;
+}
+
+/** Transforme une composition retenue en nouvel état, avec son rapport et ses indicateurs. */
+function materialiser(etatInitial, candidat, idsFixes) {
+  const etat = copierEtat(etatInitial);
+  const anciens = etat.binomes;
+  const fixes = new Set(idsFixes);
 
   // Un binôme glissant qui ne reçoit finalement aucun élève d'une de ses classes la perd.
-  meilleur.bins.forEach((b) => {
-    if (!b.fixe && b.classeIds.length > 1) {
-      const utiles = b.classeIds.filter((c) => (meilleur.q.x[b.id][c] || 0) > 0);
-      if (utiles.length) b.classeIds = utiles;
-    }
-  });
+  const classesUtiles = (b) => {
+    if (b.fixe || b.classeIds.length < 2) return b.classeIds.slice();
+    const utiles = b.classeIds.filter((c) => (candidat.q.x[b.id][c] || 0) > 0);
+    return utiles.length ? utiles : b.classeIds.slice();
+  };
 
-  const anciens = etat.binomes;
-  etat.binomes = meilleur.bins
+  etat.binomes = candidat.bins
     .map((b) => {
-      if (b.fixe) return b.fixe;
+      if (b.fixe) return anciens.find((x) => x.id === b.fixe.id);
       const ids = b.profs.map((o) => o.p.id);
       const ancien = anciens.find((x) => ids.every((i) => x.profIds.includes(i)));
-      return { id: nouvelId(), fixe: false, profIds: ids, classeIds: b.classeIds, salle: ancien ? ancien.salle : '' };
+      return { id: nouvelId(), fixe: false, profIds: ids, classeIds: classesUtiles(b), salle: ancien ? ancien.salle : '' };
     })
     .sort((a, b) => comparer(classesDuBinome(etat, a) + libelleBinome(etat, a), classesDuBinome(etat, b) + libelleBinome(etat, b)));
 
-  const idsFixes = new Set(fixes.map((b) => b.id));
   etat.eleves.forEach((e) => {
-    if (!(e.verrou && e.slot != null && idsFixes.has(e.binomeId) && trouverBinome(etat, e.binomeId))) {
+    if (!(e.verrou && e.slot != null && fixes.has(e.binomeId) && trouverBinome(etat, e.binomeId))) {
       e.binomeId = null;
       e.slot = null;
       e.verrou = false;
     }
   });
 
-  const glissants = etat.binomes.filter((b) => b.classeIds.length > 1).length;
+  const charges = candidat.bins.map((b) => candidat.q.charge[b.id]);
+  const indicateurs = {
+    binomes: etat.binomes.length,
+    glissants: etat.binomes.filter((b) => b.classeIds.length > 1).length,
+    profsSansBinome: candidat.libres,
+    chargeMin: Math.min(...charges),
+    chargeMax: Math.max(...charges),
+    sansPlace: candidat.q.manque,
+  };
+
+  const { glissants } = indicateurs;
   let txt =
     etat.binomes.length + ' binômes proposés' + (glissants ? ' dont ' + glissants + ' glissant' + (glissants > 1 ? 's' : '') : '') + '. ';
   const verrous = etat.eleves.filter((e) => e.verrou).length;
-  if (fixes.length)
-    txt += fixes.length + ' binôme(s) conservé(s)' + (verrous ? ', avec ' + verrous + ' rendez-vous verrouillé(s)' : '') + '. ';
-  if (meilleur.q.manque) {
+  if (fixes.size) txt += fixes.size + ' binôme(s) conservé(s)' + (verrous ? ', avec ' + verrous + ' rendez-vous verrouillé(s)' : '') + '. ';
+  if (candidat.q.manque) {
     txt +=
       'Capacité insuffisante : ' +
-      Object.keys(meilleur.q.nonPlaces)
+      Object.keys(candidat.q.nonPlaces)
         .map((c) => {
-          const k = meilleur.q.nonPlaces[c];
+          const k = candidat.q.nonPlaces[c];
           return nomClasse(etat, c) + ' (il manque ' + k + ' créneau' + (k > 1 ? 'x' : '') + ')';
         })
         .join(', ') +
       '. Allongez la soirée, raccourcissez les rendez-vous ou complétez les équipes pédagogiques.';
-    return { etat, rapport: { ok: false, txt, manque: meilleur.q.nonPlaces } };
+    return { etat, rapport: { ok: false, txt, manque: candidat.q.nonPlaces }, indicateurs };
   }
   txt +=
-    'Chaque élève peut obtenir un rendez-vous.' + (meilleur.libres ? ' ' + meilleur.libres + ' professeur(s) restent sans binôme.' : '');
-  return { etat, rapport: { ok: true, txt } };
+    'Chaque élève peut obtenir un rendez-vous.' + (candidat.libres ? ' ' + candidat.libres + ' professeur(s) restent sans binôme.' : '');
+  return { etat, rapport: { ok: true, txt }, indicateurs };
+}
+
+/**
+ * Propose des binômes pour recevoir tous les élèves.
+ * Renvoie un nouvel état (l'état reçu n'est pas modifié) et un rapport { ok, txt }.
+ * Les binômes conservés sont gardés ; les élèves des autres binômes perdent binôme et horaire.
+ */
+export function proposerBinomes(etatInitial, { alea = creerAlea(GRAINE_PROPOSITION), essais = ESSAIS_PROPOSITION } = {}) {
+  const r = explorer(etatInitial, { alea, essais });
+  if (r.erreur) return { etat: etatInitial, rapport: r.erreur };
+  const { etat, rapport } = materialiser(etatInitial, r.candidats[0], r.fixes);
+  return { etat, rapport };
+}
+
+/**
+ * Plusieurs propositions nettement différentes, pour comparaison.
+ * La première est celle de proposerBinomes. Les suivantes sont les meilleures compositions qui diffèrent
+ * d'au moins « ecartMin » binômes de chacune des propositions déjà retenues, sans laisser plus d'élèves sans place.
+ * Renvoie { erreur } ou { variantes: [{ etat, rapport, indicateurs, differences }] },
+ * « differences » comptant les binômes absents de la première proposition.
+ */
+export function proposerVariantes(
+  etatInitial,
+  { nombre = 3, ecartMin = 2, alea = creerAlea(GRAINE_PROPOSITION), essais = ESSAIS_PROPOSITION } = {},
+) {
+  const r = explorer(etatInitial, { alea, essais });
+  if (r.erreur) return { erreur: r.erreur };
+  const [premier] = r.candidats;
+  const retenus = [premier];
+  for (const c of r.candidats) {
+    if (retenus.length >= nombre) break;
+    if (c.q.manque > premier.q.manque) continue;
+    if (retenus.every((x) => differences(c, x) >= ecartMin)) retenus.push(c);
+  }
+  return {
+    variantes: retenus.map((c) => ({ ...materialiser(etatInitial, c, r.fixes), differences: differences(c, premier) })),
+  };
 }

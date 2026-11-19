@@ -732,3 +732,39 @@ button.b.danger-plein {
   align-items: center;
   justify-content: space-between;
 }
+
+/* Comparaison de propositions */
+.propositions {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 12px;
+}
+.proposition {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 12px;
+}
+.proposition.recommandee {
+  border: 2px solid var(--accent);
+}
+.proposition h3 {
+  margin: 0;
+}
+.proposition button {
+  margin-top: auto;
+  align-self: flex-start;
+}
+ul.indicateurs,
+ul.binomes-proposes {
+  margin: 0;
+  padding-left: 18px;
+}
+ul.binomes-proposes {
+  font-size: 13px;
+}
+ul.binomes-proposes li.different {
+  font-weight: 600;
+}

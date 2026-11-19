@@ -17,6 +17,7 @@ export const app = {
     message: null, // { ok, txt } affiché en haut de l'onglet
     messageAnnonce: null, // dernier message lu par les lecteurs d'écran
     import: null, // dialogue d'import en cours
+    comparaison: null, // { source: état comparé (JSON), variantes } — propositions de binômes affichées
     focus: null, // élément à focaliser au prochain rendu
   },
 };

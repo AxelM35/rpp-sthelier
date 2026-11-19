@@ -212,4 +212,8 @@ Le fichier unique livré est produit par `npm run build`. Il est identique au pi
 
 Les données restent stockées en clair dans le navigateur : le chiffrement imposerait un mot de passe à chaque ouverture, pour un gain limité sur un poste dont la session est déjà personnelle. Ce choix est à valider avec le DPO, comme la base légale et la durée de conservation (voir `docs/rgpd.md`).
 
+### Comparaison de propositions (complément à U4)
+
+Bouton « Comparer des propositions » dans l'onglet Binômes : trois compositions nettement différentes (au moins deux binômes d'écart entre chacune), côte à côte. Chacune indique le nombre de binômes et de glissants, la charge par binôme, les professeurs inoccupés, les élèves sans place et les binômes différents de la proposition recommandée. « Choisir la proposition » l'applique, puis répartit les élèves et place les horaires. Les binômes conservés figurent dans chaque proposition ; aucune ne laisse plus d'élèves sans place que la recommandée. La comparaison disparaît dès que les données changent.
+
 Tous les points de l'audit sont traités.

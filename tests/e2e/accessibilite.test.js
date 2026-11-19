@@ -21,6 +21,7 @@ for (const theme of ['light', 'dark']) {
     for (const id of ONGLETS) {
       await onglet(page, id);
       if (id === 'planning') await page.click('.el-btn'); // avec un élève sélectionné
+      if (id === 'binomes') await page.click('[data-action=comparerPropositions]'); // avec la comparaison ouverte
       const r = await page.evaluate(() =>
         axe.run(document, { runOnly: { type: 'tag', values: ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa'] } }),
       );

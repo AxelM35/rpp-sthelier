@@ -71,6 +71,8 @@ export function rendre() {
   const { ui } = app;
   const cle = ui.focus || cleFocus(document.activeElement);
   ui.focus = null;
+  // Une comparaison n'a plus de sens si les données ont changé depuis.
+  if (ui.comparaison && ui.comparaison.source !== JSON.stringify(app.etat)) ui.comparaison = null;
   const points = controler(app.etat);
 
   const nb = {};

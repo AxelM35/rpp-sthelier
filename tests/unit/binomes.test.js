@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
-import { proposerBinomes } from '../../src/algos/binomes.js';
+import { proposerBinomes, proposerVariantes } from '../../src/algos/binomes.js';
 import { college } from '../fixtures/college.js';
 import { verifierPlanning } from './invariants.js';
 
@@ -89,4 +89,73 @@ test('aucun créneau ou aucun professeur : refus explicite, état inchangé', ()
   const r = proposerBinomes(sansProf);
   assert.match(r.rapport.txt, /au moins deux professeurs/);
   assert.equal(r.etat, sansProf);
+});
+
+// --- Comparaison de propositions ---
+
+const signatures = (etat) =>
+  new Set(etat.binomes.map((b) => b.profIds.slice().sort().join('+') + ':' + b.classeIds.slice().sort().join('+')));
+const communs = (a, b) => [...signatures(a)].filter((s) => signatures(b).has(s)).length;
+
+test('variantes : la première est la proposition recommandée', () => {
+  const { variantes } = proposerVariantes(college());
+  assert.equal(signature(variantes[0].etat), signature(proposerBinomes(college()).etat));
+  assert.equal(variantes[0].differences, 0);
+});
+
+test('variantes : trois propositions valides et nettement différentes', () => {
+  const { variantes } = proposerVariantes(college());
+  assert.equal(variantes.length, 3);
+  for (const v of variantes) {
+    assert.ok(v.rapport.ok, v.rapport.txt);
+    assert.equal(v.indicateurs.sansPlace, 0);
+    verifierPlanning(v.etat, { complet: false });
+  }
+  for (let i = 0; i < 3; i++) {
+    for (let j = i + 1; j < 3; j++) {
+      const a = variantes[i].etat;
+      const b = variantes[j].etat;
+      assert.ok(a.binomes.length - communs(a, b) >= 2, 'propositions ' + i + ' et ' + j + ' trop proches');
+    }
+  }
+});
+
+test('variantes : indicateurs cohérents avec la composition', () => {
+  for (const v of proposerVariantes(college()).variantes) {
+    const n = v.indicateurs;
+    assert.equal(n.binomes, v.etat.binomes.length);
+    assert.equal(n.glissants, v.etat.binomes.filter((b) => b.classeIds.length > 1).length);
+    assert.ok(n.chargeMax - n.chargeMin <= 2);
+  }
+});
+
+test('variantes : les binômes conservés figurent dans chaque proposition', () => {
+  const etat = college();
+  etat.binomes = [{ id: 'mien', fixe: true, profIds: ['p13', 'p19'], classeIds: ['c6C'], salle: 'B12' }];
+  for (const v of proposerVariantes(etat).variantes) {
+    assert.deepEqual(
+      v.etat.binomes.find((b) => b.id === 'mien'),
+      etat.binomes[0],
+    );
+  }
+});
+
+test('variantes : aucune ne laisse plus d’élèves sans place que la recommandée', () => {
+  const etat = college();
+  etat.soiree.fin = '19:30';
+  const { variantes } = proposerVariantes(etat);
+  const reference = variantes[0].indicateurs.sansPlace;
+  assert.ok(reference > 0);
+  assert.ok(variantes.every((v) => v.indicateurs.sansPlace <= reference));
+});
+
+test('variantes : état d’origine intact, résultat reproductible, refus explicite', () => {
+  const etat = college();
+  const copie = JSON.stringify(etat);
+  const a = proposerVariantes(etat).variantes.map((v) => signature(v.etat));
+  const b = proposerVariantes(etat).variantes.map((v) => signature(v.etat));
+  assert.equal(JSON.stringify(etat), copie);
+  assert.deepEqual(a, b);
+  etat.profs = [];
+  assert.match(proposerVariantes(etat).erreur.txt, /au moins deux professeurs/);
 });

@@ -5,6 +5,7 @@ import { calculerQuotas } from '../../algos/quotas.js';
 import { classesCommunes, classesTriees, codeBinome, effectifs, elevesDuBinome, nomClasse, profsDuBinome } from '../../modele/acces.js';
 import { comparer, echapper } from '../../utils/texte.js';
 import { app } from '../app.js';
+import { blocComparaison } from './comparaison.js';
 import { aria, blocControles, boutonSupprimer, champ } from '../composants.js';
 
 function blocProposition(classes) {
@@ -52,6 +53,7 @@ function blocProposition(classes) {
     (mode === 'min' ? ' selected' : '') +
     '>Nombre minimal de binômes</option></select>' +
     '<button type="button" class="b" data-action="proposerBinomes">Proposer les binômes</button>' +
+    '<button type="button" class="b" data-action="comparerPropositions">Comparer des propositions</button>' +
     '<button type="button" class="b p" data-action="toutGenerer">Tout générer (binômes, répartition, horaires)</button></div>' +
     '<p class="note">La proposition tient compte des classes de chaque professeur, des effectifs, du nombre de créneaux et des indisponibilités, ' +
     "et crée des binômes glissants si nécessaire pour qu'aucun élève ne reste sans rendez-vous. " +
@@ -178,6 +180,7 @@ export function vueBinomes(points) {
   etat.binomes.forEach((b) => b.profIds.forEach((id) => id && (profsPris[id] = b.id)));
   return (
     blocProposition(classes) +
+    blocComparaison() +
     '<div class="row" style="margin-bottom:6px"><h2 style="margin:0">Binômes (' +
     etat.binomes.length +
     ')</h2><span class="sp"></span>' +
