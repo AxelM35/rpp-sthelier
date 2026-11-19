@@ -37,7 +37,8 @@ npx playwright install chromium
 
 ## Documentation
 
-- [Cahier des charges](docs/cahier-des-charges.md)
+- [Cahier des charges de la version 1](docs/cahier-des-charges.md)
+- [Cahier des charges de la version 2 (6e à 3e, en préparation)](docs/cahier-des-charges-v2.md)
 - [Audit du code et suivi des corrections](docs/audit.md)
 - [Fiche de traitement des données personnelles (RGPD)](docs/rgpd.md)
 
