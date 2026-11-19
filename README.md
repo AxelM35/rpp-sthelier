@@ -16,14 +16,15 @@ Prérequis : Node.js 20 ou plus récent.
 npm install
 ```
 
-| Commande            | Rôle                                                                   |
-| ------------------- | ---------------------------------------------------------------------- |
-| `npm run build`     | Construit `dist/rencontres-parents-profs.html`                         |
-| `npm test`          | Tests unitaires (algorithmes, données, imports, exports) — environ 2 s |
-| `npm run test:e2e`  | Construit puis teste l'application dans Chromium — environ 20 s        |
-| `npm run verifier`  | Mise en forme (Prettier), imports inutilisés, lignes trop longues      |
-| `npm run formater`  | Applique la mise en forme                                              |
-| `npm run test:tout` | Les trois précédentes, à lancer avant de livrer une version            |
+| Commande            | Rôle                                                                                 |
+| ------------------- | ------------------------------------------------------------------------------------ |
+| `npm run build`     | Construit `dist/rencontres-parents-profs.html`                                       |
+| `npm test`          | Tests unitaires (algorithmes, données, imports, exports) — environ 2 s               |
+| `npm run test:e2e`  | Construit puis teste l'application dans Chromium — environ 20 s                      |
+| `npm run verifier`  | Mise en forme (Prettier), imports inutilisés, lignes trop longues                    |
+| `npm run formater`  | Applique la mise en forme                                                            |
+| `npm run theme`     | Régénère `src/theme.css` après un changement de couleur source (`scripts/theme.mjs`) |
+| `npm run test:tout` | Les trois précédentes, à lancer avant de livrer une version                          |
 
 Les tests de bout en bout utilisent Playwright, qui n'est pas installé par `npm install` :
 
@@ -75,9 +76,11 @@ src/
     dialogueImport.js  Dialogue d'import
   main.js              Point d'entrée
   index.html           Gabarit de la page
-  styles.css           Feuille de style (thèmes clair et sombre)
+  styles.css           Feuille de style Material 3 (typographie, formes, composants)
+  theme.css            Jetons de couleur Material 3 générés (npm run theme), thèmes clair et sombre
 scripts/build.mjs      Assemblage en un fichier unique (esbuild)
 scripts/verifier.mjs   Imports inutilisés, lignes trop longues
+scripts/theme.mjs      Génération des jetons de couleur à partir de la couleur source
 docs/                  Cahier des charges, audit, fiche RGPD
 tests/
   unit/                Tests des modules algos, modele, io, utils

@@ -157,6 +157,10 @@ Chaque lot est testé (unitaires et bout en bout) et livré sur `main` avant le 
 
 Commencer par le design permet de valider l'aspect visuel tôt, avant de construire les nouveaux écrans.
 
+### Avancement
+
+- **Lot 1 — livré sur `v2-dev`.** Jetons de couleur générés à partir du bleu de la v1 (variante « Vibrant », primaire `#0053db`) avec la bibliothèque de Google, utilisée seulement au développement (`npm run theme`). Couleurs de statut (succès, avertissement) harmonisées. Barre supérieure, onglets, boutons (rempli, contour, tonal, compact), boutons segmentés pour les vues du planning et les documents, puces filtres, champs, cartes, dialogue et snackbar selon Material 3. Aucun changement de fonctionnement ; tous les tests de la v1 restent verts, dont le contrôle WCAG 2.1 AA en thème clair et sombre.
+
 ## 9. Décisions du 19 novembre 2026
 
 | Question                                      | Décision                                                                                                                                                                                                                                   |

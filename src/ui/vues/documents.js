@@ -20,7 +20,7 @@ export function vueDocuments(points) {
     : '';
   return (
     alerte +
-    '<div class="card"><div class="row">' +
+    '<div class="card"><div class="row"><div class="segments" role="group" aria-label="Document à afficher">' +
     Object.entries(DOCUMENTS)
       .map(
         ([cle, d]) =>
@@ -35,6 +35,7 @@ export function vueDocuments(points) {
           '</button>',
       )
       .join('') +
+    '</div>' +
     '<span class="sp"></span><button type="button" class="b" data-action="exporterCSV">Exporter en CSV</button>' +
     '<button type="button" class="b p" data-action="imprimer">Imprimer / PDF</button></div>' +
     '<p class="muted" style="margin-top:8px">Pour obtenir un PDF, choisissez « Enregistrer au format PDF » dans la fenêtre d\'impression. ' +

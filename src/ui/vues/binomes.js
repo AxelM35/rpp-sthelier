@@ -127,9 +127,9 @@ function carteBinome(b, classes, liste, profsPris) {
     '</span>' +
     (b.classeIds.length > 1 ? '<span class="badge acc">Glissant</span>' : '') +
     '<span class="sp"></span>' +
-    '<button type="button" class="b' +
+    '<button type="button" class="b petit' +
     (b.fixe ? ' on' : '') +
-    '" style="padding:2px 9px;font-size:12px" data-action="basculerConserve" data-id="' +
+    '" data-action="basculerConserve" data-id="' +
     b.id +
     '" aria-pressed="' +
     Boolean(b.fixe) +

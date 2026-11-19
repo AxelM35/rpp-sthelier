@@ -27,11 +27,12 @@ const resultat = await build({
 const script = resultat.outputFiles[0].text;
 if (/<\/script/i.test(script)) throw new Error('Le code contient « </script », ce qui casserait la page.');
 
-const [gabarit, styles] = await Promise.all([
+const [gabarit, theme, styles] = await Promise.all([
   readFile(resolve(racine, 'src/index.html'), 'utf8'),
+  readFile(resolve(racine, 'src/theme.css'), 'utf8'),
   readFile(resolve(racine, 'src/styles.css'), 'utf8'),
 ]);
-const page = gabarit.replace('/*STYLES*/', () => styles.trim()).replace('/*SCRIPT*/', () => script.trim());
+const page = gabarit.replace('/*STYLES*/', () => theme.trim() + '\n\n' + styles.trim()).replace('/*SCRIPT*/', () => script.trim());
 
 await mkdir(dirname(sortie), { recursive: true });
 await writeFile(sortie, page);

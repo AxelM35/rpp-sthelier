@@ -145,7 +145,7 @@ export function vuePlanning(points) {
     ['binome', 'Par binôme'],
   ];
   let h =
-    '<div class="card"><div class="row">' +
+    '<div class="card"><div class="row"><div class="segments" role="group" aria-label="Vue du planning">' +
     vues
       .map(
         ([k, t]) =>
@@ -160,6 +160,7 @@ export function vuePlanning(points) {
           '</button>',
       )
       .join('') +
+    '</div>' +
     '<select data-champ="filtre" data-param="filtrePlanning" ' +
     aria('Afficher la classe') +
     '>' +
