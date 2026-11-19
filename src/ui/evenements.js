@@ -11,6 +11,7 @@ import {
 } from './actions.js';
 import { app } from './app.js';
 import { $ } from './dom.js';
+import { suivreAdresse } from './navigation.js';
 import { ONGLETS, rendre } from './rendu.js';
 import { enregistrer } from './stockage.js';
 
@@ -98,6 +99,13 @@ export function brancherEvenements() {
   document.addEventListener('click', surClic);
   document.addEventListener('change', surModification);
   $('#dlg').addEventListener('close', () => (app.ui.import = null));
+  // Bouton Précédent du navigateur ou adresse modifiée : accueil ou niveau inscrit dans l'adresse.
+  window.addEventListener('hashchange', () => suivreAdresse() && rendre());
+  // Lien d'évitement : déplace le focus sans modifier l'adresse (qui porte le niveau ouvert).
+  $('.skip').addEventListener('click', (ev) => {
+    ev.preventDefault();
+    $('#main').focus();
+  });
   brancherGlisserDeposer();
   brancherClavier();
 }

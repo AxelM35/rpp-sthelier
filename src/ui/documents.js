@@ -22,7 +22,8 @@ export function dateEnClair(etat) {
   return isNaN(x) ? '' : x.toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
 }
 
-const entete = (etat) => echapper([etat.soiree.etab, 'Rencontres parents-professeurs', dateEnClair(etat)].filter(Boolean).join(' — '));
+const entete = (etat) =>
+  echapper([etat.soiree.etab, 'Rencontres parents-professeurs de ' + etat.niveau, dateEnClair(etat)].filter(Boolean).join(' — '));
 const parHoraire = (a, b) => (a.slot == null ? 999 : a.slot) - (b.slot == null ? 999 : b.slot) || comparerEleves(a, b);
 
 /** Une page par classe (filtre : id de classe ou '' pour toutes). */

@@ -11,6 +11,7 @@ import { repartirEleves } from '../algos/repartition.js';
 import { CLASSES_MAX_PAR_BINOME } from '../config.js';
 import { classesTriees, nomEleve, profsDuBinome, trouverBinome, trouverClasse, trouverEleve, trouverProf } from '../modele/acces.js';
 import { etatVide, valider } from '../modele/etat.js';
+import { chiffreNiveau, nomFichier, preparationVide } from '../modele/niveaux.js';
 import { lireCSV } from '../io/csv.js';
 import { classeurPlanning, csvPlanning } from '../io/exports.js';
 import { importerLignes } from '../io/import.js';
@@ -21,10 +22,76 @@ import { $, annoncer, confirmer, telecharger, toast } from './dom.js';
 import { afficherDialogue, chargerLignes, fermerDialogue, lireFichierImport, ouvrirDialogue } from './dialogueImport.js';
 import { DOCUMENTS } from './documents.js';
 import { LETTRES } from './vues/comparaison.js';
-import { annulerDerniereModification, effacerDefinitivement, enregistrer, noterSauvegardeFichier } from './stockage.js';
+import { allerAAccueil, allerAuNiveau } from './navigation.js';
+import {
+  annulerDerniereModification,
+  effacerNiveauDefinitivement,
+  effacerToutDefinitivement,
+  enregistrer,
+  lireNiveau,
+  noterSauvegardeFichier,
+} from './stockage.js';
 
 const RAPPEL_SAUVEGARDE = ' Pensez à cliquer sur « Sauvegarder » pour garder une copie.';
 const FICHIER_PERSONNEL = 'Fichier téléchargé. Il contient des données personnelles : rangez-le dans un espace protégé.';
+const SAUVEGARDE_PERSONNELLE = 'Sauvegarde téléchargée. Elle contient des données personnelles : rangez-la dans un espace protégé.';
+
+/** « 108 élèves, 20 professeurs, 9 binômes ». */
+const contenu = (etat) => etat.eleves.length + ' élèves, ' + etat.profs.length + ' professeurs, ' + etat.binomes.length + ' binômes';
+
+/** Télécharge la sauvegarde d'un niveau et note sa date. */
+function telechargerSauvegarde(etat) {
+  telecharger(nomFichier('rencontres-parents-profs', etat.niveau, 'json'), JSON.stringify(etat, null, 1), 'application/json');
+  noterSauvegardeFichier(etat.niveau);
+  toast(SAUVEGARDE_PERSONNELLE);
+}
+
+/**
+ * Ouvre une sauvegarde déjà validée.
+ * Depuis l'accueil, elle est rangée dans le niveau indiqué par le fichier (après confirmation si ce niveau contient
+ * des données), puis ce niveau s'ouvre. Dans un niveau, seule une sauvegarde de ce niveau est acceptée.
+ */
+function ouvrirSauvegarde(etat) {
+  const niveau = etat.niveau;
+  if (app.niveau && app.niveau !== niveau) {
+    app.ui.message = {
+      ok: false,
+      txt:
+        "Fichier refusé : c'est une sauvegarde de la " +
+        niveau +
+        ". Pour l'ouvrir, revenez à l'accueil. Les données de la " +
+        app.niveau +
+        ' sont conservées.',
+    };
+    return;
+  }
+  if (!app.niveau) {
+    const actuel = lireNiveau(niveau);
+    if (
+      !preparationVide(actuel) &&
+      !confirmer(
+        'Ce fichier est une sauvegarde de la ' +
+          niveau +
+          ' (' +
+          contenu(etat) +
+          ').\n\nLa ' +
+          niveau +
+          ' contient déjà des données (' +
+          contenu(actuel) +
+          ') : elles seront remplacées. ' +
+          'Le bouton « Annuler » de la ' +
+          niveau +
+          ' permettra de revenir en arrière.\n\nContinuer ?',
+      )
+    )
+      return;
+    allerAuNiveau(niveau, { focus: true });
+  }
+  app.etat = etat;
+  app.ui.message = { ok: true, txt: 'Sauvegarde de la ' + niveau + ' ouverte : ' + contenu(etat) + '.' };
+  enregistrer();
+  noterSauvegardeFichier(niveau);
+}
 
 /** Avertit avant de remplacer un travail existant ; renvoie vrai pour continuer. */
 function confirmerRegeneration(etendue) {
@@ -80,6 +147,39 @@ function terminerDeplacement(eleveId, cible) {
 }
 
 export const actions = {
+  // Accueil
+  ouvrirNiveau: (el) => allerAuNiveau(el.dataset.id, { focus: true }),
+  accueil: () => allerAAccueil(),
+  choisirSauvegarde: () => $('#fichierSauvegarde').click(),
+  sauvegarderNiveau: (el) => telechargerSauvegarde(lireNiveau(el.dataset.id)),
+  effacerNiveau(el) {
+    const niveau = el.dataset.id;
+    const etat = lireNiveau(niveau);
+    const ok = confirmer(
+      'Effacer définitivement les données de la ' +
+        niveau +
+        ' de ce navigateur (' +
+        contenu(etat) +
+        ') ?\n\n' +
+        'Cette action ne peut pas être annulée. Les autres niveaux ne sont pas concernés, ' +
+        "ni les fichiers déjà sauvegardés ou exportés : supprimez-les vous-même s'ils ne servent plus.",
+    );
+    if (!ok) return;
+    effacerNiveauDefinitivement(niveau);
+    app.ui.message = { ok: true, txt: 'Les données de la ' + niveau + ' ont été effacées de ce navigateur.' };
+    app.ui.focus = 'action:ouvrirNiveau|' + niveau + '|';
+  },
+  effacerToutDefinitivement() {
+    const ok = confirmer(
+      'Effacer définitivement les données de tous les niveaux (6e à 3e) de ce navigateur ?\n\n' +
+        'Cette action ne peut pas être annulée. Les fichiers déjà sauvegardés ou exportés ne sont pas concernés : ' +
+        "supprimez-les vous-même s'ils ne servent plus.",
+    );
+    if (!ok) return;
+    effacerToutDefinitivement();
+    app.ui.message = { ok: true, txt: 'Les données de tous les niveaux ont été effacées de ce navigateur.' };
+  },
+
   // Navigation
   onglet(el) {
     app.ui.onglet = el.dataset.id;
@@ -99,41 +199,37 @@ export const actions = {
     annoncer('Dernière modification annulée.');
     app.ui.message = null;
   },
-  sauvegarder() {
-    telecharger('rencontres-parents-profs.json', JSON.stringify(app.etat, null, 1), 'application/json');
-    noterSauvegardeFichier();
-    toast('Sauvegarde téléchargée. Elle contient des données personnelles : rangez-la dans un espace protégé.');
-  },
+  sauvegarder: () => telechargerSauvegarde(app.etat),
   toutEffacer() {
     const { etat } = app;
     const ok = confirmer(
-      'Effacer toutes les données (' +
-        etat.eleves.length +
-        ' élèves, ' +
-        etat.profs.length +
-        ' professeurs, ' +
-        etat.binomes.length +
-        ' binômes) ?\n\n' +
+      'Effacer toutes les données de la ' +
+        app.niveau +
+        ' (' +
+        contenu(etat) +
+        ') ?\n\n' +
         "Pensez à cliquer sur « Sauvegarder » avant. Le bouton Annuler permet de revenir en arrière tant que la page n'est pas rechargée. " +
         "Pour ne laisser aucune trace (après la soirée), utilisez plutôt « Effacer définitivement » dans l'onglet Soirée.",
     );
     if (!ok) return;
-    app.etat = etatVide();
+    app.etat = etatVide(app.niveau);
     app.ui.message = { ok: true, txt: 'Tout a été effacé. Le bouton Annuler permet de revenir en arrière.' };
   },
 
   effacerDefinitivement() {
     const ok = confirmer(
-      'Effacer définitivement toutes les données de ce navigateur (élèves, professeurs, binômes, planning) ?\n\n' +
-        'Cette action ne peut pas être annulée. Les fichiers déjà sauvegardés ou exportés ne sont pas concernés : ' +
-        "supprimez-les vous-même s'ils ne servent plus.",
+      'Effacer définitivement toutes les données de la ' +
+        app.niveau +
+        ' de ce navigateur (élèves, professeurs, binômes, planning) ?\n\n' +
+        'Cette action ne peut pas être annulée. Les autres niveaux ne sont pas concernés, ' +
+        "ni les fichiers déjà sauvegardés ou exportés : supprimez-les vous-même s'ils ne servent plus.",
     );
     if (!ok) return;
-    effacerDefinitivement();
+    effacerNiveauDefinitivement(app.niveau);
     Object.assign(app.ui, {
       onglet: 'soiree',
       selection: null,
-      message: { ok: true, txt: 'Toutes les données ont été effacées de ce navigateur.' },
+      message: { ok: true, txt: 'Toutes les données de la ' + app.niveau + ' ont été effacées de ce navigateur.' },
     });
   },
 
@@ -143,7 +239,7 @@ export const actions = {
 
   // Données
   ajouterClasse() {
-    app.etat.classes.push({ id: nouvelId(), nom: '6' + String.fromCharCode(65 + (app.etat.classes.length % 26)) });
+    app.etat.classes.push({ id: nouvelId(), nom: chiffreNiveau(app.niveau) + String.fromCharCode(65 + (app.etat.classes.length % 26)) });
   },
   supprimerClasse(el) {
     const { etat } = app;
@@ -314,11 +410,11 @@ export const actions = {
       toast('Aucun planning à exporter.');
       return;
     }
-    telecharger('planning-rencontres.xlsx', classeurPlanning(app.etat), MIME_XLSX);
+    telecharger(nomFichier('planning-rencontres', app.niveau, 'xlsx'), classeurPlanning(app.etat), MIME_XLSX);
     toast(FICHIER_PERSONNEL);
   },
   exporterCSV() {
-    telecharger('planning-rencontres.csv', csvPlanning(app.etat), 'text/csv');
+    telecharger(nomFichier('planning-rencontres', app.niveau, 'csv'), csvPlanning(app.etat), 'text/csv');
     toast(FICHIER_PERSONNEL);
   },
   imprimer() {
@@ -331,6 +427,12 @@ export const actions = {
 
 /** Actions qui ne modifient pas les données (pas d'enregistrement ni d'historique). */
 export const SANS_ENREGISTREMENT = new Set([
+  'ouvrirNiveau',
+  'accueil',
+  'choisirSauvegarde',
+  'sauvegarderNiveau',
+  'effacerNiveau',
+  'effacerToutDefinitivement',
   'effacerDefinitivement',
   'comparerPropositions',
   'fermerComparaison',
@@ -388,25 +490,14 @@ export const champs = {
     if (!fichier) return;
     const lecteur = new FileReader();
     lecteur.onload = () => {
+      let etat;
       try {
-        app.etat = valider(JSON.parse(lecteur.result));
-        app.ui.message = {
-          ok: true,
-          txt:
-            'Projet chargé : ' +
-            app.etat.eleves.length +
-            ' élèves, ' +
-            app.etat.profs.length +
-            ' professeurs, ' +
-            app.etat.binomes.length +
-            ' binômes.',
-        };
-        enregistrer();
-        noterSauvegardeFichier();
+        etat = valider(JSON.parse(lecteur.result));
       } catch (x) {
         const raison = x instanceof SyntaxError ? "ce n'est pas un fichier de sauvegarde lisible" : x.message;
         app.ui.message = { ok: false, txt: 'Fichier refusé : ' + raison + '. Les données actuelles sont conservées.' };
       }
+      if (etat) ouvrirSauvegarde(etat);
       apres();
     };
     lecteur.readAsText(fichier);

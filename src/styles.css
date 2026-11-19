@@ -33,6 +33,10 @@
 * {
   box-sizing: border-box;
 }
+/* L'attribut hidden l'emporte sur les display des composants (barre d'onglets masquée sur l'accueil). */
+[hidden] {
+  display: none !important;
+}
 body {
   margin: 0;
   background: var(--md-sys-color-surface);
@@ -151,8 +155,33 @@ main {
   flex: 1;
   min-width: 200px;
 }
+@media (min-width: 601px) {
+  .top h1 {
+    flex: 1 0 auto;
+    white-space: nowrap;
+  }
+}
 .sauv {
   font-size: 12px;
+}
+.actions-haut {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+}
+/* Niveau courant, affiché en permanence à côté du titre. */
+.niveau-courant {
+  display: inline-block;
+  margin-left: 8px;
+  padding: 0 12px;
+  border-radius: var(--md-sys-shape-s);
+  background: var(--md-sys-color-primary-container);
+  color: var(--md-sys-color-on-primary-container);
+  font-size: 16px;
+  line-height: 32px;
+  font-weight: 500;
+  vertical-align: 2px;
 }
 
 /* ---------- Onglets principaux ---------- */
@@ -268,6 +297,16 @@ button.b.danger-plein {
 }
 button.b.danger-plein:hover {
   background: color-mix(in srgb, var(--md-sys-color-on-error) var(--md-sys-state-hover), var(--md-sys-color-error));
+}
+
+/* Bouton texte (sans contour) : retour à l'accueil, actions secondaires des cartes. */
+button.b.texte {
+  border-color: transparent;
+  padding: 0 12px;
+}
+button.b.texte.danger {
+  margin-left: 0;
+  border-color: transparent;
 }
 
 button.b.petit {
@@ -411,6 +450,106 @@ details.guide li {
 .kpi span {
   font-size: 12px;
   color: var(--md-sys-color-on-surface-variant);
+}
+
+/* ---------- Écran d'accueil ---------- */
+
+.accueil-tete {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px 24px;
+  align-items: flex-end;
+  justify-content: space-between;
+  margin-bottom: 24px;
+}
+.titre-ecran {
+  font-size: 24px;
+  line-height: 32px;
+  font-weight: 400;
+  letter-spacing: 0;
+  margin: 0 0 4px;
+}
+.accueil-ouvrir .note {
+  margin: 4px 0 0;
+}
+.niveaux {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 16px;
+  margin-bottom: 24px;
+}
+.card.niveau {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin: 0;
+  padding: 20px;
+  border-radius: var(--md-sys-shape-l);
+  background: var(--md-sys-color-surface-container);
+}
+.card.niveau.vide {
+  background: var(--md-sys-color-surface);
+}
+.card.niveau h2 {
+  margin: 0;
+  font-size: 36px;
+  line-height: 44px;
+  font-weight: 400;
+  color: var(--md-sys-color-primary);
+}
+.niveau-sur {
+  display: block;
+  font-size: 12px;
+  line-height: 16px;
+  font-weight: 500;
+  letter-spacing: 0.5px;
+  color: var(--md-sys-color-on-surface-variant);
+}
+.niveau-date {
+  margin: 0;
+  font-weight: 500;
+}
+.niveau-chiffres {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+  margin: 0;
+}
+.niveau-chiffres div {
+  padding: 8px 12px;
+  border-radius: var(--md-sys-shape-m);
+  background: var(--md-sys-color-surface-container-highest);
+}
+.niveau-chiffres dt {
+  font-size: 12px;
+  line-height: 16px;
+  color: var(--md-sys-color-on-surface-variant);
+}
+.niveau-chiffres dd {
+  margin: 0;
+  font-size: 22px;
+  line-height: 28px;
+}
+.niveau-chiffres small {
+  font-size: 14px;
+  color: var(--md-sys-color-on-surface-variant);
+}
+.niveau-etiquettes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 0;
+}
+.niveau-rappel {
+  margin: 0;
+  padding: 8px 12px;
+}
+.niveau-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: auto;
+  padding-top: 4px;
 }
 
 /* ---------- Tableaux ---------- */
@@ -948,6 +1087,10 @@ dialog::backdrop {
   }
   .top {
     padding-left: 16px;
+  }
+  .top h1 {
+    font-size: 18px;
+    line-height: 24px;
   }
   .bins {
     grid-template-columns: 1fr;

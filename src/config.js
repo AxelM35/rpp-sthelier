@@ -1,10 +1,16 @@
 // Constantes métier et techniques, réunies ici pour être modifiées en un seul endroit.
 
-/** Clé du stockage local du navigateur. */
-export const CLE_STOCKAGE = 'rpp6-v1';
+/** Niveaux du collège. Chacun est une préparation indépendante, enregistrée à part. */
+export const NIVEAUX = Object.freeze(['6e', '5e', '4e', '3e']);
+
+/** Début des clés du stockage local : une clé par niveau (« rpp-v2-6e », « rpp-v2-6e-meta »…). */
+export const PREFIXE_STOCKAGE = 'rpp-v2-';
+
+/** Clé du stockage local de la version 1 (6e seulement), reprise au premier lancement de la version 2. */
+export const CLE_STOCKAGE_V1 = 'rpp6-v1';
 
 /** Version du format des données (sauvegardes et stockage local). */
-export const VERSION_DONNEES = 1;
+export const VERSION_DONNEES = 2;
 
 /** Nombre maximal de classes reçues par un binôme (au-delà d'une : binôme « glissant »). */
 export const CLASSES_MAX_PAR_BINOME = 2;

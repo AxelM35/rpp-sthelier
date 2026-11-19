@@ -126,7 +126,7 @@ function donneesPersonnelles() {
   return (
     '<div class="card" id="donnees-personnelles"><h2>Données personnelles</h2>' +
     '<ul class="liste">' +
-    "<li><b>Où sont-elles ?</b> Uniquement dans ce navigateur, sur cet ordinateur. L'application ne les envoie nulle part. " +
+    "<li><b>Où sont-elles ?</b> Uniquement dans ce navigateur, sur cet ordinateur, chaque niveau séparément. L'application ne les envoie nulle part. " +
     'Toute personne qui utilise ce navigateur avec la même session peut y accéder : sur un poste partagé, effacez-les après usage.</li>' +
     '<li><b>Lesquelles ?</b> Nom, prénom et classe des élèves, code de fratrie, contraintes horaires des familles, ' +
     "noms et classes des professeurs. Ne saisissez rien d'autre (pas de motif de rendez-vous ni de commentaire sur un élève).</li>" +
@@ -138,9 +138,13 @@ function donneesPersonnelles() {
     (conservation ? ', soit le ' + echapper(dateCourte(conservation.limite)) : '') +
     '.</li></ul>' +
     (presentes
-      ? '<button type="button" class="b danger-plein" data-action="effacerDefinitivement">Effacer définitivement les données de ce navigateur</button>' +
-        '<p class="note">Efface aussi l\'historique d\'annulation et les copies internes. Les fichiers déjà enregistrés ne sont pas concernés.</p>'
-      : '<p class="note">Aucune donnée personnelle n\'est enregistrée dans ce navigateur.</p>') +
+      ? '<button type="button" class="b danger-plein" data-action="effacerDefinitivement">Effacer définitivement les données de la ' +
+        app.niveau +
+        '</button>' +
+        '<p class="note">Efface aussi l\'historique d\'annulation et les copies internes de la ' +
+        app.niveau +
+        ". Les autres niveaux s'effacent depuis l'accueil. Les fichiers déjà enregistrés ne sont pas concernés.</p>"
+      : '<p class="note">Aucune donnée personnelle de la ' + app.niveau + " n'est enregistrée dans ce navigateur.</p>") +
     '</div>'
   );
 }

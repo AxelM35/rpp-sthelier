@@ -51,7 +51,7 @@ test('exports : sauvegarde JSON, Excel et CSV', async () => {
 
   await onglet(page, 'planning');
   const [excel] = await Promise.all([page.waitForEvent('download'), page.click('[data-action=exporterExcel]')]);
-  assert.equal(excel.suggestedFilename(), 'planning-rencontres.xlsx');
+  assert.equal(excel.suggestedFilename(), 'planning-rencontres-6e.xlsx');
   const zip = ouvrirZip(await readFile(await excel.path()));
   assert.match(await zip.lire('xl/workbook.xml'), /Planning général.*Par classe.*Par binôme/);
 

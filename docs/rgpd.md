@@ -1,4 +1,4 @@
-# Fiche de traitement — Rencontres parents-professeurs (6e)
+# Fiche de traitement — Rencontres parents-professeurs (6e à 3e)
 
 Projet de fiche pour le registre des activités de traitement de l'établissement. **À relire et compléter avec le délégué à la protection des données (DPO)**. Les champs entre crochets sont propres à l'établissement.
 
@@ -9,14 +9,14 @@ Projet de fiche pour le registre des activités de traitement de l'établissemen
 | Responsable du traitement | [Chef d'établissement, nom du collège]                                                                                                                                                                          |
 | Délégué à la protection   | [DPO académique : coordonnées]                                                                                                                                                                                  |
 | Utilisateur de l'outil    | [Organisateur de la soirée, par exemple le CPE ou un professeur principal]                                                                                                                                      |
-| Finalité                  | Organiser la soirée de rencontres parents-professeurs du niveau 6e : constituer les binômes d'enseignants, attribuer un rendez-vous de 15 minutes à chaque famille, produire les plannings et les convocations. |
+| Finalité                  | Organiser la soirée de rencontres parents-professeurs de chaque niveau du collège (6e à 3e) : constituer les binômes d'enseignants, attribuer un rendez-vous de 15 minutes à chaque famille, produire les plannings et les convocations. |
 | Base légale proposée      | Mission d'intérêt public (article 6.1.e du RGPD) : suivi de la scolarité et relations avec les familles. À confirmer par le DPO.                                                                                |
 
 ## Données traitées
 
 | Personnes concernées | Données                                                                                              |
 | -------------------- | ---------------------------------------------------------------------------------------------------- |
-| Élèves de 6e         | Nom, prénom, classe ; code de fratrie (facultatif) ; contraintes horaires de la famille (facultatif) |
+| Élèves (6e à 3e)     | Nom, prénom, classe ; code de fratrie (facultatif) ; contraintes horaires de la famille (facultatif) |
 | Enseignants          | Nom, discipline, classes ; heures d'arrivée tardive ou de départ anticipé (facultatif)               |
 
 Aucune donnée sensible au sens de l'article 9 du RGPD (santé, etc.), aucune appréciation scolaire et aucune coordonnée des familles ne sont traitées. L'application invite à ne rien saisir d'autre.
@@ -41,7 +41,7 @@ Aucun transfert hors de l'Union européenne, aucun sous-traitant : l'application
 | Aucune transmission          | Application en un fichier HTML autonome, sans serveur, sans bibliothèque chargée depuis internet, sans traceur.                                                                                                                            |
 | Minimisation                 | Seules les données nécessaires à l'organisation sont demandées (voir ci-dessus).                                                                                                                                                           |
 | Information de l'utilisateur | Encadré « Données personnelles » dans l'onglet Soirée : lieu de stockage, données, fichiers, durée.                                                                                                                                        |
-| Effacement                   | Rappel sur tous les onglets dès le lendemain de la soirée, renforcé après 30 jours. Bouton « Effacer définitivement » : supprime toutes les données du navigateur, l'historique d'annulation et les copies internes, sans retour possible. |
+| Effacement                   | Rappel sur tous les onglets dès le lendemain de la soirée, renforcé après 30 jours. Chaque niveau est enregistré séparément. « Effacer définitivement » supprime les données d'un niveau (onglet Soirée ou carte de l'accueil), ou de tous les niveaux (accueil), avec l'historique d'annulation et les copies internes, sans retour possible. |
 | Intégrité                    | Toute sauvegarde ouverte est entièrement contrôlée ; un fichier piégé est refusé.                                                                                                                                                          |
 | Fichiers                     | Message à chaque téléchargement : le fichier contient des données personnelles et doit être rangé dans un espace protégé.                                                                                                                  |
 

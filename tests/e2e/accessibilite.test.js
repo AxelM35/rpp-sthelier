@@ -27,6 +27,13 @@ for (const theme of ['light', 'dark']) {
       );
       r.violations.forEach((v) => violations.push(id + ' : ' + v.id + ' (' + v.nodes.length + ')'));
     }
+    // Écran d'accueil, avec un niveau préparé et des niveaux vides.
+    await page.click('[data-action=accueil]');
+    await page.waitForSelector('.niveaux');
+    const r = await page.evaluate(() =>
+      axe.run(document, { runOnly: { type: 'tag', values: ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa'] } }),
+    );
+    r.violations.forEach((v) => violations.push('accueil : ' + v.id + ' (' + v.nodes.length + ')'));
     assert.deepEqual(violations, []);
   });
 }
@@ -39,4 +46,7 @@ test('pas de défilement horizontal de la page sur téléphone', async () => {
     await onglet(page, id);
     assert.equal(await page.evaluate(() => document.documentElement.scrollWidth), 390, id);
   }
+  await page.click('[data-action=accueil]');
+  await page.waitForSelector('.niveaux');
+  assert.equal(await page.evaluate(() => document.documentElement.scrollWidth), 390, 'accueil');
 });

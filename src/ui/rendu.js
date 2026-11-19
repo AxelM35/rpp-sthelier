@@ -8,6 +8,7 @@ import { echapper } from '../utils/texte.js';
 import { app } from './app.js';
 import { $, annoncer, dateCourte } from './dom.js';
 import { etatSauvegarde } from './stockage.js';
+import { vueAccueil } from './vues/accueil.js';
 import { vueBinomes } from './vues/binomes.js';
 import { vueDocuments } from './vues/documents.js';
 import { vueDonnees } from './vues/donnees.js';
@@ -67,10 +68,59 @@ function rappelConservation() {
   );
 }
 
-export function rendre() {
+/** Barre supérieure : titre seul sur l'accueil ; niveau courant et actions dans un niveau. */
+function barreSuperieure() {
+  const titre = 'Rencontres parents-professeurs';
+  if (!app.niveau) return '<h1>' + titre + '</h1>';
+  const sauvegarde = etatSauvegarde();
+  return (
+    '<button type="button" class="b texte retour" data-action="accueil" title="Revenir au choix du niveau">' +
+    '<span aria-hidden="true">←</span> Accueil</button>' +
+    '<h1>' +
+    titre +
+    '<span class="sr-only"> — niveau</span> <span class="niveau-courant">' +
+    app.niveau +
+    '</span></h1>' +
+    '<span class="sauv" id="etatSauv">' +
+    (sauvegarde ? '<span class="badge ' + sauvegarde.statut + '">' + echapper(sauvegarde.texte) + '</span>' : '') +
+    '</span>' +
+    '<span class="actions-haut">' +
+    '<button type="button" class="b" data-action="annuler" title="Annuler la dernière modification">↶ Annuler</button>' +
+    '<button type="button" class="b" data-action="choisirSauvegarde" title="Ouvrir une sauvegarde de la ' +
+    app.niveau +
+    '">Ouvrir…</button>' +
+    '<button type="button" class="b" data-action="sauvegarder">Sauvegarder</button>' +
+    '<button type="button" class="b danger" data-action="toutEffacer" title="Efface les données de la ' +
+    app.niveau +
+    ' (annulable)">Tout effacer</button></span>'
+  );
+}
+
+/** Annonce aux lecteurs d'écran un nouveau message et renvoie son affichage. */
+function messageCourant() {
   const { ui } = app;
-  const cle = ui.focus || cleFocus(document.activeElement);
-  ui.focus = null;
+  if (ui.message && ui.message !== ui.messageAnnonce) {
+    ui.messageAnnonce = ui.message;
+    annoncer(ui.message.txt);
+  }
+  return ui.message ? '<div class="msg ' + (ui.message.ok ? 'ok' : 'bad') + '">' + echapper(ui.message.txt) + '</div>' : '';
+}
+
+/** Écran d'accueil : pas d'onglets. */
+function rendreAccueil() {
+  document.title = 'Rencontres parents-professeurs';
+  $('#tabs').hidden = true;
+  $('#tabs').innerHTML = '';
+  const main = $('#main');
+  main.removeAttribute('role');
+  main.setAttribute('aria-labelledby', 'titre-accueil');
+  main.innerHTML = messageCourant() + vueAccueil();
+}
+
+/** Préparation d'un niveau : onglets et contenu de l'onglet courant. */
+function rendreNiveau() {
+  const { ui } = app;
+  document.title = app.niveau + ' — Rencontres parents-professeurs';
   // Une comparaison n'a plus de sens si les données ont changé depuis.
   if (ui.comparaison && ui.comparaison.source !== JSON.stringify(app.etat)) ui.comparaison = null;
   const points = controler(app.etat);
@@ -99,18 +149,22 @@ export function rendre() {
       '</button>'
     );
   }).join('');
-  $('#main').setAttribute('aria-labelledby', 'tab-' + ui.onglet);
-
-  const sauvegarde = etatSauvegarde();
-  $('#etatSauv').innerHTML = sauvegarde ? '<span class="badge ' + sauvegarde.niveau + '">' + echapper(sauvegarde.texte) + '</span>' : '';
-
-  if (ui.message && ui.message !== ui.messageAnnonce) {
-    ui.messageAnnonce = ui.message;
-    annoncer(ui.message.txt);
-  }
-  const message = ui.message ? '<div class="msg ' + (ui.message.ok ? 'ok' : 'bad') + '">' + echapper(ui.message.txt) + '</div>' : '';
+  $('#tabs').hidden = false;
+  const main = $('#main');
+  main.setAttribute('role', 'tabpanel');
+  main.setAttribute('aria-labelledby', 'tab-' + ui.onglet);
+  const message = messageCourant();
   const vue = ONGLETS.find(([id]) => id === ui.onglet)[2];
-  $('#main').innerHTML = rappelConservation() + message + barreSelection() + vue(points);
+  main.innerHTML = rappelConservation() + message + barreSelection() + vue(points);
+}
+
+export function rendre() {
+  const { ui } = app;
+  const cle = ui.focus || cleFocus(document.activeElement);
+  ui.focus = null;
+  $('#barre').innerHTML = barreSuperieure();
+  if (app.niveau) rendreNiveau();
+  else rendreAccueil();
 
   if (cle) {
     const cible = Array.from(document.querySelectorAll('[data-focus],[data-action],[data-champ]')).find((x) => cleFocus(x) === cle);

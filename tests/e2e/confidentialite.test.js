@@ -48,7 +48,7 @@ test('l’effacement définitif ne laisse aucune trace et ne peut pas être annu
   page.refuserConfirmations = false;
   await page.click('.rappel [data-action=effacerDefinitivement]');
   assert.deepEqual(await cles(page), []);
-  assert.match(await message(page), /Toutes les données ont été effacées/);
+  assert.match(await message(page), /Toutes les données de la 6e ont été effacées/);
   assert.equal(await page.locator('.rappel').count(), 0);
 
   await page.click('[data-action=annuler]');

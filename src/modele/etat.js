@@ -2,6 +2,7 @@
 //
 // Structure d'un état :
 //   v        version du format
+//   niveau   '6e' | '5e' | '4e' | '3e' (voir NIVEAUX)
 //   soiree   { etab, date, debut, fin, duree, pauses:[{debut, duree}] }
 //   classes  [{ id, nom }]
 //   profs    [{ id, nom, discipline, classeIds:[], dispoDe, dispoA }]
@@ -11,12 +12,13 @@
 //
 // « slot » est l'indice du créneau dans la liste calculée par creneaux().
 
-import { CLASSES_MAX_PAR_BINOME, SOIREE_PAR_DEFAUT, VERSION_DONNEES } from '../config.js';
+import { CLASSES_MAX_PAR_BINOME, NIVEAUX, SOIREE_PAR_DEFAUT, VERSION_DONNEES } from '../config.js';
 
-/** État vide d'une nouvelle préparation. */
-export function etatVide() {
+/** État vide d'une nouvelle préparation du niveau indiqué. */
+export function etatVide(niveau = NIVEAUX[0]) {
   return {
     v: VERSION_DONNEES,
+    niveau,
     soiree: { ...SOIREE_PAR_DEFAUT, pauses: [] },
     classes: [],
     eleves: [],
@@ -35,7 +37,10 @@ export function copierEtat(etat) {
  * Migrations successives : MIGRATIONS[n] transforme des données de version n en version n + 1.
  * Pour faire évoluer le format : incrémenter VERSION_DONNEES et ajouter ici la migration correspondante.
  */
-const MIGRATIONS = {};
+const MIGRATIONS = {
+  // Version 1 (application de la 6e seulement) : les données deviennent la préparation du niveau 6e.
+  1: (d) => ({ ...d, niveau: '6e' }),
+};
 
 /** Amène des données d'une version antérieure à la version courante. */
 export function migrer(donnees) {
@@ -85,7 +90,8 @@ export function valider(brut) {
     return v;
   };
 
-  const etat = etatVide();
+  if (!NIVEAUX.includes(s.niveau)) throw new Error('niveau inconnu');
+  const etat = etatVide(s.niveau);
   const so = s.soiree && typeof s.soiree === 'object' ? s.soiree : {};
   etat.soiree = {
     etab: texte(so.etab),

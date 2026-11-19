@@ -1,7 +1,7 @@
 {
   "name": "rencontres-parents-profs",
   "version": "2.0.0",
-  "description": "Préparation des rencontres parents-professeurs (niveau 6e) : binômes, répartition, planning.",
+  "description": "Préparation des rencontres parents-professeurs (6e à 3e) : binômes, répartition, planning.",
   "private": true,
   "type": "module",
   "scripts": {

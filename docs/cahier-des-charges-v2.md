@@ -160,6 +160,13 @@ Commencer par le design permet de valider l'aspect visuel tôt, avant de constru
 ### Avancement
 
 - **Lot 1 — livré sur `v2-dev`.** Jetons de couleur générés à partir du bleu de la v1 (variante « Vibrant », primaire `#0053db`) avec la bibliothèque de Google, utilisée seulement au développement (`npm run theme`). Couleurs de statut (succès, avertissement) harmonisées. Barre supérieure, onglets, boutons (rempli, contour, tonal, compact), boutons segmentés pour les vues du planning et les documents, puces filtres, champs, cartes, dialogue et snackbar selon Material 3. Aucun changement de fonctionnement ; tous les tests de la v1 restent verts, dont le contrôle WCAG 2.1 AA en thème clair et sombre.
+- **Lot 2 — livré sur `v2-dev`.**
+  - **Stockage par niveau** : une clé du navigateur par niveau (`rpp-v2-6e`…), avec ses dates de sauvegarde et sa copie de secours. L'historique « Annuler » est propre à chaque niveau et survit au passage par l'accueil.
+  - **Accueil** (V2-A1 à V2-A4) : une carte par niveau (date, élèves, enseignants, binômes, élèves planifiés, points à corriger, état de la sauvegarde, rappel d'effacement) ; « Ouvrir », « Sauvegarder », « Effacer définitivement » ; effacement de tous les niveaux. L'accueil s'affiche à chaque lancement.
+  - **Niveau courant** : affiché dans la barre supérieure, avec un bouton « Accueil ». Il est inscrit dans l'adresse (`#5e`) : un rechargement garde le niveau, le bouton « Précédent » du navigateur ramène à l'accueil.
+  - **Sauvegardes** : le niveau est enregistré dans le fichier et figure dans son nom (`rencontres-parents-profs-5e.json`, `planning-rencontres-5e.xlsx`). Depuis l'accueil, « Ouvrir une sauvegarde » range le fichier dans son niveau (confirmation si ce niveau contient déjà des données). Dans un niveau, une sauvegarde d'un autre niveau est refusée. Un fichier de la v1 est une sauvegarde de 6e.
+  - **Reprise de la v1** (V2-F11) : format de données version 2 (champ `niveau`). Au premier lancement, les données de la v1 enregistrées dans le navigateur deviennent le niveau 6e, avec leurs dates de sauvegarde, et les anciennes clés sont supprimées. Des données illisibles sont mises de côté ; un 6e déjà rempli n'est jamais écrasé.
+  - **Documents** : l'en-tête des plannings indique le niveau (début de V2-F9). Une nouvelle classe est nommée selon le niveau (5A, 5B…).
 
 ## 9. Décisions du 19 novembre 2026
 

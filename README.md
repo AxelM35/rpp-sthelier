@@ -1,12 +1,14 @@
-# Rencontres parents-professeurs (6e)
+# Rencontres parents-professeurs (6e à 3e)
 
-Application pour préparer la soirée de rencontres parents-professeurs du niveau 6e : binômes de professeurs, répartition des élèves, planning des rendez-vous, convocations.
+Application pour préparer les soirées de rencontres parents-professeurs d'un collège, niveau par niveau (6e, 5e, 4e, 3e) : binômes de professeurs, répartition des élèves, planning des rendez-vous, convocations.
 
 L'application livrée est **un seul fichier HTML** qui s'ouvre dans un navigateur, sans serveur ni connexion internet. Les données restent dans le navigateur du poste.
 
 ## Utiliser l'application
 
-Ouvrir `dist/rencontres-parents-profs.html` (produit par `npm run build`) dans Chrome, Edge, Firefox ou Safari récents.
+Ouvrir `dist/rencontres-parents-profs.html` (produit par `npm run build`) dans Chrome, Edge, Firefox ou Safari récents. L'écran d'accueil propose une carte par niveau ; chaque niveau est une préparation indépendante. Les données de la version 1, enregistrées dans le même navigateur, sont reprises automatiquement comme niveau 6e.
+
+Pour que cette reprise fonctionne, ouvrir la version 2 dans le même navigateur que la version 1, en remplaçant le fichier de la version 1 au même emplacement : certains navigateurs (Firefox) séparent le stockage selon l'emplacement du fichier. À défaut, ouvrir depuis l'accueil la sauvegarde `.json` faite avec la version 1 : elle devient le niveau 6e.
 
 ## Développer
 
@@ -47,12 +49,13 @@ npx playwright install chromium
 
 ```
 src/
-  config.js            Constantes métier (2 classes max par binôme, écart visé, graine…)
+  config.js            Constantes métier (niveaux, 2 classes max par binôme, écart visé, graine…)
   utils/               Texte, heures, générateur pseudo-aléatoire
   modele/
     etat.js            Format des données, validation des fichiers, migrations
     acces.js           Lecture de l'état : recherches, libellés
     normaliser.js      Remise en cohérence après une modification
+    niveaux.js         Résumé d'un niveau pour l'accueil, noms de fichiers
   algos/               Cœur métier, sans navigateur : fonctions testables
     creneaux.js        Créneaux de la soirée, disponibilités
     quotas.js          Nombre d'élèves de chaque classe par binôme
@@ -64,13 +67,15 @@ src/
     generation.js      Enchaînement complet
   io/                  Imports et exports, sans navigateur
     csv.js, zip.js, xlsx.js, import.js, exports.js
+    stockage.js        Clés du stockage par niveau, reprise des données de la v1 (stockage passé en paramètre)
   ui/                  Interface
-    app.js             État courant partagé (données + affichage)
-    stockage.js        Stockage local, annulation, suivi des sauvegardes
+    app.js             État courant partagé (niveau ouvert, données, affichage)
+    navigation.js      Accueil ou niveau ouvert, niveau inscrit dans l'adresse (#5e)
+    stockage.js        Stockage local du niveau ouvert, annulation par niveau, suivi des sauvegardes
     rendu.js           Affichage de l'onglet courant, gestion du focus
     actions.js         Réactions aux clics et aux saisies
     evenements.js      Branchement des événements (clic, clavier, glisser-déposer)
-    vues/              Un module par onglet
+    vues/              Un module par onglet, et l'écran d'accueil (accueil.js)
     composants.js      Fragments HTML communs
     documents.js       Documents imprimables
     dialogueImport.js  Dialogue d'import
@@ -93,6 +98,7 @@ tests/
 - **Les algorithmes ne modifient pas l'état reçu.** Ils renvoient `{ etat, rapport }`, où `etat` est un nouvel état et `rapport` vaut `{ ok, txt }`. L'interface remplace l'état courant par le résultat.
 - **Les modules `algos/`, `modele/` et `io/` n'utilisent pas le navigateur.** Ils sont testés directement avec Node.
 - **La proposition de binômes est reproductible.** Le hasard vient d'un générateur à graine fixe (`GRAINE_PROPOSITION`) : la même situation donne toujours la même proposition.
+- **Chaque niveau est enregistré à part.** Une clé du stockage local par niveau (`rpp-v2-6e`, `rpp-v2-5e`…), avec `-meta` (dates) et `-secours` (données illisibles mises de côté). `app.niveau` vaut `null` sur l'accueil.
 - **Toute donnée externe passe par `valider()`.** C'est le cas des fichiers ouverts comme du stockage local. Les identifiants sont strictement contrôlés car ils sont insérés dans le HTML.
 - **L'interface est reconstruite à chaque changement.** Les attributs `data-action`, `data-champ`, `data-id`, `data-param` et `data-cible` relient le HTML aux fonctions de `ui/actions.js` (voir l'en-tête de `ui/composants.js`).
 
