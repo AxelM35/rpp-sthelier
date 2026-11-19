@@ -1,0 +1,21 @@
+{
+  "name": "rencontres-parents-profs",
+  "version": "2.0.0",
+  "description": "Préparation des rencontres parents-professeurs (niveau 6e) : binômes, répartition, planning.",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "test": "node --test --test-reporter=spec \"tests/unit/**/*.test.js\"",
+    "test:e2e": "npm run build && node --test --test-reporter=spec --test-concurrency=1 \"tests/e2e/**/*.test.js\"",
+    "verifier": "prettier --check \"src/**/*.{js,css}\" \"tests/**/*.js\" \"scripts/*.mjs\" && node scripts/verifier.mjs",
+    "formater": "prettier --write \"src/**/*.{js,css}\" \"tests/**/*.js\" \"scripts/*.mjs\"",
+    "test:tout": "npm run verifier && npm test && npm run test:e2e"
+  },
+  "devDependencies": {
+    "@xmldom/xmldom": "0.8.10",
+    "axe-core": "4.10.2",
+    "esbuild": "0.24.2",
+    "prettier": "^3.3.3"
+  }
+}

@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Rencontres parents-professeurs</title>
+<style>
+/*STYLES*/
+</style>
+</head>
+<body>
+<a class="skip" href="#main">Aller au contenu</a>
+<header class="top">
+  <h1>Rencontres parents-professeurs</h1>
+  <span id="etatSauv" class="sauv"></span>
+  <button type="button" class="b" data-action="annuler" title="Annuler la dernière modification">↶ Annuler</button>
+  <label class="b">Ouvrir…<input type="file" accept=".json" data-champ="ouvrirFichier" hidden></label>
+  <button type="button" class="b" data-action="sauvegarder">Sauvegarder</button>
+  <button type="button" class="b danger" data-action="toutEffacer" title="Efface toutes les données de ce navigateur">Tout effacer</button>
+</header>
+<nav id="tabs" role="tablist" aria-label="Étapes de préparation"></nav>
+<main id="main" role="tabpanel" tabindex="-1"></main>
+<dialog id="dlg" aria-labelledby="dlgTitre"></dialog>
+<div id="toast" role="status" aria-live="polite"></div>
+<div id="annonce" class="sr-only" aria-live="polite"></div>
+<div id="print" class="doc"></div>
+<script>
+/*SCRIPT*/
+</script>
+</body>
+</html>
