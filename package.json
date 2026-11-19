@@ -15,9 +15,9 @@
   },
   "devDependencies": {
     "@material/material-color-utilities": "^0.3.0",
-    "@xmldom/xmldom": "0.8.10",
+    "@xmldom/xmldom": "0.8.15",
     "axe-core": "4.10.2",
-    "esbuild": "0.24.2",
+    "esbuild": "0.28.2",
     "prettier": "^3.3.3"
   }
 }
