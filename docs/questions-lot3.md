@@ -1,4 +1,4 @@
-# Lot 3 — Questions de conception en attente
+# Lot 3 — Questions de conception (tranchées le 20 novembre 2026)
 
 Questions posées le 19 novembre 2026, avant de commencer le lot 3 (LVB, options, enseignements et équipe de l'élève). Le détail des règles est dans le [cahier des charges v2](cahier-des-charges-v2.md).
 
@@ -35,7 +35,7 @@ Peut-il y avoir deux professeurs d'espagnol en 5A, chacun avec une partie des é
 - **A — recommandée si le cas est rare ou inexistant** : un seul enseignant par LVB et par classe. S'il y en a deux, les deux sont comptés dans l'équipe de tous les hispanisants de 5A, et un avertissement le signale.
 - **B** : groupes explicites, chaque élève est rattaché à son groupe (« Espagnol 1 », « Espagnol 2 »). Règle exacte, mais saisie et import plus lourds.
 
-Réponse :
+Réponse (20 novembre) : d'accord — pas de groupes explicites ; si deux enseignants d'une même LVB interviennent dans une classe, les deux comptent pour tous ses élèves, avec un avertissement.
 
 ## 3. Un enseignant peut-il avoir des types différents selon les classes ?
 
@@ -46,7 +46,7 @@ Exemple : un professeur de lettres classiques enseigne le français en 5A (class
 - **Oui — recommandé, le cas est courant** : chaque classe cochée porte son type. À l'écran, un réglage « Enseigne en tant que » par professeur (classe entière, Espagnol, Latin…) s'applique à toutes ses classes ; un détail par classe permet de régler les exceptions.
 - **Non** : un seul type par enseignant, saisie plus simple.
 
-Réponse :
+Réponse (20 novembre) : d'accord — type par classe, déduit à l'import ; à la main, puce de la classe indiquant le type (« 3 J · Latin »), un clic ouvre le choix.
 
 ## 4. Les enseignants de LVB et d'options dans les binômes
 
@@ -58,17 +58,17 @@ Exemple : le binôme « allemand + mathématiques de 5A » ne peut recevoir que 
   - en mode « le moins de binômes possible » : seulement s'ils sont nécessaires pour placer tous les élèves.
 - **4c.** Un binôme de deux enseignants de LVB ou d'options (espagnol + latin) ne recevrait que les élèves qui suivent les deux. **Recommandé : jamais formé par la proposition automatique** ; possible à la main, avec un avertissement.
 
-Réponse 4a :
+Réponse 4a (20 novembre) : oui.
 
-Réponse 4b :
+Réponse 4b (20 novembre) : d'accord.
 
-Réponse 4c :
+Réponse 4c (20 novembre) : d'accord ; jamais deux options différentes, permis pour une même option.
 
 ## 5. Où saisir les listes de LVB et d'options du niveau ?
 
 Le cahier des charges (V2-F1) les place dans l'onglet Soirée. **Recommandé : l'onglet Données**, dans une carte « Langues et options » au-dessus des classes, là où elles servent. La durée des rendez-vous reste dans l'onglet Soirée.
 
-Réponse :
+Réponse (20 novembre) : d'accord — onglet Données, carte « Langues et options ».
 
 ## 6. Élève de 5e à 3e sans LVB
 
@@ -77,4 +77,4 @@ Faut-il le signaler ?
 - **Recommandé : une simple information**, qui ne compte pas parmi les points à corriger (certains élèves peuvent légitimement ne pas en avoir).
 - Alternative : un avertissement.
 
-Réponse :
+Réponse (20 novembre) : d'accord — rien pour un élève ULIS ; simple information pour les autres.

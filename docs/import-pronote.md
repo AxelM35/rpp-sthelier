@@ -4,7 +4,7 @@ Analyse du 20 novembre 2026, à partir d'exports anonymisés (noms remplacés pa
 
 ## Synthèse des règles d'import retenues (20 novembre)
 
-Toutes les questions sont tranchées, sauf E8 (menus de Pronote, pour l'aide).
+Toutes les questions sont tranchées.
 
 **Import des enseignants** (export du collège entier, importé dans un niveau) :
 
@@ -14,9 +14,10 @@ Toutes les questions sont tranchées, sauf E8 (menus de Pronote, pour l'aide).
 4. Dans chaque classe, son type d'enseignement se déduit de sa liste Matière/Fonction :
    - une discipline de classe entière : classe entière ;
    - sinon ESPAGNOL LV2 ou ALLEMAND LV2 : LVB ;
-   - sinon BRETON, LCA LATIN, LLC ANGLAIS ou ATHLETISME : option ;
-   - seulement O2, ANGLAIS +, MATHS +, VIE DE CLASSE, DEVOIRS FAITS, ACCOMP. AUX DEVOIRS, PARCOURS AVENIR, CDI : pas rattaché à la classe.
-5. Une matière ou fonction inconnue est présentée avant l'import pour être classée.
+   - sinon BRETON, LCA LATIN ou ATHLETISME : option ;
+   - seulement O2, ANGLAIS +, MATHS +, LLC ANGLAIS (options ignorées pour les binômes, N1), VIE DE CLASSE, DEVOIRS FAITS, ACCOMP. AUX DEVOIRS, PARCOURS AVENIR, CDI : pas rattaché à la classe.
+5. Une matière ou fonction inconnue est présentée avant l'import pour être classée (classe entière, LVB, option, ou ignorée).
+8. Les LVB et options trouvées complètent les listes du niveau, présentées pour confirmation (N1). Les enseignants s'importent avant les élèves ; l'application le rappelle.
 6. « X » dans Professeur principal : professeur principal de la classe. Il appartient à l'équipe de tous les élèves de sa classe (U2).
 7. Les heures sont ignorées ; « service de notation actif » vaut enseignement en classe entière.
 
@@ -25,10 +26,12 @@ Toutes les questions sont tranchées, sauf E8 (menus de Pronote, pour l'aide).
 1. Colonnes lues : Nom, Prénom d'usage (sinon Prénom), Classe, Formation, Toutes les options. Toutes les autres sont ignorées et listées dans le compte rendu.
 2. LVB : la valeur de « Toutes les options » qui est une LVB du niveau. C'est la référence, même si l'export des enseignants diffère ; un contrôle signale une LVB sans enseignant dans la classe.
 3. Options : les valeurs qui correspondent à une option de l'export des enseignants, rapprochées si l'un des noms commence par l'autre (« BRETON REG. » = « BRETON »), avec confirmation.
-4. Ignorés : O2, ANGLAIS +, MATHS +, ANGLAIS LV1, la colonne Groupes.
+4. Ignorés : O2, ANGLAIS +, MATHS +, LLC ANGLAIS (N1), ANGLAIS LV1, la colonne Groupes.
 5. ULIS : Formation se terminant par « ULIS » (espaces ignorés). Pour les élèves ULIS, l'enseignant de LVB est retiré de leur équipe seulement si son effectif correspond aux élèves de la LVB hors ULIS ; en cas de doute, il est gardé et l'import le signale (U1 bis, résultat confirmé classe par classe à l'import).
 
 **Discipline partagée (histoire-géographie en breton)** : quand des élèves portent une discipline de classe entière dans « Toutes les options » (« HISTOIRE-GEOGRAPHIE »), l'enseignant de cette discipline dont l'effectif correspond reçoit ces élèves, et l'autre devient « classe entière sauf ces élèves ». L'application présente ce partage pour confirmation à l'import.
+
+**Un seul bouton « Importer… »** (N2) : un export Pronote est reconnu à ses en-têtes et suit ces règles ; tout autre fichier passe par le choix des colonnes de la v1.
 
 ## 1. Export des enseignants
 
@@ -128,7 +131,10 @@ Réponse (20 novembre) : non, import par niveau. Le fichier du collège entier e
 
 **E8. Obtention du fichier.** Quel menu de Pronote produit cet export, et ses colonnes sont-elles toujours les mêmes ? Je l'indiquerai dans l'aide de l'application.
 
-Réponse (20 novembre) : en attente.
+Réponse (20 novembre) :
+
+- **Enseignants** : Ressources → Classes → Équipe pédagogique → sélectionner toutes les classes → cocher « Cumuler par classe ».
+- **Élèves** : Ressources → Élèves → Liste → dans les menus déroulants, choisir « Niveaux » puis « Élèves de 6ème » (ou 5ème, 4ème, 3ème).
 
 ## 2. Export des élèves
 

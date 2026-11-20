@@ -97,7 +97,7 @@ Les règles R1 à R9 de la v1 restent valables, sauf R2 qui est remplacée par V
 
 ### 6.1 Saisie
 
-- **V2-F1.** Paramètres du niveau (section 4.1), dans l'onglet Soirée.
+- **V2-F1.** Paramètres du niveau (section 4.1) : la durée des rendez-vous dans l'onglet Soirée ; les listes de LVB et d'options dans l'onglet Données, carte « Langues et options » (décision du 20 novembre). L'import des enseignants complète ces listes, avec confirmation.
 - **V2-F2.** Liste des élèves : colonnes LVB et options, avec un choix limité aux valeurs du niveau.
 - **V2-F3.** Import des élèves : colonnes LVB et options en plus. Plusieurs options peuvent figurer dans une même cellule (« Latin, Euro »). Une valeur inconnue est signalée avant l'import, avec la proposition de l'ajouter à la liste du niveau.
 - **V2-F4.** Enseignants : pour chaque classe cochée, le type d'enseignement (classe entière, une LVB ou une option). Désignation du professeur principal de chaque classe.
@@ -187,6 +187,9 @@ Commencer par le design permet de valider l'aspect visuel tôt, avant de constru
 | Reprise des enseignants d'un niveau à l'autre | Non retenue : chaque niveau est saisi indépendamment.                                                                                                                                                                                      |
 | Équipe : professeur principal (20 novembre)   | Il appartient à l'équipe de tous les élèves de sa classe, quelle que soit sa discipline (section 4.4).                                                                                                                                     |
 | Équipe : élèves ULIS (20 novembre)            | L'enseignant de LVB entre ou non dans leur équipe selon la classe, d'après son effectif, avec confirmation à l'import (section 4.4). Les élèves ULIS sont repérés par la formation.                                                        |
+| Binômes limités par une LVB ou une option (20 novembre) | Exclus du calcul de l'écart, avec la mention du groupe. Formés par la proposition en mode « tous » ; en mode « min », seulement si nécessaire. Jamais deux enseignants d'options différentes ; permis pour une même option ; toujours possible à la main, avec avertissement. |
+| Options ignorées pour les binômes (20 novembre) | ANGLAIS +, MATHS +, O2 et LLC ANGLAIS ne font entrer aucun enseignant dans l'équipe d'un élève. |
+| Élève sans LVB (20 novembre)                  | Rien pour un élève ULIS ; simple information pour les autres.                                                                                                                                                                               |
 | Import Pronote (20 novembre)                  | Les exports bruts des enseignants et des élèves sont lus directement ; règles détaillées dans [import-pronote.md](import-pronote.md).                                                                                                      |
 
 ### Point restant
