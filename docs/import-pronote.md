@@ -17,7 +17,7 @@ Toutes les questions sont tranchées, sauf E8 (menus de Pronote, pour l'aide).
    - sinon BRETON, LCA LATIN, LLC ANGLAIS ou ATHLETISME : option ;
    - seulement O2, ANGLAIS +, MATHS +, VIE DE CLASSE, DEVOIRS FAITS, ACCOMP. AUX DEVOIRS, PARCOURS AVENIR, CDI : pas rattaché à la classe.
 5. Une matière ou fonction inconnue est présentée avant l'import pour être classée.
-6. « X » dans Professeur principal : professeur principal de la classe (lot 4).
+6. « X » dans Professeur principal : professeur principal de la classe. Il appartient à l'équipe de tous les élèves de sa classe (U2).
 7. Les heures sont ignorées ; « service de notation actif » vaut enseignement en classe entière.
 
 **Import des élèves** (un export par niveau) :
@@ -26,7 +26,7 @@ Toutes les questions sont tranchées, sauf E8 (menus de Pronote, pour l'aide).
 2. LVB : la valeur de « Toutes les options » qui est une LVB du niveau. C'est la référence, même si l'export des enseignants diffère ; un contrôle signale une LVB sans enseignant dans la classe.
 3. Options : les valeurs qui correspondent à une option de l'export des enseignants, rapprochées si l'un des noms commence par l'autre (« BRETON REG. » = « BRETON »), avec confirmation.
 4. Ignorés : O2, ANGLAIS +, MATHS +, ANGLAIS LV1, la colonne Groupes.
-5. ULIS : Formation se terminant par « ULIS ».
+5. ULIS : Formation se terminant par « ULIS » (espaces ignorés). Un élève ULIS n'a pas l'enseignant de LVB dans son équipe (U1).
 
 **Discipline partagée (histoire-géographie en breton)** : quand des élèves portent une discipline de classe entière dans « Toutes les options » (« HISTOIRE-GEOGRAPHIE »), l'enseignant de cette discipline dont l'effectif correspond reçoit ces élèves, et l'autre devient « classe entière sauf ces élèves ». L'application présente ce partage pour confirmation à l'import.
 
@@ -277,8 +277,8 @@ Export anonymisé du niveau 5e : 140 élèves (5 A : 29, 5 M : 27, 5 P : 29, 5 S
 
 **U1. Élèves ULIS et LVB.** Faut-il considérer que les élèves ULIS n'ont pas l'enseignant de LVB dans leur équipe, même si Pronote leur attribue une LVB ? Recommandé : oui. Leur équipe serait alors faite des enseignants de toute la classe et de leurs options.
 
-Réponse :
+Réponse (20 novembre) : oui.
 
 **U2. « VIE DE CLASSE ».** Faut-il compter « VIE DE CLASSE » comme un enseignement à toute la classe ? Le professeur principal l'assure devant toute la classe et connaît tous ses élèves. Recommandé : oui. M. ECG serait ainsi rattaché à toute la 5 Z.
 
-Réponse :
+Réponse (20 novembre) : faux problème. **Le professeur principal peut toujours recevoir tous les élèves de sa classe** : il appartient à l'équipe de chacun d'eux, quelle que soit sa discipline. C'est une règle de l'équipe (cahier des charges v2, section 4.4), indépendante de « VIE DE CLASSE », qui reste ignorée.
