@@ -98,7 +98,10 @@ function brancherClavier() {
 export function brancherEvenements() {
   document.addEventListener('click', surClic);
   document.addEventListener('change', surModification);
-  $('#dlg').addEventListener('close', () => (app.ui.import = null));
+  $('#dlg').addEventListener('close', () => {
+    app.ui.import = null;
+    app.ui.enseignement = null;
+  });
   // Bouton Précédent du navigateur ou adresse modifiée : accueil ou niveau inscrit dans l'adresse.
   window.addEventListener('hashchange', () => suivreAdresse() && rendre());
   // Lien d'évitement : déplace le focus sans modifier l'adresse (qui porte le niveau ouvert).

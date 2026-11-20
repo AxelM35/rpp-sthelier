@@ -16,6 +16,7 @@ export const affichageParDefaut = () => ({
   compact: false, // colonnes compactes dans le planning
   message: null, // { ok, txt } affiché en haut de l'onglet ou de l'accueil
   import: null, // dialogue d'import en cours
+  enseignement: null, // { profId, classeId } : dialogue de choix d'un enseignement en cours
   comparaison: null, // { source: état comparé (JSON), variantes } — propositions de binômes affichées
 });
 

@@ -81,6 +81,7 @@ src/
     composants.js      Fragments HTML communs
     documents.js       Documents imprimables
     dialogueImport.js  Dialogue d'import
+    dialogueEnseignement.js  Dialogue de choix de l'enseignement d'un professeur dans une classe
   main.js              Point d'entrée
   index.html           Gabarit de la page
   styles.css           Feuille de style Material 3 (typographie, formes, composants)

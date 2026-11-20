@@ -182,6 +182,12 @@ Commencer par le design permet de valider l'aspect visuel tôt, avant de constru
     - **Contrôles** : élève avec moins de deux enseignants dans son équipe ; LVB ou option suivie sans enseignant dans la classe, ou enseignée sans élève ; deux enseignants d'une même LVB ; élève sans LVB (hors ULIS) ; binôme limité à un groupe ; élève reçu par un enseignant qui ne l'a pas en cours (signalé aussi sur sa vignette). Les contrôles des données s'affichent dans l'onglet Données.
     - **Couverture** (V2-F7) : l'onglet Binômes détaille, pour chaque classe qui en a plusieurs, les groupes (« Espagnol · Latin »), leurs élèves, les binômes possibles et les élèves sans place.
     - **Tests** : un niveau de 4e fictif reproduit les cas des exports Pronote (LVB, breton et histoire-géographie en breton, latin, athlétisme, élèves ULIS, professeure principale enseignant une LVB).
+    - **Allègement** : les binômes limités sont signalés par un seul message regroupé par LVB ou option, et par une étiquette « Limité : Espagnol » sur leur carte.
+  - **Étape 3c, saisie — livrée.** Onglet Données :
+    - carte « Langues et options » : LVB et options du niveau, nombre d'élèves de chacune, ajout, renommage, suppression (confirmation si elle est utilisée) ;
+    - professeur principal choisi pour chaque classe ;
+    - puces des enseignants : un clic sur une classe libre l'ajoute (toute la classe) ; une classe attribuée indique son type (« 4B · Espagnol », « 4A · sauf Histoire-géographie en breton ») et un clic ouvre le dialogue de choix (toute la classe, LVB avec ou sans les élèves ULIS, option, toute la classe sauf une option, aucun enseignement) ;
+    - liste des élèves : colonnes LVB, options et ULIS.
 
 ## 9. Décisions du 19 novembre 2026
 

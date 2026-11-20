@@ -576,6 +576,32 @@ table.t input {
   width: 100%;
   min-width: 70px;
 }
+/* Onglet Données : listes de LVB et d'options, classes avec leur professeur principal, options d'un élève. */
+.ligne-liste {
+  margin-bottom: 6px;
+}
+.ligne-liste input {
+  width: 200px;
+}
+.classes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 20px;
+  margin-bottom: 10px;
+}
+.classes select {
+  max-width: 220px;
+}
+.puces {
+  display: flex;
+  flex-wrap: wrap;
+}
+.chip.petite {
+  min-height: 28px;
+  padding: 0 8px;
+  font-size: 13px;
+}
+
 /* Tableau de couverture : la classe en tête de ligne, ses groupes (LVB, options) en retrait. */
 table.couverture th[scope='row'] {
   font-size: 14px;
@@ -970,6 +996,42 @@ dialog h2 {
   line-height: 32px;
   font-weight: 400;
   margin-bottom: 16px;
+}
+/* Dialogue de choix d'un enseignement : boutons radio sur deux lignes (choix, précision). */
+fieldset.choix-enseignement {
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+fieldset.choix-enseignement legend {
+  margin-bottom: 8px;
+  color: var(--md-sys-color-on-surface-variant);
+}
+label.choix {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  padding: 8px 12px;
+  border-radius: var(--md-sys-shape-s);
+  cursor: pointer;
+}
+label.choix:hover {
+  background: color-mix(in srgb, var(--md-sys-color-on-surface) var(--md-sys-state-hover), transparent);
+}
+.categorie-choix {
+  margin: 8px 0 4px;
+}
+.titre-choix {
+  margin: 0 12px 2px;
+  font-weight: 500;
+}
+.titre-choix small {
+  font-weight: 400;
+  color: var(--md-sys-color-on-surface-variant);
+}
+.choix-ligne {
+  display: flex;
+  flex-wrap: wrap;
 }
 dialog::backdrop {
   background: rgb(0 0 0 / 0.32);

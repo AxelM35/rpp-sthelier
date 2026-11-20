@@ -30,6 +30,7 @@ import { nouvelId } from '../utils/texte.js';
 import { app } from './app.js';
 import { $, annoncer, confirmer, telecharger, toast } from './dom.js';
 import { afficherDialogue, chargerLignes, fermerDialogue, lireFichierImport, ouvrirDialogue } from './dialogueImport.js';
+import { fermerEnseignement, lireChoix, ouvrirEnseignement } from './dialogueEnseignement.js';
 import { DOCUMENTS } from './documents.js';
 import { LETTRES } from './vues/comparaison.js';
 import { allerAAccueil, allerAuNiveau } from './navigation.js';
@@ -145,6 +146,28 @@ export function deposerEleve(eleveId, cible) {
   if (r.refus) toast(r.refus);
   app.etat = r.etat;
   enregistrer();
+}
+
+/** Supprime une LVB ou une option du niveau, après confirmation si des élèves ou des enseignants l'utilisent. */
+function supprimerDeListe(liste, id) {
+  const { etat } = app;
+  const x = etat[liste].find((o) => o.id === id);
+  const eleves = etat.eleves.filter((e) => e.lvbId === id || e.optionIds.includes(id)).length;
+  const profs = etat.profs.filter((p) => p.enseignements.some((ens) => ens.refId === id)).length;
+  if (
+    (eleves || profs) &&
+    !confirmer(
+      'Supprimer « ' +
+        x.nom +
+        ' » ?\n\n' +
+        eleves +
+        ' élève(s) la suivent et ' +
+        profs +
+        ' enseignant(s) l’enseignent : ces élèves la perdront, et ces enseignements seront retirés.',
+    )
+  )
+    return;
+  etat[liste] = etat[liste].filter((o) => o.id !== id);
 }
 
 /** Fin d'un déplacement par sélection : annonce et focus sur l'élève déplacé. */
@@ -285,6 +308,45 @@ export const actions = {
     });
   },
   supprimerEleve: (el) => (app.etat.eleves = app.etat.eleves.filter((e) => e.id !== el.dataset.id)),
+  // Langues et options du niveau
+  ajouterLvb() {
+    const x = { id: 'lvb-' + nouvelId(), nom: 'Nouvelle LVB' };
+    app.etat.lvb.push(x);
+    app.ui.focus = 'focus:nomListe|' + x.id + '|lvb';
+  },
+  ajouterOption() {
+    const x = { id: 'opt-' + nouvelId(), nom: 'Nouvelle option' };
+    app.etat.options.push(x);
+    app.ui.focus = 'focus:nomListe|' + x.id + '|options';
+  },
+  supprimerLvb: (el) => supprimerDeListe('lvb', el.dataset.id),
+  supprimerOption: (el) => supprimerDeListe('options', el.dataset.id),
+  basculerOptionEleve(el) {
+    const e = trouverEleve(app.etat, el.dataset.id);
+    const o = el.dataset.param;
+    e.optionIds = e.optionIds.includes(o) ? e.optionIds.filter((x) => x !== o) : e.optionIds.concat(o);
+  },
+
+  // Enseignements
+  choisirEnseignement: (el) => ouvrirEnseignement(el.dataset.id, el.dataset.param),
+  fermerEnseignement() {
+    const { profId, classeId } = app.ui.enseignement;
+    fermerEnseignement();
+    app.ui.focus = 'action:choisirEnseignement|' + profId + '|' + classeId;
+  },
+  validerEnseignement() {
+    const { profId, classeId } = app.ui.enseignement;
+    const choix = lireChoix();
+    const p = trouverProf(app.etat, profId);
+    const i = p.enseignements.findIndex((x) => x.classeId === classeId);
+    const nouveau = choix ? [{ classeId, ...choix }] : [];
+    if (i >= 0) p.enseignements.splice(i, 1, ...nouveau);
+    else p.enseignements.push(...nouveau);
+    fermerEnseignement();
+    app.ui.focus = choix ? 'action:choisirEnseignement|' + profId + '|' + classeId : 'action:basculerClasseProf|' + profId + '|' + classeId;
+    enregistrer();
+  },
+
   ajouterProf: () => app.etat.profs.push({ id: nouvelId(), nom: '', discipline: '', enseignements: [], dispoDe: '', dispoA: '' }),
   supprimerProf: (el) => (app.etat.profs = app.etat.profs.filter((p) => p.id !== el.dataset.id)),
   basculerClasseProf(el) {
@@ -465,6 +527,9 @@ export const SANS_ENREGISTREMENT = new Set([
   'annulerSelection',
   'ouvrirImport',
   'fermerImport',
+  'choisirEnseignement',
+  'fermerEnseignement',
+  'validerEnseignement',
   'analyserTexteColle',
   'validerImport',
   'exporterExcel',
@@ -473,7 +538,7 @@ export const SANS_ENREGISTREMENT = new Set([
 ]);
 
 /** Actions qui ne touchent qu'au dialogue d'import (pas de nouveau rendu de la page). */
-export const DIALOGUE_SEUL = new Set(['ouvrirImport', 'fermerImport', 'analyserTexteColle']);
+export const DIALOGUE_SEUL = new Set(['ouvrirImport', 'fermerImport', 'analyserTexteColle', 'choisirEnseignement']);
 
 export const champs = {
   soiree(el) {
@@ -484,6 +549,13 @@ export const champs = {
     const p = el.dataset.param;
     app.etat.soiree.pauses[Number(el.dataset.id)][p] = p === 'duree' ? Number(el.value) || 0 : el.value;
   },
+  nomListe(el) {
+    const x = app.etat[el.dataset.param].find((o) => o.id === el.dataset.id);
+    if (el.value.trim()) x.nom = el.value.trim();
+  },
+  ppClasse: (el) => (trouverClasse(app.etat, el.dataset.id).ppId = el.value || null),
+  lvbEleve: (el) => (trouverEleve(app.etat, el.dataset.id).lvbId = el.value || null),
+  ulisEleve: (el) => (trouverEleve(app.etat, el.dataset.id).ulis = el.checked),
   classe(el) {
     if (el.value.trim()) trouverClasse(app.etat, el.dataset.id).nom = el.value.trim();
   },
