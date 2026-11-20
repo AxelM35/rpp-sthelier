@@ -10,7 +10,18 @@ export const PREFIXE_STOCKAGE = 'rpp-v2-';
 export const CLE_STOCKAGE_V1 = 'rpp6-v1';
 
 /** Version du format des données (sauvegardes et stockage local). */
-export const VERSION_DONNEES = 2;
+export const VERSION_DONNEES = 3;
+
+/**
+ * Langues vivantes B et options d'une nouvelle préparation, par niveau. Ces listes sont modifiables
+ * dans l'application et complétées par l'import des enseignants.
+ */
+export const LISTES_PAR_DEFAUT = Object.freeze({
+  '6e': { lvb: [], options: ['Breton'] },
+  '5e': { lvb: ['Espagnol', 'Allemand'], options: ['Breton'] },
+  '4e': { lvb: ['Espagnol', 'Allemand'], options: ['Breton'] },
+  '3e': { lvb: ['Espagnol', 'Allemand'], options: ['Breton'] },
+});
 
 /** Nombre maximal de classes reçues par un binôme (au-delà d'une : binôme « glissant »). */
 export const CLASSES_MAX_PAR_BINOME = 2;

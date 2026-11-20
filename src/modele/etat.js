@@ -4,15 +4,47 @@
 //   v        version du format
 //   niveau   '6e' | '5e' | '4e' | '3e' (voir NIVEAUX)
 //   soiree   { etab, date, debut, fin, duree, pauses:[{debut, duree}] }
-//   classes  [{ id, nom }]
-//   profs    [{ id, nom, discipline, classeIds:[], dispoDe, dispoA }]
+//   lvb      [{ id, nom }]          langues vivantes B du niveau
+//   options  [{ id, nom }]          options du niveau
+//   classes  [{ id, nom, ppId }]    ppId : professeur principal (id d'un professeur) ou null
+//   profs    [{ id, nom, discipline, enseignements:[{ classeId, type, refId, sansUlis }], dispoDe, dispoA }]
 //   binomes  [{ id, fixe, profIds:[id|null, id|null], classeIds:[], salle }]
-//   eleves   [{ id, nom, prenom, classeId, fratrie, pasAvant, pasApres, binomeId, slot, verrou }]
+//   eleves   [{ id, nom, prenom, classeId, lvbId, optionIds:[], ulis,
+//               fratrie, pasAvant, pasApres, binomeId, slot, verrou }]
 //   opt      { mode: 'tous' | 'min' }
+//
+// Enseignement d'un professeur dans une classe (au plus un par classe), selon son type :
+//   'classe'  toute la classe (refId : null)
+//   'lvb'     les élèves de la LVB refId ; sansUlis : les élèves ULIS de la classe ne l'ont pas en cours
+//   'option'  les élèves de l'option refId
+//   'sauf'    toute la classe sauf les élèves de l'option refId (discipline partagée, par exemple
+//             l'histoire-géographie enseignée en breton aux élèves bilingues)
+// L'équipe d'un élève s'en déduit (modele/equipe.js).
 //
 // « slot » est l'indice du créneau dans la liste calculée par creneaux().
 
-import { CLASSES_MAX_PAR_BINOME, NIVEAUX, SOIREE_PAR_DEFAUT, VERSION_DONNEES } from '../config.js';
+import { CLASSES_MAX_PAR_BINOME, LISTES_PAR_DEFAUT, NIVEAUX, SOIREE_PAR_DEFAUT, VERSION_DONNEES } from '../config.js';
+
+/** Types d'enseignement d'un professeur dans une classe. */
+export const TYPES_ENSEIGNEMENT = Object.freeze(['classe', 'lvb', 'option', 'sauf']);
+
+/** Identifiant stable d'un élément d'une liste par défaut : « Espagnol » → « lvb-espagnol ». */
+const idParDefaut = (prefixe, nom) =>
+  prefixe +
+  '-' +
+  nom
+    .normalize('NFD')
+    .replace(/[^A-Za-z0-9]+/g, '-')
+    .toLowerCase();
+
+/** Listes de LVB et d'options d'une nouvelle préparation du niveau (vides pour un niveau inconnu). */
+export function listesParDefaut(niveau) {
+  const l = LISTES_PAR_DEFAUT[niveau] || { lvb: [], options: [] };
+  return {
+    lvb: l.lvb.map((nom) => ({ id: idParDefaut('lvb', nom), nom })),
+    options: l.options.map((nom) => ({ id: idParDefaut('opt', nom), nom })),
+  };
+}
 
 /** État vide d'une nouvelle préparation du niveau indiqué. */
 export function etatVide(niveau = NIVEAUX[0]) {
@@ -20,6 +52,7 @@ export function etatVide(niveau = NIVEAUX[0]) {
     v: VERSION_DONNEES,
     niveau,
     soiree: { ...SOIREE_PAR_DEFAUT, pauses: [] },
+    ...listesParDefaut(niveau),
     classes: [],
     eleves: [],
     profs: [],
@@ -40,6 +73,25 @@ export function copierEtat(etat) {
 const MIGRATIONS = {
   // Version 1 (application de la 6e seulement) : les données deviennent la préparation du niveau 6e.
   1: (d) => ({ ...d, niveau: '6e' }),
+  // Version 2 : les classes d'un professeur deviennent des enseignements « classe entière » ; les listes
+  // de LVB et d'options du niveau sont celles par défaut. Élèves (LVB, options, ULIS) et professeur principal
+  // prennent leur valeur par défaut à la validation.
+  2: (d) => ({
+    ...d,
+    ...listesParDefaut(d.niveau),
+    profs: Array.isArray(d.profs)
+      ? d.profs.map((p) => {
+          if (!p || typeof p !== 'object') return p;
+          const { classeIds, ...reste } = p;
+          return {
+            ...reste,
+            enseignements: Array.isArray(classeIds)
+              ? classeIds.map((classeId) => ({ classeId, type: 'classe', refId: null, sansUlis: false }))
+              : classeIds,
+          };
+        })
+      : d.profs,
+  }),
 };
 
 /** Amène des données d'une version antérieure à la version courante. */
@@ -106,9 +158,22 @@ export function valider(brut) {
   };
   etat.opt = { mode: s.opt && s.opt.mode === 'min' ? 'min' : 'tous' };
 
+  const nommes = (v, nom) =>
+    liste(v, nom).map((x) => {
+      x = objet(x, nom);
+      return { id: identifiant(x.id, nom), nom: texte(x.nom, 60) || '?' };
+    });
+  etat.lvb = nommes(s.lvb, 'LVB');
+  etat.options = nommes(s.options, 'options');
+  const lvb = new Set(etat.lvb.map((x) => x.id));
+  const options = new Set(etat.options.map((x) => x.id));
+
+  const ppIds = {};
   etat.classes = liste(s.classes, 'classes').map((c) => {
     c = objet(c, 'classes');
-    return { id: identifiant(c.id, 'classes'), nom: texte(c.nom, 30) || '?' };
+    const id = identifiant(c.id, 'classes');
+    ppIds[id] = c.ppId;
+    return { id, nom: texte(c.nom, 30) || '?', ppId: null };
   });
   const classes = new Set(etat.classes.map((c) => c.id));
 
@@ -118,12 +183,13 @@ export function valider(brut) {
       id: identifiant(p.id, 'professeurs'),
       nom: texte(p.nom, 100),
       discipline: texte(p.discipline, 100),
-      classeIds: [...new Set(liste(p.classeIds, "classes d'un professeur").filter((c) => classes.has(c)))],
+      enseignements: validerEnseignements(liste(p.enseignements, "enseignements d'un professeur"), { classes, lvb, options }),
       dispoDe: heure(p.dispoDe),
       dispoA: heure(p.dispoA),
     };
   });
   const profs = new Set(etat.profs.map((p) => p.id));
+  etat.classes.forEach((c) => (c.ppId = profs.has(ppIds[c.id]) ? ppIds[c.id] : null));
 
   etat.binomes = liste(s.binomes, 'binômes').map((b) => {
     b = objet(b, 'binômes');
@@ -150,6 +216,9 @@ export function valider(brut) {
         nom: texte(e.nom, 100),
         prenom: texte(e.prenom, 100),
         classeId: classes.has(e.classeId) ? e.classeId : null,
+        lvbId: lvb.has(e.lvbId) ? e.lvbId : null,
+        optionIds: [...new Set(liste(e.optionIds, "options d'un élève").filter((o) => options.has(o)))],
+        ulis: e.ulis === true,
         fratrie: texte(e.fratrie, 40),
         pasAvant: heure(e.pasAvant),
         pasApres: heure(e.pasApres),
@@ -161,4 +230,22 @@ export function valider(brut) {
     .filter((e) => e.classeId);
 
   return etat;
+}
+
+/**
+ * Enseignements valides d'un professeur : classe connue, type connu, LVB ou option existante,
+ * un seul enseignement par classe (le premier). Les autres sont écartés sans erreur.
+ */
+export function validerEnseignements(brut, { classes, lvb, options }) {
+  const vus = new Set();
+  const valides = [];
+  for (const x of brut) {
+    if (!x || typeof x !== 'object' || !classes.has(x.classeId) || vus.has(x.classeId)) continue;
+    const ref =
+      x.type === 'classe' ? null : x.type === 'lvb' ? (lvb.has(x.refId) ? x.refId : undefined) : options.has(x.refId) ? x.refId : undefined;
+    if (!TYPES_ENSEIGNEMENT.includes(x.type) || ref === undefined) continue;
+    vus.add(x.classeId);
+    valides.push({ classeId: x.classeId, type: x.type, refId: ref, sansUlis: x.type === 'lvb' && x.sansUlis === true });
+  }
+  return valides;
 }

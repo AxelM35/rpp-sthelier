@@ -52,10 +52,11 @@ src/
   config.js            Constantes métier (niveaux, 2 classes max par binôme, écart visé, graine…)
   utils/               Texte, heures, générateur pseudo-aléatoire
   modele/
-    etat.js            Format des données, validation des fichiers, migrations
+    etat.js            Format des données (LVB, options, enseignements), validation des fichiers, migrations
     acces.js           Lecture de l'état : recherches, libellés
     normaliser.js      Remise en cohérence après une modification
     niveaux.js         Résumé d'un niveau pour l'accueil, noms de fichiers
+    equipe.js          Équipe d'un élève : enseignants qui l'ont en cours (LVB, options, ULIS, professeur principal)
   algos/               Cœur métier, sans navigateur : fonctions testables
     creneaux.js        Créneaux de la soirée, disponibilités
     quotas.js          Nombre d'élèves de chaque classe par binôme

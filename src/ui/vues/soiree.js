@@ -1,7 +1,7 @@
 // Onglet 1 : paramètres de la soirée, capacité, premiers pas.
 
 import { creneaux } from '../../algos/creneaux.js';
-import { classesTriees, effectifs } from '../../modele/acces.js';
+import { classesDuProf, classesTriees, effectifs } from '../../modele/acces.js';
 import { echapper, formaterHeure } from '../../utils/texte.js';
 import { CONSERVATION_JOURS } from '../../config.js';
 import { etatConservation } from '../../modele/confidentialite.js';
@@ -73,7 +73,7 @@ function capaciteSoiree() {
   const n = effectifs(etat);
   const S = liste.length;
   const N = etat.eleves.length;
-  const nbProfs = etat.profs.filter((p) => p.classeIds.length).length;
+  const nbProfs = etat.profs.filter((p) => p.enseignements.length).length;
   const indicateur = (valeur, texte) => '<div class="kpi"><b>' + valeur + '</b><span>' + texte + '</span></div>';
   let h =
     '<div class="card"><h2>Capacité</h2><div class="kpis">' +
@@ -95,7 +95,7 @@ function capaciteSoiree() {
       '<th scope="col">Professeurs</th><th scope="col">Binômes nécessaires</th></tr>' +
       classesTriees(etat)
         .map((c) => {
-          const profs = etat.profs.filter((p) => p.classeIds.includes(c.id)).length;
+          const profs = etat.profs.filter((p) => classesDuProf(p).includes(c.id)).length;
           const besoin = n[c.id] / S;
           return (
             '<tr><td>' +

@@ -60,8 +60,14 @@ export function effectifs(etat) {
   return n;
 }
 
+/** Classes où intervient un professeur, quel que soit le type d'enseignement. */
+export const classesDuProf = (p) => p.enseignements.map((x) => x.classeId);
+
+/** Enseignement d'un professeur dans une classe, ou null. */
+export const enseignementDans = (p, classeId) => p.enseignements.find((x) => x.classeId === classeId) || null;
+
 /** Classes communes aux deux professeurs d'un binôme. */
 export function classesCommunes(etat, b) {
   const p = profsDuBinome(etat, b);
-  return p.length === 2 ? p[0].classeIds.filter((c) => p[1].classeIds.includes(c)) : [];
+  return p.length === 2 ? classesDuProf(p[0]).filter((c) => classesDuProf(p[1]).includes(c)) : [];
 }

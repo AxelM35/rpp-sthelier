@@ -7,14 +7,7 @@ import { NIVEAUX, VERSION_DONNEES } from '../../src/config.js';
 import * as stockage from '../../src/io/stockage.js';
 import { etatVide, migrer, valider } from '../../src/modele/etat.js';
 import { chiffreNiveau, nomFichier, preparationVide, resumerNiveau } from '../../src/modele/niveaux.js';
-import { college } from '../fixtures/college.js';
-
-/** Données au format de la version 1 : pas de niveau. */
-function donneesV1(etat = college()) {
-  const { niveau, ...reste } = etat;
-  assert.equal(niveau, '6e');
-  return { ...reste, v: 1 };
-}
+import { college, enFormatV1 } from '../fixtures/college.js';
 
 /** Faux stockage local, en mémoire. plein : refuse toute écriture. */
 function fauxStockage(initial = {}) {
@@ -36,17 +29,19 @@ function fauxStockage(initial = {}) {
 // ---------- Format des données ----------
 
 test('un état neuf porte son niveau et la version courante', () => {
-  assert.equal(VERSION_DONNEES, 2);
+  assert.equal(VERSION_DONNEES, 3);
   assert.deepEqual(NIVEAUX, ['6e', '5e', '4e', '3e']);
   assert.equal(etatVide().niveau, '6e');
   assert.equal(etatVide('4e').niveau, '4e');
   assert.equal(valider(etatVide('3e')).niveau, '3e');
 });
 
-test('migration 1 → 2 : les données de la v1 deviennent le niveau 6e, sans perte', () => {
+test('migration depuis la v1 : les données deviennent le niveau 6e, sans perte', () => {
   const etat = genererTout(college({ date: '2026-12-01' })).etat;
-  const v1 = donneesV1(etat);
-  assert.deepEqual(migrer(structuredClone(v1)), { ...v1, v: 2, niveau: '6e' });
+  const v1 = enFormatV1(etat);
+  const migre = migrer(structuredClone(v1));
+  assert.equal(migre.v, VERSION_DONNEES);
+  assert.equal(migre.niveau, '6e');
   assert.deepEqual(valider(structuredClone(v1)), etat, 'toutes les données sont reprises à l’identique');
 });
 
@@ -120,7 +115,7 @@ test('dates de sauvegarde par niveau et état de la sauvegarde', () => {
 test('reprise v1 : données, dates et copie de secours passent au 6e, anciennes clés supprimées', () => {
   const etat = genererTout(college()).etat;
   const s = fauxStockage({
-    'rpp6-v1': JSON.stringify(donneesV1(etat)),
+    'rpp6-v1': JSON.stringify(enFormatV1(etat)),
     'rpp6-v1-meta': '{"modif":1,"export":2}',
     'rpp6-v1-secours': 'vieille copie',
   });
@@ -149,7 +144,7 @@ test('reprise v1 : données illisibles mises de côté comme copie de secours du
 
 test('reprise v1 : un 6e déjà rempli est gardé, les données v1 sont mises de côté', () => {
   const sixieme = JSON.stringify(college());
-  const s = fauxStockage({ 'rpp-v2-6e': sixieme, 'rpp6-v1': JSON.stringify(donneesV1()) });
+  const s = fauxStockage({ 'rpp-v2-6e': sixieme, 'rpp6-v1': JSON.stringify(enFormatV1(college())) });
   assert.equal(stockage.reprendreDonneesV1(s), 'conflit');
   assert.equal(s.lire('rpp-v2-6e'), sixieme);
   assert.ok(s.lire('rpp-v2-6e-secours'));
@@ -157,7 +152,7 @@ test('reprise v1 : un 6e déjà rempli est gardé, les données v1 sont mises de
 });
 
 test('reprise v1 : stockage plein, les anciennes clés restent en place', () => {
-  const brut = JSON.stringify(donneesV1());
+  const brut = JSON.stringify(enFormatV1(college()));
   const s = fauxStockage({ 'rpp6-v1': brut });
   s.plein = true;
   assert.equal(stockage.reprendreDonneesV1(s), null);

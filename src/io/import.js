@@ -45,7 +45,7 @@ function classeParNom(etat, nom) {
   if (!nom) return null;
   let c = etat.classes.find((x) => x.nom.toLowerCase() === nom.toLowerCase());
   if (!c) {
-    c = { id: nouvelId(), nom };
+    c = { id: nouvelId(), nom, ppId: null };
     etat.classes.push(c);
   }
   return c;
@@ -85,6 +85,9 @@ export function importerLignes(etatInitial, { type, lignes, colonnes, entete, re
         nom,
         prenom: valeur(l, 'prenom'),
         classeId: classe.id,
+        lvbId: null,
+        optionIds: [],
+        ulis: false,
         fratrie: valeur(l, 'fratrie'),
         pasAvant: '',
         pasApres: '',
@@ -105,7 +108,7 @@ export function importerLignes(etatInitial, { type, lignes, colonnes, entete, re
       if (!nom) return;
       let p = etat.profs.find((x) => x.nom.toLowerCase() === nom.toLowerCase());
       if (!p) {
-        p = { id: nouvelId(), nom, discipline: valeur(l, 'discipline'), classeIds: [], dispoDe: '', dispoA: '' };
+        p = { id: nouvelId(), nom, discipline: valeur(l, 'discipline'), enseignements: [], dispoDe: '', dispoA: '' };
         etat.profs.push(p);
         ajoutes++;
       } else if (!vusDansFichier.has(p.id)) {
@@ -116,7 +119,8 @@ export function importerLignes(etatInitial, { type, lignes, colonnes, entete, re
         .split(/[,;/|\n]+/)
         .forEach((x) => {
           const c = classeParNom(etat, x);
-          if (c && !p.classeIds.includes(c.id)) p.classeIds.push(c.id);
+          if (c && !p.enseignements.some((x) => x.classeId === c.id))
+            p.enseignements.push({ classeId: c.id, type: 'classe', refId: null, sansUlis: false });
         });
     });
   }

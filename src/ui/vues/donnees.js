@@ -1,6 +1,6 @@
 // Onglet 2 : classes, professeurs et élèves.
 
-import { classesTriees, comparerEleves, effectifs, nomClasse, nomEleve } from '../../modele/acces.js';
+import { classesDuProf, classesTriees, comparerEleves, effectifs, nomClasse, nomEleve } from '../../modele/acces.js';
 import { comparer, echapper } from '../../utils/texte.js';
 import { app } from '../app.js';
 import { aria, boutonSupprimer, champ, optionsClasses } from '../composants.js';
@@ -43,7 +43,7 @@ function blocProfesseurs(classes) {
         '>' +
         classes
           .map((c) => {
-            const a = p.classeIds.includes(c.id);
+            const a = classesDuProf(p).includes(c.id);
             return (
               '<button type="button" class="chip' +
               (a ? ' on' : '') +

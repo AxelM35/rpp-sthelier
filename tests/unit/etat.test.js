@@ -41,13 +41,17 @@ test('les références orphelines et valeurs fantaisistes sont nettoyées', () =
   etat.eleves[1].binomeId = 'inconnu';
   etat.eleves[1].slot = 3;
   etat.eleves[1].verrou = true;
-  etat.profs[0].classeIds.push('inconnue', 'c6A');
+  etat.profs[0].enseignements.push({ classeId: 'inconnue', type: 'classe' }, { classeId: 'c6A', type: 'classe' });
   const v = valider(etat);
   assert.equal(v.soiree.duree, 15);
   assert.equal(v.soiree.debut, '17:00');
   assert.equal(v.eleves.length, etat.eleves.length - 1);
   assert.deepEqual([v.eleves[0].binomeId, v.eleves[0].slot, v.eleves[0].verrou], [null, null, false]);
-  assert.deepEqual(v.profs[0].classeIds, ['c6A']);
+  assert.deepEqual(
+    v.profs[0].enseignements.map((x) => x.classeId),
+    ['c6A'],
+    'classe inconnue écartée, une seule fois la même classe',
+  );
 });
 
 test('migrer : version courante acceptée, version future refusée', () => {

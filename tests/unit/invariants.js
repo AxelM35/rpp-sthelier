@@ -2,7 +2,8 @@
 
 import assert from 'node:assert/strict';
 import { creneaux, familleDisponible, profDisponible } from '../../src/algos/creneaux.js';
-import { profsDuBinome, trouverBinome } from '../../src/modele/acces.js';
+import { classesDuProf, profsDuBinome, trouverBinome } from '../../src/modele/acces.js';
+import { dansEquipe } from '../../src/modele/equipe.js';
 
 export function verifierPlanning(etat, { complet = true } = {}) {
   const liste = creneaux(etat.soiree);
@@ -12,7 +13,7 @@ export function verifierPlanning(etat, { complet = true } = {}) {
     for (const p of profsDuBinome(etat, b)) {
       assert.ok(!profsVus.has(p.id), p.nom + ' appartient à un seul binôme');
       profsVus.add(p.id);
-      for (const c of b.classeIds) assert.ok(p.classeIds.includes(c), p.nom + ' enseigne dans les classes de son binôme');
+      for (const c of b.classeIds) assert.ok(classesDuProf(p).includes(c), p.nom + ' enseigne dans les classes de son binôme');
     }
   }
   const cases = new Set();
@@ -24,6 +25,7 @@ export function verifierPlanning(etat, { complet = true } = {}) {
     if (!e.binomeId) continue;
     const b = trouverBinome(etat, e.binomeId);
     assert.ok(b.classeIds.includes(e.classeId), 'le binôme de ' + e.nom + ' reçoit sa classe');
+    for (const p of profsDuBinome(etat, b)) assert.ok(dansEquipe(etat, p, e), p.nom + ' appartient à l’équipe de ' + e.nom + ' (V2-R2)');
     if (e.slot == null) continue;
     const cle = b.id + '|' + e.slot;
     assert.ok(!cases.has(cle), 'pas deux élèves sur le même créneau');

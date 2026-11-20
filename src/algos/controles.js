@@ -3,7 +3,7 @@
 // Chaque point : { niveau: 'bloquant' | 'avertissement' | 'info', texte, onglet }.
 
 import { ECART_CHARGE_VISE } from '../config.js';
-import { elevesDuBinome, libelleBinome, nomClasse, nomEleve, profsDuBinome, trouverBinome } from '../modele/acces.js';
+import { classesDuProf, elevesDuBinome, libelleBinome, nomClasse, nomEleve, profsDuBinome, trouverBinome } from '../modele/acces.js';
 import { formaterHeure } from '../utils/texte.js';
 import { capacite, creneaux, familleDisponible, profDisponible } from './creneaux.js';
 import { chargesActuelles, ecartCharges } from './equilibre.js';
@@ -23,7 +23,7 @@ export function controler(etat) {
   // Binômes
   const pris = new Set();
   etat.binomes.forEach((b) => b.profIds.forEach((id) => id && pris.add(id)));
-  const sansBinome = etat.profs.filter((p) => p.classeIds.length && !pris.has(p.id));
+  const sansBinome = etat.profs.filter((p) => p.enseignements.length && !pris.has(p.id));
   if (etat.binomes.length && sansBinome.length) {
     ajouter('info', sansBinome.length + ' professeur(s) sans binôme : ' + sansBinome.map((p) => p.nom).join(', ') + '.', 'binomes');
   }
@@ -35,7 +35,7 @@ export function controler(etat) {
     if (!b.classeIds.length) ajouter('avertissement', 'Binôme sans classe : ' + nom + '.', 'binomes');
     b.classeIds.forEach((c) =>
       profs.forEach((p) => {
-        if (!p.classeIds.includes(c))
+        if (!classesDuProf(p).includes(c))
           ajouter('avertissement', p.nom + " n'enseigne pas en " + nomClasse(etat, c) + ' (binôme ' + nom + ').', 'binomes');
       }),
     );

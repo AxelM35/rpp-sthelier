@@ -44,7 +44,7 @@ Ce document complète le [cahier des charges de la version 1](cahier-des-charges
 | ------------------ | -------------------------------------------------------------------------------------------------------------------------------------- |
 | Soirée             | Date, début, fin, pauses, **durée d'un rendez-vous** (par défaut : 15 min).                                                            |
 | Langues vivantes B | Liste des LVB du niveau. Par défaut : espagnol et allemand en 5e, 4e et 3e ; aucune en 6e.                                             |
-| Options            | Liste des options du niveau, modifiable. Par défaut : « Bilangue breton » en 6e ; aucune en 5e, 4e et 3e (listes à définir plus tard). |
+| Options            | Liste des options du niveau, modifiable. Par défaut : « Breton » à tous les niveaux (option bilingue, décision du 20 novembre) ; l'import des enseignants complète la liste (latin, athlétisme…). |
 
 ### 4.2 Élève
 
@@ -174,6 +174,8 @@ Commencer par le design permet de valider l'aspect visuel tôt, avant de constru
   - **Sauvegardes** : le niveau est enregistré dans le fichier et figure dans son nom (`rencontres-parents-profs-5e.json`, `planning-rencontres-5e.xlsx`). Depuis l'accueil, « Ouvrir une sauvegarde » range le fichier dans son niveau (confirmation si ce niveau contient déjà des données). Dans un niveau, une sauvegarde d'un autre niveau est refusée. Un fichier de la v1 est une sauvegarde de 6e.
   - **Reprise de la v1** (V2-F11) : format de données version 2 (champ `niveau`). Au premier lancement, les données de la v1 enregistrées dans le navigateur deviennent le niveau 6e, avec leurs dates de sauvegarde, et les anciennes clés sont supprimées. Des données illisibles sont mises de côté ; un 6e déjà rempli n'est jamais écrasé.
   - **Documents** : l'en-tête des plannings indique le niveau (début de V2-F9). Une nouvelle classe est nommée selon le niveau (5A, 5B…).
+- **Lot 3 — en cours sur `v2-dev`.**
+  - **Étape 3a, modèle et équipe — livrée.** Format de données version 3, avec migration depuis la version 2 : listes de LVB et d'options par niveau ; pour l'élève, LVB, options et ULIS ; pour l'enseignant, un enseignement par classe (classe entière, LVB avec ou sans les élèves ULIS, option, ou classe entière sauf une option) ; professeur principal de chaque classe. Le module `modele/equipe.js` calcule l'équipe d'un élève (section 4.4). Les algorithmes raisonnent encore par classe jusqu'à l'étape 3b ; les plannings générés vérifient déjà la règle V2-R2 dans les tests.
 
 ## 9. Décisions du 19 novembre 2026
 

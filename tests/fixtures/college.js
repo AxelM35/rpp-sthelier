@@ -116,7 +116,7 @@ export function college({ effectifs = [27, 28, 26, 27], date = '2026-12-01' } = 
   const etat = etatVide();
   etat.soiree.etab = 'Collège (test)';
   etat.soiree.date = date;
-  etat.classes = ['6A', '6B', '6C', '6D'].map((nom) => ({ id: 'c' + nom, nom }));
+  etat.classes = ['6A', '6B', '6C', '6D'].map((nom) => ({ id: 'c' + nom, nom, ppId: null }));
   let i = 0;
   etat.classes.forEach((c, k) => {
     for (let n = 0; n < effectifs[k]; n++, i++) {
@@ -125,6 +125,9 @@ export function college({ effectifs = [27, 28, 26, 27], date = '2026-12-01' } = 
         nom: NOMS[(i * 7) % NOMS.length],
         prenom: PRENOMS[(i * 11) % PRENOMS.length],
         classeId: c.id,
+        lvbId: null,
+        optionIds: [],
+        ulis: false,
         fratrie: '',
         pasAvant: '',
         pasApres: '',
@@ -143,9 +146,32 @@ export function college({ effectifs = [27, 28, 26, 27], date = '2026-12-01' } = 
     id: 'p' + k,
     nom,
     discipline,
-    classeIds: classes.split(',').map((c) => 'c' + c),
+    enseignements: classes.split(',').map((c) => ({ classeId: 'c' + c, type: 'classe', refId: null, sansUlis: false })),
     dispoDe: '',
     dispoA: '',
   }));
   return etat;
+}
+
+/**
+ * Les mêmes données au format de la version 1 (application de la 6e) : pas de niveau, ni de listes de LVB
+ * et d'options ; classes d'un professeur dans classeIds ; ni LVB, ni options, ni ULIS pour les élèves.
+ */
+export function enFormatV1(etat) {
+  const v1 = structuredClone(etat);
+  v1.v = 1;
+  delete v1.niveau;
+  delete v1.lvb;
+  delete v1.options;
+  v1.classes.forEach((c) => delete c.ppId);
+  v1.profs.forEach((p) => {
+    p.classeIds = p.enseignements.map((x) => x.classeId);
+    delete p.enseignements;
+  });
+  v1.eleves.forEach((e) => {
+    delete e.lvbId;
+    delete e.optionIds;
+    delete e.ulis;
+  });
+  return v1;
 }

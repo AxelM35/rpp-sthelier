@@ -6,7 +6,16 @@
 // des charges et le nombre de binômes glissants.
 
 import { ESSAIS_PROPOSITION, GRAINE_PROPOSITION } from '../config.js';
-import { binomeComplet, classesDuBinome, effectifs, libelleBinome, nomClasse, profsDuBinome, trouverBinome } from '../modele/acces.js';
+import {
+  binomeComplet,
+  classesDuBinome,
+  classesDuProf,
+  effectifs,
+  libelleBinome,
+  nomClasse,
+  profsDuBinome,
+  trouverBinome,
+} from '../modele/acces.js';
 import { copierEtat } from '../modele/etat.js';
 import { creerAlea } from '../utils/alea.js';
 import { comparer, nouvelId } from '../utils/texte.js';
@@ -37,7 +46,7 @@ function explorer(etatInitial, { alea, essais }) {
   const n = effectifs(etat);
   const mode = etat.opt.mode;
   const classes = etat.classes.filter((c) => n[c.id] > 0).map((c) => c.id);
-  const profs = etat.profs.map((p) => ({ p, cs: p.classeIds.filter((c) => classes.includes(c)) })).filter((o) => o.cs.length);
+  const profs = etat.profs.map((p) => ({ p, cs: classesDuProf(p).filter((c) => classes.includes(c)) })).filter((o) => o.cs.length);
 
   if (!liste.length) return { erreur: { ok: false, txt: 'Aucun créneau : vérifiez les horaires de la soirée.' } };
   if (!classes.length || profs.length < 2) {

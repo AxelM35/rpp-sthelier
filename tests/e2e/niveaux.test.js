@@ -7,7 +7,7 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { after, test } from 'node:test';
 import { genererTout } from '../../src/algos/generation.js';
-import { college } from '../fixtures/college.js';
+import { college, enFormatV1 } from '../fixtures/college.js';
 import { CLE_V1, cleNiveau, cles, fermer, lireEtat, message, onglet, ouvrir } from './navigateur.js';
 
 after(fermer);
@@ -131,10 +131,9 @@ test('les niveaux sont indépendants, y compris pour « Annuler »', async () =>
 });
 
 test('les données de la v1 sont reprises comme niveau 6e, une seule fois', async () => {
-  const { niveau, ...v1 } = genererTout(college()).etat;
-  assert.equal(niveau, '6e');
+  const v1 = enFormatV1(genererTout(college()).etat);
   const meta = JSON.stringify({ modif: 1, export: 2 });
-  const page = await ouvrir({ stockage: { [CLE_V1]: JSON.stringify({ ...v1, v: 1 }), [CLE_V1 + '-meta']: meta }, niveau: null });
+  const page = await ouvrir({ stockage: { [CLE_V1]: JSON.stringify(v1), [CLE_V1 + '-meta']: meta }, niveau: null });
   assert.match(await message(page), /Vos données de la version 1 ont été reprises dans le niveau 6e/);
   assert.deepEqual(await cles(page), ['rpp-v2-6e', 'rpp-v2-6e-meta']);
   assert.match(await carte(page, '6e').textContent(), /Élèves\s*108[\s\S]*Planifiés\s*108/);
@@ -212,10 +211,9 @@ test('ouvrir une sauvegarde depuis l’accueil : rangée dans son niveau, après
 
   // Un fichier de la v1 (sans niveau) est une sauvegarde de 6e.
   await page.click('[data-action=accueil]');
-  const { niveau, ...v1 } = college();
-  await ouvrirFichier(page, await fichier('v1.json', { ...v1, v: 1, niveau: undefined }));
+  await ouvrirFichier(page, await fichier('v1.json', enFormatV1(college())));
   await page.waitForSelector('.niveau-courant');
-  assert.equal(await page.textContent('.niveau-courant'), niveau);
+  assert.equal(await page.textContent('.niveau-courant'), '6e');
   assert.equal((await lireEtat(page, '6e')).eleves.length, 108);
   assert.deepEqual(page.erreurs, []);
 });

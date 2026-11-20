@@ -9,7 +9,17 @@ import { completerGeneration, genererTout } from '../algos/generation.js';
 import { planifierHoraires } from '../algos/horaires.js';
 import { repartirEleves } from '../algos/repartition.js';
 import { CLASSES_MAX_PAR_BINOME } from '../config.js';
-import { classesTriees, nomEleve, profsDuBinome, trouverBinome, trouverClasse, trouverEleve, trouverProf } from '../modele/acces.js';
+import {
+  classesCommunes,
+  classesTriees,
+  enseignementDans,
+  nomEleve,
+  profsDuBinome,
+  trouverBinome,
+  trouverClasse,
+  trouverEleve,
+  trouverProf,
+} from '../modele/acces.js';
 import { etatVide, valider } from '../modele/etat.js';
 import { chiffreNiveau, nomFichier, preparationVide } from '../modele/niveaux.js';
 import { lireCSV } from '../io/csv.js';
@@ -239,7 +249,11 @@ export const actions = {
 
   // Données
   ajouterClasse() {
-    app.etat.classes.push({ id: nouvelId(), nom: chiffreNiveau(app.niveau) + String.fromCharCode(65 + (app.etat.classes.length % 26)) });
+    app.etat.classes.push({
+      id: nouvelId(),
+      nom: chiffreNiveau(app.niveau) + String.fromCharCode(65 + (app.etat.classes.length % 26)),
+      ppId: null,
+    });
   },
   supprimerClasse(el) {
     const { etat } = app;
@@ -259,6 +273,9 @@ export const actions = {
       nom: '',
       prenom: '',
       classeId: ui.filtreDonnees || classesTriees(etat)[0].id,
+      lvbId: null,
+      optionIds: [],
+      ulis: false,
       fratrie: '',
       pasAvant: '',
       pasApres: '',
@@ -268,12 +285,13 @@ export const actions = {
     });
   },
   supprimerEleve: (el) => (app.etat.eleves = app.etat.eleves.filter((e) => e.id !== el.dataset.id)),
-  ajouterProf: () => app.etat.profs.push({ id: nouvelId(), nom: '', discipline: '', classeIds: [], dispoDe: '', dispoA: '' }),
+  ajouterProf: () => app.etat.profs.push({ id: nouvelId(), nom: '', discipline: '', enseignements: [], dispoDe: '', dispoA: '' }),
   supprimerProf: (el) => (app.etat.profs = app.etat.profs.filter((p) => p.id !== el.dataset.id)),
   basculerClasseProf(el) {
     const p = trouverProf(app.etat, el.dataset.id);
     const c = el.dataset.param;
-    p.classeIds = p.classeIds.includes(c) ? p.classeIds.filter((x) => x !== c) : p.classeIds.concat(c);
+    if (enseignementDans(p, c)) p.enseignements = p.enseignements.filter((x) => x.classeId !== c);
+    else p.enseignements.push({ classeId: c, type: 'classe', refId: null, sansUlis: false });
   },
 
   // Binômes
@@ -480,7 +498,7 @@ export const champs = {
     b.fixe = true; // un binôme composé à la main est conservé
     const profs = profsDuBinome(etat, b);
     if (profs.length === 2 && !b.classeIds.length) {
-      const communes = profs[0].classeIds.filter((c) => profs[1].classeIds.includes(c));
+      const communes = classesCommunes(etat, b);
       if (communes.length === 1) b.classeIds = communes;
     }
   },

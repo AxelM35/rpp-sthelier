@@ -2,7 +2,16 @@
 
 import { capacite, creneaux } from '../../algos/creneaux.js';
 import { calculerQuotas } from '../../algos/quotas.js';
-import { classesCommunes, classesTriees, codeBinome, effectifs, elevesDuBinome, nomClasse, profsDuBinome } from '../../modele/acces.js';
+import {
+  classesCommunes,
+  classesDuProf,
+  classesTriees,
+  codeBinome,
+  effectifs,
+  elevesDuBinome,
+  nomClasse,
+  profsDuBinome,
+} from '../../modele/acces.js';
 import { comparer, echapper } from '../../utils/texte.js';
 import { app } from '../app.js';
 import { blocComparaison } from './comparaison.js';
@@ -89,7 +98,7 @@ function carteBinome(b, classes, liste, profsPris) {
           (p.discipline ? ' (' + echapper(p.discipline) + ')' : '') +
           ' — ' +
           echapper(
-            p.classeIds
+            classesDuProf(p)
               .map((id) => nomClasse(etat, id))
               .sort(comparer)
               .join(', '),

@@ -9,6 +9,7 @@ import { detecterColonnes, importerLignes } from '../../src/io/import.js';
 import { creerClasseur, lettreColonne, lireClasseur } from '../../src/io/xlsx.js';
 import { ouvrirZip } from '../../src/io/zip.js';
 import { college } from '../fixtures/college.js';
+import { classesDuProf } from '../../src/modele/acces.js';
 
 const fixture = (nom) => readFile(new URL('../fixtures/' + nom, import.meta.url));
 
@@ -129,8 +130,13 @@ test('import de professeurs : classes sur une cellule ou sur plusieurs lignes', 
   ];
   const r = importerLignes(college(), { type: 'profs', lignes, ...detecterColonnes('profs', lignes) });
   assert.deepEqual([r.ajoutes, r.doublons], [1, 1]);
-  assert.deepEqual(r.etat.profs.find((p) => p.nom === 'Mme Neuve').classeIds, ['c6A', 'c6B', 'c6C']);
-  assert.deepEqual(r.etat.profs.find((p) => p.nom === 'Mme Aubert').classeIds, ['c6A', 'c6B']);
+  const classes = (nom) => classesDuProf(r.etat.profs.find((p) => p.nom === nom));
+  assert.deepEqual(classes('Mme Neuve'), ['c6A', 'c6B', 'c6C']);
+  assert.deepEqual(classes('Mme Aubert'), ['c6A', 'c6B']);
+  assert.ok(
+    r.etat.profs.every((p) => p.enseignements.every((x) => x.type === 'classe')),
+    'import générique : classe entière',
+  );
 });
 
 test('import : remplacer la liste, colonnes obligatoires', () => {
