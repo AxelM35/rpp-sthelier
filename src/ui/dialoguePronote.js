@@ -276,7 +276,7 @@ function vueEleves(a) {
         : '',
     ) +
     section(
-      'Non retenues pour les binômes',
+      'Options non retenues pour les binômes',
       a.ignorees.length ? '<p class="note">' + a.ignorees.map((x) => echapper(x.valeur) + ' (' + x.n + ')').join(', ') + '</p>' : '',
     ) +
     (etat.eleves.length

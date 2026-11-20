@@ -77,7 +77,9 @@ export function importerLignes(etatInitial, { type, lignes, colonnes, entete, re
     // LVB et options : rapprochées des listes du niveau ; une valeur inconnue y est ajoutée (V2-F3).
     const ajoutees = [];
     const idDans = (liste, valeur, prefixe) => {
-      if (!valeur.trim() || PRONOTE.ignorees.includes(normaliser(valeur))) return null;
+      // Options ignorées et disciplines de toute la classe (ANGLAIS LV1, la LVA de tous les élèves) : pas une option.
+      const v = normaliser(valeur);
+      if (!v || PRONOTE.ignorees.includes(v) || PRONOTE.classeEntiere.includes(v)) return null;
       let x = correspondance(liste, valeur);
       if (!x) {
         x = { id: prefixe + nouvelId(), nom: nomAffiche(valeur) };

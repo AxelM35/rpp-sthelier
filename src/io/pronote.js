@@ -334,24 +334,30 @@ export function analyserEleves(lignes, etat, niveau, choix = {}) {
     });
   }
 
-  // Classement des valeurs de « Toutes les options ».
+  // Classement des valeurs de « Toutes les options ». Les disciplines enseignées à toute la classe (ANGLAIS LV1,
+  // la LVA de tous les élèves ; HISTOIRE-GEOGRAPHIE…) ne sont pas des options : leurs enseignants ont déjà toute
+  // la classe. Seule exception, l'option d'une discipline partagée (« Histoire-géographie (groupe à part) »).
   const inconnues = new Map();
   const ignorees = new Map();
+  const partagee = (val) => etat.options.find((x) => normaliser(x.nom).startsWith(normaliser(nomAffiche(val)))) || null;
   const comptes = new Map();
   const compter = (map, k) => map.set(k, (map.get(k) || 0) + 1);
   for (const e of eleves) {
     e.lvb = null;
     e.options = [];
     for (const val of e.valeurs) {
+      const commune = PRONOTE.classeEntiere.includes(val);
       const lvb = / LV2$/.test(val) ? correspondance(etat.lvb, val) : null;
-      const option = !/ LV2$/.test(val) ? correspondance(etat.options, val) : null;
+      const option = commune ? partagee(val) : !/ LV2$/.test(val) ? correspondance(etat.options, val) : null;
       if (lvb) {
         e.lvb = { valeur: val, nom: lvb.nom };
         compter(comptes, lvb.nom);
       } else if (option) {
         e.options.push({ valeur: val, nom: option.nom });
         compter(comptes, option.nom);
-      } else if (PRONOTE.ignorees.includes(val) || PRONOTE.classeEntiere.includes(val)) {
+      } else if (commune) {
+        continue; // enseignée à toute la classe
+      } else if (PRONOTE.ignorees.includes(val)) {
         compter(ignorees, val);
       } else {
         const x = inconnues.get(val) || { valeur: val, nom: nomAffiche(val), type: / LV2$/.test(val) ? 'lvb' : 'option', eleves: 0 };

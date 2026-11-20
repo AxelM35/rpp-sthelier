@@ -26,7 +26,7 @@ Toutes les questions sont tranchées.
 1. Colonnes lues : Nom, Prénom d'usage (sinon Prénom), Classe, Formation, Toutes les options. Toutes les autres sont ignorées et listées dans le compte rendu.
 2. LVB : la valeur de « Toutes les options » qui est une LVB du niveau. C'est la référence, même si l'export des enseignants diffère ; un contrôle signale une LVB sans enseignant dans la classe.
 3. Options : les valeurs qui correspondent à une option de l'export des enseignants, rapprochées si l'un des noms commence par l'autre (« BRETON REG. » = « BRETON »), avec confirmation.
-4. Ignorés : O2, ANGLAIS +, MATHS +, LLC ANGLAIS (N1), ANGLAIS LV1, la colonne Groupes.
+4. Options ignorées : O2, ANGLAIS +, MATHS +, LLC ANGLAIS (N1) ; la colonne Groupes n'est pas lue. ANGLAIS LV1 n'est pas une option : c'est la LVA, obligatoire pour tous les élèves ; son enseignant est déjà dans l'équipe de toute la classe. De même pour les autres disciplines de classe entière (sauf discipline partagée).
 5. ULIS : Formation se terminant par « ULIS » (espaces ignorés). Pour les élèves ULIS, l'enseignant de LVB est retiré de leur équipe seulement si son effectif correspond aux élèves de la LVB hors ULIS ; en cas de doute, il est gardé et l'import le signale (U1 bis, résultat confirmé classe par classe à l'import).
 
 **Discipline partagée (histoire-géographie en breton)** : quand des élèves portent une discipline de classe entière dans « Toutes les options » (« HISTOIRE-GEOGRAPHIE »), l'enseignant de cette discipline dont l'effectif correspond reçoit ces élèves, et l'autre devient « classe entière sauf ces élèves ». L'application présente ce partage pour confirmation à l'import.
@@ -159,7 +159,7 @@ L'export contient des **données de santé** (« Projet d'accompagnement » : PA
 - **Une seule feuille, une ligne par élève**, avec une ligne d'en-tête. 128 élèves, puis 408 lignes vides en fin de feuille, que le lecteur de l'application écarte déjà.
 - **Classe** : même écriture que l'export des enseignants (« 3 E »). Le rapprochement est direct.
 - **Formation** : « 3EME » (106), « 3EME SECTION SPORTIVE » (15), « 3EME BILINGUE » (4), « 3EME ULIS » (3).
-- **Toutes les options** : liste séparée par des virgules. Elle donne la LV1, la LV2 et les options : ANGLAIS LV1 (128), ESPAGNOL LV2 (121), ALLEMAND LV2 (7), LLC ANGLAIS (39), LCA LATIN (22), ATHLETISME (15), BRETON REG. (4), et HISTOIRE-GEOGRAPHIE (4) et ENS. MORAL & CIVIQUE (4) pour les bilingues.
+- **Toutes les options** : liste séparée par des virgules. Elle donne la LVA (ANGLAIS LV1, obligatoire pour tous les élèves : 128), la LVB et les options : ESPAGNOL LV2 (121), ALLEMAND LV2 (7), LLC ANGLAIS (39), LCA LATIN (22), ATHLETISME (15), BRETON REG. (4), et HISTOIRE-GEOGRAPHIE (4) et ENS. MORAL & CIVIQUE (4) pour les bilingues.
 - **Groupes** : liste de codes « classes-groupe ». Le préfixe énumère les classes réunies : « 3AEIJO-O2 » couvre les 5 classes de 3e ; « 3AE4M-ALL » réunit 3 A, 3 E et 4 M.
 
   | Groupe(s)                    | Élèves                   | Sens                                            |
@@ -201,7 +201,7 @@ Les effectifs concordent presque partout, ce qui confirme le classement de la pa
 | Options                      | Dans « Toutes les options », les valeurs qui correspondent à une matière « option » de l'export des enseignants (O2, ANGLAIS + et MATHS + ignorées) |
 | ULIS (selon E4)              | Formation se terminant par « ULIS »                                                                                                            |
 
-O2 étant ignorée, la colonne « Groupes » n'est plus nécessaire : toutes les options utiles figurent dans « Toutes les options ». Les valeurs sans enseignant correspondant (ANGLAIS LV1, demi-groupes G1/G2…) sont ignorées. Les valeurs inconnues sont présentées avant l'import, avec la proposition de les ajouter aux options du niveau ou de les ignorer.
+O2 étant ignorée, la colonne « Groupes » n'est plus nécessaire : toutes les options utiles figurent dans « Toutes les options ». ANGLAIS LV1 (LVA de tous les élèves) et les autres disciplines de classe entière ne sont pas des options : leurs enseignants ont déjà toute la classe. Les valeurs inconnues sont présentées avant l'import, avec la proposition de les ajouter aux options du niveau ou de les ignorer.
 
 ### Questions sur l'export des élèves
 

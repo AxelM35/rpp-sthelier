@@ -147,7 +147,8 @@ test('élèves : niveau, colonnes ignorées, LVB et options, valeurs inconnues, 
   });
   assert.deepEqual(
     a.ignorees.map((x) => x.valeur),
-    ['ANGLAIS LV1', 'LLC ANGLAIS', 'ENS. MORAL & CIVIQUE'],
+    ['LLC ANGLAIS'],
+    'seules les options ignorées sont listées ; ANGLAIS LV1 (LVA de tous) et ENS. MORAL & CIVIQUE ne sont pas des options',
   );
   assert.deepEqual(
     a.inconnues.map((x) => [x.valeur, x.type, x.ajouter]),
@@ -212,7 +213,7 @@ test('import générique : colonnes LVB et options rapprochées des listes, vale
   const lignes = [
     ['Nom', 'Prénom', 'Classe', 'LVB', 'Options'],
     ['Durand', 'Léa', '5A', 'espagnol', 'Breton; Théâtre'],
-    ['Petit', 'Tom', '5 A', 'Italien', 'LLC ANGLAIS'],
+    ['Petit', 'Tom', '5 A', 'Italien', 'LLC ANGLAIS, ANGLAIS LV1'],
   ];
   const r = importerLignes(etat, { type: 'eleves', lignes, colonnes: { nom: 0, prenom: 1, classe: 2, lvb: 3, options: 4 }, entete: true });
   assert.equal(r.etat.classes.length, 1, '« 5A » et « 5 A » : une seule classe');
@@ -223,6 +224,17 @@ test('import générique : colonnes LVB et options rapprochées des listes, vale
     ['Breton', 'Théâtre'],
   );
   assert.equal(r.etat.lvb.find((x) => x.id === b.lvbId).nom, 'Italien');
-  assert.deepEqual(b.optionIds, [], 'LLC ANGLAIS ignorée');
+  assert.deepEqual(b.optionIds, [], 'LLC ANGLAIS ignorée ; ANGLAIS LV1 (LVA de tous) n’est pas une option');
   assert.deepEqual(r.ajoutees, ['Théâtre', 'Italien']);
+});
+
+test('ANGLAIS LV1 est la LVA de tous les élèves, jamais une option, même si une option « Anglais » existe', () => {
+  let etat = etatVide('4e');
+  etat = importerProfs(etat, analyserProfs(exportEnseignants(), etat, '4e')).etat;
+  etat.options.push({ id: 'opt-anglais', nom: 'Anglais +' }, { id: 'opt-ang', nom: 'Anglais' });
+  const a = analyserEleves(exportEleves4e(), etat, '4e');
+  assert.ok(a.eleves.every((e) => !e.options.some((o) => o.valeur === 'ANGLAIS LV1')));
+  assert.ok(!a.comptes.some((x) => x.nom.startsWith('Anglais')));
+  assert.ok(!a.inconnues.some((x) => x.valeur === 'ANGLAIS LV1'));
+  assert.ok(!a.ignorees.some((x) => x.valeur === 'ANGLAIS LV1'));
 });
