@@ -282,3 +282,41 @@ Réponse (20 novembre) : oui.
 **U2. « VIE DE CLASSE ».** Faut-il compter « VIE DE CLASSE » comme un enseignement à toute la classe ? Le professeur principal l'assure devant toute la classe et connaît tous ses élèves. Recommandé : oui. M. ECG serait ainsi rattaché à toute la 5 Z.
 
 Réponse (20 novembre) : faux problème. **Le professeur principal peut toujours recevoir tous les élèves de sa classe** : il appartient à l'équipe de chacun d'eux, quelle que soit sa discipline. C'est une règle de l'équipe (cahier des charges v2, section 4.4), indépendante de « VIE DE CLASSE », qui reste ignorée.
+
+## 5. Vérification avec l'export des élèves de 4e
+
+Export anonymisé du niveau 4e : 127 élèves (4 B : 26, 4 C : 24, 4 G : 25, 4 M : 26, 4 O : 26), mêmes colonnes. Formation : 104 « 4EME », 18 « SECTION SPORTIVE », 3 « ULIS », 2 « BILINGUE ». Aucune matière inconnue.
+
+**Confirmé :**
+
+- **Options**, effectifs exacts dans toutes les classes : LLC ANGLAIS (7, 8, 11, 7, 9), LCA LATIN (4 C : 7, 4 M : 6), ATHLETISME (4 G : 10), BRETON REG. (4 B : 2), ALLEMAND LV2 (4 M : 3, groupe commun avec la 3e).
+- **Histoire-géographie en breton (4 B)** : 2 élèves, M. JC 2, Mme MH 24 = les autres.
+- **LLC ANGLAIS** : Mme ATT enseigne l'anglais à toute la classe en 4 B, 4 C, 4 M et 4 O (rattachée à toute la classe, LLC compris) ; en 4 G, elle n'a que LLC (option).
+- **Professeurs principaux** : tous enseignent à toute leur classe.
+- **Groupes ignorés**, dont deux nouveaux : « 4-BREST » (17) et « 4BCGMO-EXETER » (50), sans doute des voyages.
+- **4 G** : 25 hispanisants pour 24 élèves chez M. ECG, sans élève ULIS (même cas qu'en 3 A ; P5 : les options font référence).
+
+**Constat qui remet en cause U1 :**
+
+| Classe | Hispanisants | dont ULIS | Effectif de l'enseignant d'espagnol | Les élèves ULIS suivent-ils l'espagnol ? |
+| ------ | ------------ | --------- | ----------------------------------- | ---------------------------------------- |
+| 5 A    | 24           | 2         | 22                                  | non                                      |
+| 5 M    | 27           | 2         | 25                                  | non                                      |
+| 5 S    | 27           | 2         | 25                                  | non                                      |
+| 3 E    | 25           | 3         | 23                                  | 1 sur 3 ?                                |
+| **4 O** | **26**      | **2**     | **26**                              | **oui**                                  |
+
+En 4 O, Mme JLR a tous les hispanisants, élèves ULIS compris. La règle U1 (« un élève ULIS n'a jamais l'enseignant de LVB dans son équipe ») les priverait à tort de leur enseignante d'espagnol.
+
+### Question
+
+**U1 bis. Élèves ULIS et LVB, selon la classe.**
+
+- **A — recommandée** : l'application compare l'effectif de l'enseignant de LVB au nombre d'hispanisants (ou de germanistes) de la classe :
+  - effectif = élèves hors ULIS : les élèves ULIS n'ont pas cet enseignant (5 A, 5 M, 5 S) ;
+  - effectif = tous les élèves de la LVB : ils l'ont (4 O) ;
+  - autre cas (3 E : 23 pour 22 ou 25) : les élèves ULIS gardent l'enseignant, et l'import le signale pour vérification manuelle.
+  Le résultat est présenté pour confirmation à l'import, classe par classe.
+- **B** : règle unique, au choix : les élèves ULIS n'ont jamais l'enseignant de LVB (U1 actuelle, fausse en 4 O), ou l'ont toujours (fausse en 5e).
+
+Réponse :

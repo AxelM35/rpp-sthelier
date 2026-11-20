@@ -157,8 +157,10 @@ Chaque lot est testé (unitaires et bout en bout) et livré sur `main` avant le 
 | --- | --------------------------------------------------------------------------------------------- |
 | 1   | Design Material 3 sur l'existant, sans changement fonctionnel                                 |
 | 2   | Données par niveau, écran d'accueil, reprise automatique des données de la v1                 |
-| 3   | LVB, options, enseignements et équipe de l'élève ; algorithmes et contrôles adaptés           |
+| 3   | LVB, options, enseignements, professeur principal de chaque classe et équipe de l'élève ; import des exports Pronote ; algorithmes et contrôles adaptés |
 | 4   | Élèves prioritaires du professeur principal, durée par niveau, documents ; étiquette `v2.0.0` |
+
+Décision du 20 novembre 2026 : la désignation du professeur principal passe du lot 4 au lot 3, car l'équipe de l'élève en dépend (section 4.4).
 
 Commencer par le design permet de valider l'aspect visuel tôt, avant de construire les nouveaux écrans.
 
