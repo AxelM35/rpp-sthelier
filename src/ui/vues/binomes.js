@@ -1,7 +1,7 @@
 // Onglet 3 : proposition automatique et composition des binômes.
 
 import { capacite, creneaux } from '../../algos/creneaux.js';
-import { calculerQuotas } from '../../algos/quotas.js';
+import { couverture } from '../../algos/groupes.js';
 import {
   classesCommunes,
   classesDuProf,
@@ -17,38 +17,46 @@ import { app } from '../app.js';
 import { blocComparaison } from './comparaison.js';
 import { aria, blocControles, boutonSupprimer, champ } from '../composants.js';
 
-function blocProposition(classes) {
+function blocProposition() {
   const { etat } = app;
-  const liste = creneaux(etat.soiree);
-  const n = effectifs(etat);
-  const q = calculerQuotas(
-    etat.binomes.map((b) => ({ id: b.id, classeIds: b.classeIds, cap: capacite(profsDuBinome(etat, b), liste) })),
-    n,
-  );
   const conserves = etat.binomes.filter((b) => b.fixe).length;
   const mode = etat.opt.mode;
-  const couverture = classes
-    .map((c) => {
-      const bs = etat.binomes.filter((b) => b.classeIds.includes(c.id));
-      const glissants = bs.filter((b) => b.classeIds.length > 1).length;
-      const manque = q.nonPlaces[c.id] || 0;
-      return (
-        '<tr><td>' +
+  const etatCouverture = (manque, eleves) =>
+    eleves === 0
+      ? '–'
+      : manque
+        ? '<span class="badge bad">il manque ' + manque + ' créneau(x)</span>'
+        : '<span class="badge ok">tous les élèves peuvent être reçus</span>';
+  const couvertureTexte = couverture(etat)
+    .map(
+      (c) =>
+        '<tr><th scope="row">' +
         echapper(c.nom) +
+        '</th><td>' +
+        c.eleves +
         '</td><td>' +
-        n[c.id] +
+        c.binomes +
+        (c.glissants ? ' <span class="muted">dont ' + c.glissants + ' glissant(s)</span>' : '') +
         '</td><td>' +
-        bs.length +
-        (glissants ? ' <span class="muted">dont ' + glissants + ' glissant(s)</span>' : '') +
-        '</td><td>' +
-        (n[c.id] === 0
-          ? '–'
-          : manque
-            ? '<span class="badge bad">il manque ' + manque + ' créneau(x)</span>'
-            : '<span class="badge ok">tous les élèves peuvent être reçus</span>') +
-        '</td></tr>'
-      );
-    })
+        etatCouverture(c.manque, c.eleves) +
+        '</td></tr>' +
+        c.groupes
+          .map(
+            (g) =>
+              '<tr class="groupe"><td><span class="sr-only">' +
+              echapper(c.nom) +
+              ', groupe </span>' +
+              echapper(g.libelle) +
+              '</td><td>' +
+              g.eleves +
+              '</td><td>' +
+              g.binomes +
+              ' <span class="muted">possible(s)</span></td><td>' +
+              etatCouverture(g.manque, g.eleves) +
+              '</td></tr>',
+          )
+          .join(''),
+    )
     .join('');
   return (
     '<div class="card"><div class="row"><h2 style="margin:0">Proposition automatique</h2><span class="sp"></span>' +
@@ -64,13 +72,14 @@ function blocProposition(classes) {
     '<button type="button" class="b" data-action="proposerBinomes">Proposer les binômes</button>' +
     '<button type="button" class="b" data-action="comparerPropositions">Comparer des propositions</button>' +
     '<button type="button" class="b p" data-action="toutGenerer">Tout générer (binômes, répartition, horaires)</button></div>' +
-    '<p class="note">La proposition tient compte des classes de chaque professeur, des effectifs, du nombre de créneaux et des indisponibilités, ' +
+    '<p class="note">La proposition tient compte de l\'équipe de chaque élève (LVB et options comprises), des effectifs, du nombre de créneaux et des indisponibilités, ' +
     "et crée des binômes glissants si nécessaire pour qu'aucun élève ne reste sans rendez-vous. " +
     "<b>Pour imposer un binôme</b>, composez-le avec « + Binôme » ou cliquez « Conserver » sur une proposition : il est gardé et l'application complète le reste" +
     (conserves ? ' (' + conserves + ' binôme(s) conservé(s) actuellement)' : '') +
     '.</p>' +
-    '<div class="scroll"><table class="t"><tr><th scope="col">Classe</th><th scope="col">Élèves</th><th scope="col">Binômes</th><th scope="col">Couverture</th></tr>' +
-    couverture +
+    '<div class="scroll"><table class="t couverture"><tr><th scope="col">Classe et groupes</th><th scope="col">Élèves</th>' +
+    '<th scope="col">Binômes</th><th scope="col">Couverture</th></tr>' +
+    couvertureTexte +
     '</table></div></div>'
   );
 }
@@ -188,7 +197,7 @@ export function vueBinomes(points) {
   const profsPris = {};
   etat.binomes.forEach((b) => b.profIds.forEach((id) => id && (profsPris[id] = b.id)));
   return (
-    blocProposition(classes) +
+    blocProposition() +
     blocComparaison() +
     '<div class="row" style="margin-bottom:6px"><h2 style="margin:0">Binômes (' +
     etat.binomes.length +

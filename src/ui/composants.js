@@ -8,7 +8,8 @@
 //   data-eleve         vignette d'élève déplaçable
 
 import { creneaux } from '../algos/creneaux.js';
-import { nomClasse, nomEleve } from '../modele/acces.js';
+import { nomClasse, nomEleve, profsDuBinome } from '../modele/acces.js';
+import { dansEquipe } from '../modele/equipe.js';
 import { echapper, formaterHeure } from '../utils/texte.js';
 import { app } from './app.js';
 
@@ -103,11 +104,14 @@ export function blocControles(points, onglets) {
 
 /**
  * Vignette d'un élève, déplaçable à la souris et sélectionnable au clavier.
- * b : binôme qui l'accueille (pour signaler une classe non reçue) ; extra : HTML ajouté (cadenas).
+ * b : binôme qui l'accueille (pour signaler une classe non reçue ou un professeur qui n'a pas l'élève en cours) ;
+ * extra : HTML ajouté (cadenas).
  */
 export function vignetteEleve(e, b, extra = '') {
   const { etat, ui } = app;
   const horsClasse = b && !b.classeIds.includes(e.classeId);
+  const horsEquipe = b && !horsClasse && profsDuBinome(etat, b).some((p) => !dansEquipe(etat, p, e));
+  const alerte = horsClasse ? 'Classe non reçue par ce binôme' : horsEquipe ? "Un professeur du binôme n'a pas cet élève en cours" : '';
   const choisi = ui.selection === e.id;
   const liste = creneaux(etat.soiree);
   const heure = b && e.slot != null && liste[e.slot] ? formaterHeure(liste[e.slot].d) : '';
@@ -117,7 +121,7 @@ export function vignetteEleve(e, b, extra = '') {
     nomClasse(etat, e.classeId) +
     (heure ? ', ' + heure : '') +
     (e.verrou ? ', verrouillé' : '') +
-    (horsClasse ? ", attention : sa classe n'est pas reçue par ce binôme" : '') +
+    (alerte ? ', attention : ' + alerte.charAt(0).toLowerCase() + alerte.slice(1) : '') +
     (choisi
       ? ', sélectionné'
       : ui.selection
@@ -126,7 +130,7 @@ export function vignetteEleve(e, b, extra = '') {
   return (
     '<div class="el' +
     (choisi ? ' sel' : '') +
-    (horsClasse ? ' pb' : '') +
+    (alerte ? ' pb' : '') +
     '" draggable="true" data-eleve="' +
     e.id +
     '">' +
@@ -140,7 +144,7 @@ export function vignetteEleve(e, b, extra = '') {
     '<span>' +
     echapper(nomEleve(e)) +
     '</span>' +
-    (horsClasse ? '<span class="alerte" aria-hidden="true" title="Classe non reçue par ce binôme">!</span>' : '') +
+    (alerte ? '<span class="alerte" aria-hidden="true" title="' + echapper(alerte) + '">!</span>' : '') +
     '<small>' +
     echapper(nomClasse(etat, e.classeId)) +
     '</small></button>' +

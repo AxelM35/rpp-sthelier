@@ -3,7 +3,7 @@
 import { classesDuProf, classesTriees, comparerEleves, effectifs, nomClasse, nomEleve } from '../../modele/acces.js';
 import { comparer, echapper } from '../../utils/texte.js';
 import { app } from '../app.js';
-import { aria, boutonSupprimer, champ, optionsClasses } from '../composants.js';
+import { aria, blocControles, boutonSupprimer, champ, optionsClasses } from '../composants.js';
 
 function blocClasses(classes, n) {
   return (
@@ -144,7 +144,12 @@ function blocEleves(classes) {
   );
 }
 
-export function vueDonnees() {
+export function vueDonnees(points) {
   const classes = classesTriees(app.etat);
-  return blocClasses(classes, effectifs(app.etat)) + blocProfesseurs(classes) + blocEleves(classes);
+  return (
+    blocClasses(classes, effectifs(app.etat)) +
+    blocProfesseurs(classes) +
+    blocEleves(classes) +
+    (points.some((p) => p.onglet === 'donnees') ? '<div style="margin-top:14px">' + blocControles(points, ['donnees']) + '</div>' : '')
+  );
 }

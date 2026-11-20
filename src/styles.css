@@ -576,6 +576,18 @@ table.t input {
   width: 100%;
   min-width: 70px;
 }
+/* Tableau de couverture : la classe en tête de ligne, ses groupes (LVB, options) en retrait. */
+table.couverture th[scope='row'] {
+  font-size: 14px;
+  color: var(--md-sys-color-on-surface);
+}
+table.couverture tr.groupe td {
+  font-size: 13px;
+  color: var(--md-sys-color-on-surface-variant);
+}
+table.couverture tr.groupe td:first-child {
+  padding-left: 24px;
+}
 
 /* ---------- Étiquettes, puces, messages ---------- */
 

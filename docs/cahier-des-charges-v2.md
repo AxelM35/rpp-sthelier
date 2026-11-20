@@ -176,6 +176,12 @@ Commencer par le design permet de valider l'aspect visuel tôt, avant de constru
   - **Documents** : l'en-tête des plannings indique le niveau (début de V2-F9). Une nouvelle classe est nommée selon le niveau (5A, 5B…).
 - **Lot 3 — en cours sur `v2-dev`.**
   - **Étape 3a, modèle et équipe — livrée.** Format de données version 3, avec migration depuis la version 2 : listes de LVB et d'options par niveau ; pour l'élève, LVB, options et ULIS ; pour l'enseignant, un enseignement par classe (classe entière, LVB avec ou sans les élèves ULIS, option, ou classe entière sauf une option) ; professeur principal de chaque classe. Le module `modele/equipe.js` calcule l'équipe d'un élève (section 4.4). Les algorithmes raisonnent encore par classe jusqu'à l'étape 3b ; les plannings générés vérifient déjà la règle V2-R2 dans les tests.
+  - **Étape 3b, algorithmes et contrôles — livrée.**
+    - **Calcul par groupes** : les élèves d'une même classe qui ont la même équipe forment un groupe (`algos/groupes.js`). Proposition des binômes, répartition et comparaison de propositions raisonnent par groupe : un binôme ne reçoit que des élèves dont ses deux enseignants font partie de l'équipe (V2-R2, V2-R10). Quand tout est enseigné à la classe entière, chaque classe forme un seul groupe : sur six situations de 6e, binômes, répartition et horaires sont identiques à ceux de la version 1, et le temps de calcul est inchangé.
+    - **Décisions 4a à 4c** : les binômes limités à une LVB ou une option sortent du calcul de l'écart et des indicateurs de charge ; la proposition les forme en mode « tous », et en mode « min » seulement s'ils servent ; jamais deux enseignants d'options différentes, sauf à la main (avertissement).
+    - **Contrôles** : élève avec moins de deux enseignants dans son équipe ; LVB ou option suivie sans enseignant dans la classe, ou enseignée sans élève ; deux enseignants d'une même LVB ; élève sans LVB (hors ULIS) ; binôme limité à un groupe ; élève reçu par un enseignant qui ne l'a pas en cours (signalé aussi sur sa vignette). Les contrôles des données s'affichent dans l'onglet Données.
+    - **Couverture** (V2-F7) : l'onglet Binômes détaille, pour chaque classe qui en a plusieurs, les groupes (« Espagnol · Latin »), leurs élèves, les binômes possibles et les élèves sans place.
+    - **Tests** : un niveau de 4e fictif reproduit les cas des exports Pronote (LVB, breton et histoire-géographie en breton, latin, athlétisme, élèves ULIS, professeure principale enseignant une LVB).
 
 ## 9. Décisions du 19 novembre 2026
 

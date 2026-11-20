@@ -55,7 +55,7 @@ test('ecartCharges ignore les binômes pleins à capacité réduite', () => {
       { n: 11, cap: 12 },
       { n: 12, cap: 12 },
     ]),
-    { min: 11, max: 12, ecart: 1, reduit: true },
+    { min: 11, max: 12, ecart: 1, reduit: true, limites: 0 },
   );
   assert.equal(ecartCharges([]).ecart, 0);
 });

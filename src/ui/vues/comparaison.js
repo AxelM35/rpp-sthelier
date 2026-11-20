@@ -14,7 +14,9 @@ function indicateurs(v, i) {
   const n = v.indicateurs;
   const lignes = [
     n.binomes + ' binômes' + (n.glissants ? ', dont ' + n.glissants + ' glissant' + (n.glissants > 1 ? 's' : '') : ', aucun glissant'),
-    (n.chargeMin === n.chargeMax ? n.chargeMax : 'De ' + n.chargeMin + ' à ' + n.chargeMax) + ' élèves par binôme',
+    (n.chargeMin === n.chargeMax ? n.chargeMax : 'De ' + n.chargeMin + ' à ' + n.chargeMax) +
+      ' élèves par binôme' +
+      (n.limites ? ' (hors ' + n.limites + ' limité' + (n.limites > 1 ? 's' : '') + ' à une LVB ou une option)' : ''),
     n.profsSansBinome ? n.profsSansBinome + ' professeur(s) sans binôme' : 'Tous les professeurs mobilisés',
     n.sansPlace ? '<span class="badge bad">' + n.sansPlace + ' élève(s) sans place</span>' : 'Tous les élèves ont une place',
   ];

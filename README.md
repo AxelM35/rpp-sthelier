@@ -59,7 +59,8 @@ src/
     equipe.js          Équipe d'un élève : enseignants qui l'ont en cours (LVB, options, ULIS, professeur principal)
   algos/               Cœur métier, sans navigateur : fonctions testables
     creneaux.js        Créneaux de la soirée, disponibilités
-    quotas.js          Nombre d'élèves de chaque classe par binôme
+    groupes.js         Groupes d'élèves de même équipe (unités du calcul), compatibilité des paires, couverture
+    quotas.js          Nombre d'élèves de chaque groupe par binôme
     binomes.js         Proposition automatique des binômes
     repartition.js     Affectation des élèves
     horaires.js        Attribution des créneaux
@@ -91,7 +92,7 @@ docs/                  Cahier des charges, audit, fiche RGPD
 tests/
   unit/                Tests des modules algos, modele, io, utils
   e2e/                 Tests de l'application construite dans un navigateur
-  fixtures/            Collège fictif (108 élèves, 20 professeurs), fichiers Excel
+  fixtures/            Collèges fictifs : 6e (108 élèves, 20 professeurs), 4e avec LVB, options et ULIS ; fichiers Excel
 ```
 
 ### Principes

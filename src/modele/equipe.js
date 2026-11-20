@@ -36,5 +36,23 @@ export function dansEquipe(etat, prof, eleve) {
   return Boolean(x && concerne(x, eleve));
 }
 
+/**
+ * Enseignement qui limite un professeur à une partie de la classe (LVB ou option), ou null : enseignement
+ * de toute la classe (« classe entière », ou « sauf », qui n'écarte que quelques élèves), professeur principal
+ * de la classe, ou aucun enseignement.
+ */
+export function restriction(etat, prof, classeId) {
+  const classe = trouverClasse(etat, classeId);
+  if (classe && classe.ppId === prof.id) return null;
+  const x = enseignementDans(prof, classeId);
+  return x && (x.type === 'lvb' || x.type === 'option') ? x : null;
+}
+
+/** Nom de la LVB ou de l'option d'un enseignement (« Espagnol »). */
+export function nomReference(etat, x) {
+  const ref = (x.type === 'lvb' ? etat.lvb : etat.options).find((o) => o.id === x.refId);
+  return ref ? ref.nom : '?';
+}
+
 /** Professeurs de l'équipe d'un élève, dans l'ordre de la liste des professeurs. */
 export const equipeEleve = (etat, eleve) => etat.profs.filter((p) => dansEquipe(etat, p, eleve));
