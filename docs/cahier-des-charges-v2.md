@@ -77,7 +77,7 @@ L'équipe d'un élève regroupe trois ensembles d'enseignants :
 S'y ajoutent deux précisions (décisions du 20 novembre 2026) :
 
 - le **professeur principal** de la classe appartient à l'équipe de tous ses élèves, quelle que soit sa discipline ;
-- un **élève ULIS** n'a pas l'enseignant de LVB dans son équipe, même si une LVB lui est attribuée : il ne suit pas la LVB avec sa classe.
+- un **élève ULIS** peut ne pas suivre la LVB avec sa classe, même si une LVB lui est attribuée. À l'import, l'effectif de l'enseignant de LVB indique, classe par classe, si les élèves ULIS l'ont en cours ; l'organisateur confirme (voir [import-pronote.md](import-pronote.md), U1 bis).
 
 Toutes les règles de constitution des binômes s'appuient sur cette équipe.
 
@@ -186,7 +186,7 @@ Commencer par le design permet de valider l'aspect visuel tôt, avant de constru
 | Groupes de LVB interclasses                   | Oui : un même groupe peut réunir plusieurs classes (V2-R10).                                                                                                                                                                               |
 | Reprise des enseignants d'un niveau à l'autre | Non retenue : chaque niveau est saisi indépendamment.                                                                                                                                                                                      |
 | Équipe : professeur principal (20 novembre)   | Il appartient à l'équipe de tous les élèves de sa classe, quelle que soit sa discipline (section 4.4).                                                                                                                                     |
-| Équipe : élèves ULIS (20 novembre)            | L'enseignant de LVB n'entre pas dans leur équipe (section 4.4). Les élèves ULIS sont repérés à l'import par la formation.                                                                                                                  |
+| Équipe : élèves ULIS (20 novembre)            | L'enseignant de LVB entre ou non dans leur équipe selon la classe, d'après son effectif, avec confirmation à l'import (section 4.4). Les élèves ULIS sont repérés par la formation.                                                        |
 | Import Pronote (20 novembre)                  | Les exports bruts des enseignants et des élèves sont lus directement ; règles détaillées dans [import-pronote.md](import-pronote.md).                                                                                                      |
 
 ### Point restant

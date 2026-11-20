@@ -26,7 +26,7 @@ Toutes les questions sont tranchées, sauf E8 (menus de Pronote, pour l'aide).
 2. LVB : la valeur de « Toutes les options » qui est une LVB du niveau. C'est la référence, même si l'export des enseignants diffère ; un contrôle signale une LVB sans enseignant dans la classe.
 3. Options : les valeurs qui correspondent à une option de l'export des enseignants, rapprochées si l'un des noms commence par l'autre (« BRETON REG. » = « BRETON »), avec confirmation.
 4. Ignorés : O2, ANGLAIS +, MATHS +, ANGLAIS LV1, la colonne Groupes.
-5. ULIS : Formation se terminant par « ULIS » (espaces ignorés). Un élève ULIS n'a pas l'enseignant de LVB dans son équipe (U1).
+5. ULIS : Formation se terminant par « ULIS » (espaces ignorés). Pour les élèves ULIS, l'enseignant de LVB est retiré de leur équipe seulement si son effectif correspond aux élèves de la LVB hors ULIS ; en cas de doute, il est gardé et l'import le signale (U1 bis, résultat confirmé classe par classe à l'import).
 
 **Discipline partagée (histoire-géographie en breton)** : quand des élèves portent une discipline de classe entière dans « Toutes les options » (« HISTOIRE-GEOGRAPHIE »), l'enseignant de cette discipline dont l'effectif correspond reçoit ces élèves, et l'autre devient « classe entière sauf ces élèves ». L'application présente ce partage pour confirmation à l'import.
 
@@ -319,4 +319,4 @@ En 4 O, Mme JLR a tous les hispanisants, élèves ULIS compris. La règle U1 («
   Le résultat est présenté pour confirmation à l'import, classe par classe.
 - **B** : règle unique, au choix : les élèves ULIS n'ont jamais l'enseignant de LVB (U1 actuelle, fausse en 4 O), ou l'ont toujours (fausse en 5e).
 
-Réponse :
+Réponse (20 novembre) : solution A. Elle remplace la règle U1.
