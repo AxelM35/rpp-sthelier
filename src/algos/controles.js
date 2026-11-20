@@ -5,6 +5,7 @@
 import { ECART_CHARGE_VISE } from '../config.js';
 import {
   classesPossibles,
+  codeBinome,
   elevesDuBinome,
   enseignementDans,
   libelleBinome,
@@ -19,13 +20,6 @@ import { capacite, creneaux, familleDisponible, profDisponible } from './creneau
 import { chargesActuelles, ecartCharges } from './equilibre.js';
 import { compatibles, grouperEleves, limitesDuBinome } from './groupes.js';
 import { cleFratrie } from './horaires.js';
-
-/** « Athlétisme en 4B et 4C, Espagnol en 4A » : limites d'un binôme regroupées par LVB ou option. */
-function decrireLimites(etat, limites) {
-  const parNom = new Map();
-  limites.forEach((x) => parNom.set(x.nom, [...new Set([...(parNom.get(x.nom) || []), nomClasse(etat, x.classeId)])]));
-  return [...parNom].map(([nom, classes]) => nom + ' en ' + classes.sort().join(' et ')).join(', ');
-}
 
 /** « Nom Prénom (4 B), … » : cinq élèves au plus, puis « … ». */
 function quelquesEleves(etat, eleves) {
@@ -132,6 +126,7 @@ export function controler(etat) {
     ajouter('info', sansBinome.length + ' professeur(s) sans binôme : ' + sansBinome.map((p) => p.nom).join(', ') + '.', 'binomes');
   }
   const salles = {};
+  const limitesParNom = new Map(); // LVB ou option → binômes qu'elle limite
   etat.binomes.forEach((b) => {
     const profs = profsDuBinome(etat, b);
     const nom = libelleBinome(etat, b);
@@ -163,7 +158,7 @@ export function controler(etat) {
       });
       const limites = limitesDuBinome(etat, b);
       if (limites.length && b.classeIds.every((c) => compatibles(etat, profs[0], profs[1], c))) {
-        ajouter('info', 'Binôme ' + nom + ' limité à un groupe : ' + decrireLimites(etat, limites) + '.', 'binomes');
+        limites.forEach((x) => limitesParNom.set(x.nom, [...(limitesParNom.get(x.nom) || []), b]));
       }
     }
     const recus = elevesDuBinome(etat, b).length;
@@ -181,6 +176,20 @@ export function controler(etat) {
       );
     }
   });
+  // Binômes limités à une LVB ou une option : un seul message, regroupé par LVB ou option (allègement du 20 novembre).
+  if (limitesParNom.size) {
+    const binomes = new Set([...limitesParNom.values()].flat());
+    ajouter(
+      'info',
+      binomes.size +
+        ' binôme(s) limité(s) à une LVB ou une option, hors calcul de l’écart : ' +
+        [...limitesParNom]
+          .map(([nom, liste]) => nom + ' (' + [...new Set(liste)].map((b) => codeBinome(etat, b)).join(', ') + ')')
+          .join(', ') +
+        '.',
+      'binomes',
+    );
+  }
   const sansSalle = etat.binomes.filter((b) => !(b.salle || '').trim()).length;
   if (etat.binomes.length && sansSalle) ajouter('info', sansSalle + ' binôme(s) sans salle.', 'binomes');
 

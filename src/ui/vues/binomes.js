@@ -1,7 +1,7 @@
 // Onglet 3 : proposition automatique et composition des binômes.
 
 import { capacite, creneaux } from '../../algos/creneaux.js';
-import { couverture } from '../../algos/groupes.js';
+import { couverture, limitesDuBinome } from '../../algos/groupes.js';
 import {
   classesCommunes,
   classesDuProf,
@@ -86,6 +86,7 @@ function blocProposition() {
 
 function carteBinome(b, classes, liste, profsPris) {
   const { etat } = app;
+  const limites = [...new Set(limitesDuBinome(etat, b).map((x) => x.nom))];
   const communes = classesCommunes(etat, b);
   const cap = capacite(profsDuBinome(etat, b), liste);
   const recus = elevesDuBinome(etat, b).length;
@@ -144,6 +145,7 @@ function carteBinome(b, classes, liste, profsPris) {
     code +
     '</span>' +
     (b.classeIds.length > 1 ? '<span class="badge acc">Glissant</span>' : '') +
+    (limites.length ? '<span class="badge">Limité : ' + echapper(limites.join(', ')) + '</span>' : '') +
     '<span class="sp"></span>' +
     '<button type="button" class="b petit' +
     (b.fixe ? ' on' : '') +

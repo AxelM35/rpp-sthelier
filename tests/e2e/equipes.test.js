@@ -31,7 +31,11 @@ for (const theme of ['light', 'dark']) {
       groupes.some((t) => /4C, groupe Espagnol · Latin · Athlétisme/.test(t)),
       groupes.join(' | '),
     );
-    assert.match(await page.textContent('.diag'), /limité à un groupe : Athlétisme en 4B/);
+    assert.match(
+      await page.textContent('.diag'),
+      /binôme\(s\) limité\(s\) à une LVB ou une option, hors calcul de l’écart : .*Athlétisme \(B\d+\)/,
+    );
+    assert.ok((await page.locator('.bin .badge', { hasText: 'Limité : Athlétisme' }).count()) >= 1);
 
     await page.addScriptTag({ content: AXE });
     const violations = [];
