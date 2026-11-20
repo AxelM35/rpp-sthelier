@@ -17,9 +17,9 @@ Toutes les questions sont tranchées.
    - sinon BRETON, LCA LATIN ou ATHLETISME : option ;
    - seulement O2, ANGLAIS +, MATHS +, LLC ANGLAIS (options ignorées pour les binômes, N1), VIE DE CLASSE, DEVOIRS FAITS, ACCOMP. AUX DEVOIRS, PARCOURS AVENIR, CDI : pas rattaché à la classe.
 5. Une matière ou fonction inconnue est présentée avant l'import pour être classée (classe entière, LVB, option, ou ignorée).
-8. Les LVB et options trouvées complètent les listes du niveau, présentées pour confirmation (N1). Les enseignants s'importent avant les élèves ; l'application le rappelle.
 6. « X » dans Professeur principal : professeur principal de la classe. Il appartient à l'équipe de tous les élèves de sa classe (U2).
 7. Les heures sont ignorées ; « service de notation actif » vaut enseignement en classe entière.
+8. Les LVB et options trouvées complètent les listes du niveau, présentées pour confirmation (N1). Les enseignants s'importent avant les élèves ; l'application le rappelle.
 
 **Import des élèves** (un export par niveau) :
 
