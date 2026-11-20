@@ -27,7 +27,6 @@ Toutes les questions sont tranchées, sauf E8 (menus de Pronote, pour l'aide).
 3. Options : les valeurs qui correspondent à une option de l'export des enseignants, rapprochées si l'un des noms commence par l'autre (« BRETON REG. » = « BRETON »), avec confirmation.
 4. Ignorés : O2, ANGLAIS +, MATHS +, ANGLAIS LV1, la colonne Groupes.
 5. ULIS : Formation se terminant par « ULIS ».
-6. Élèves homonymes : deux lignes d'un même fichier sont toujours deux élèves, même avec les mêmes nom, prénom et classe. Le dédoublonnage (fichier importé deux fois) ne compare le fichier qu'aux élèves déjà saisis, ligne à ligne.
 
 **Discipline partagée (histoire-géographie en breton)** : quand des élèves portent une discipline de classe entière dans « Toutes les options » (« HISTOIRE-GEOGRAPHIE »), l'enseignant de cette discipline dont l'effectif correspond reçoit ces élèves, et l'autre devient « classe entière sauf ces élèves ». L'application présente ce partage pour confirmation à l'import.
 
@@ -241,7 +240,7 @@ Export anonymisé du niveau 6e : 139 élèves (6 C, 6 G, 6 M, 6 N : 28 ; 6 T : 2
 - **Breton** : Mme KF a un effectif de 7 en 6 G parce que son groupe réunit 6 G et 5 P (« 6G-5P-BZH » : 2 + 5). L'appartenance à l'option se lit donc côté élèves, jamais dans l'effectif de l'enseignant.
 - **Histoire-géographie en breton (6 G)** : 2 élèves l'ont en option, M. JC a 2 élèves, Mme MH 26 = les autres. La règle du partage s'applique sans ambiguïté.
 - **Prénom d'usage** : rempli pour 7 élèves (P7).
-- **Homonymes** : deux paires d'élèves de 6 G ont les mêmes nom, prénom et classe (initiales de l'anonymisation), mais sont bien des élèves différents. D'où la règle 6 de l'import des élèves.
+- **Homonymes** : deux paires d'élèves de 6 G ont les mêmes initiales, du seul fait de l'anonymisation ; les vrais noms diffèrent. Aucune règle particulière : l'import garde son dédoublonnage (même nom, prénom et classe). Pour les vérifications sur les exports anonymisés, ces paires sont comptées à part.
 - **Colonnes sensibles** : encore présentes dans cet export (P9).
 
 **Résultat de la simulation des règles sur la 6e** (enseignants rattachés à chaque classe) :
@@ -255,3 +254,31 @@ Export anonymisé du niveau 6e : 139 élèves (6 C, 6 G, 6 M, 6 N : 28 ; 6 T : 2
 | 6 T | 10 (dont M. AMo, PP) | — | Mme LF (devoirs faits), Mme EMN (maths +) |
 
 Aucune matière inconnue en 6e.
+
+## 4. Vérification avec l'export des élèves de 5e
+
+Export anonymisé du niveau 5e : 140 élèves (5 A : 29, 5 M : 27, 5 P : 29, 5 S : 27, 5 Z : 28), mêmes colonnes. Formation : 106 « 5EME », 22 « SECTION SPORTIVE », 7 « ULIS », 5 « BILINGUE ». Aucune matière inconnue.
+
+**Confirmé :**
+
+- **Options** : ATHLETISME (5 A : 11 élèves = effectif de M. TLG), BRETON REG. (5 P : 5 = effectif de Mme KF), ALLEMAND LV2 (5 A et 5 P : 5 = effectif de Mme EM).
+- **Histoire-géographie en breton (5 P)** : 5 élèves l'ont en option, M. JC a 5 élèves, Mme BBo 24 = les autres.
+- **Mme GR** (Suivi Inclusion) : écartée en 5 A, 5 M, 5 S et 5 Z.
+- **Groupes ignorés** : FLUENCE, NKT, KT, ASSEC, ANG+, MATHS+, G1/G2.
+
+**Constats nouveaux :**
+
+- **Élèves ULIS et LVB.** L'effectif de l'enseignant d'espagnol est égal au nombre d'hispanisants **hors élèves ULIS** : 5 A : 24 − 2 = 22 ; 5 M : 27 − 2 = 25 ; 5 S : 27 − 2 = 25. En 3 E : 25 − 3 = 22 pour un effectif de 23. Les élèves ULIS semblent donc ne pas suivre la LVB avec la classe, bien que Pronote la leur attribue. L'élève de 5 Z sans LVB est aussi un élève ULIS. Voir U1.
+- **Professeur principal enseignant de LVB.** En 5 Z, M. ECG est professeur principal mais n'enseigne que l'espagnol (avec « VIE DE CLASSE »). Avec les règles actuelles, il n'est rattaché qu'aux hispanisants : il ne pourrait pas recevoir l'élève sans LVB, ce qui compte pour les élèves prioritaires du lot 4. Voir U2.
+- **Latin en 5 P** : Mme VP a un effectif de 1 en LCA LATIN en 5 P, mais aucun élève de 5 P n'a LCA LATIN dans ses options. En 5 A, 10 élèves l'ont en option, pour 9 dans le groupe « 5A-LCA LAT ». Incohérence de Pronote : Mme VP serait rattachée en 5 P à une option sans élève, ce qu'un contrôle signalera.
+- **Colonnes sensibles** : encore présentes (P9).
+
+### Questions
+
+**U1. Élèves ULIS et LVB.** Faut-il considérer que les élèves ULIS n'ont pas l'enseignant de LVB dans leur équipe, même si Pronote leur attribue une LVB ? Recommandé : oui. Leur équipe serait alors faite des enseignants de toute la classe et de leurs options.
+
+Réponse :
+
+**U2. « VIE DE CLASSE ».** Faut-il compter « VIE DE CLASSE » comme un enseignement à toute la classe ? Le professeur principal l'assure devant toute la classe et connaît tous ses élèves. Recommandé : oui. M. ECG serait ainsi rattaché à toute la 5 Z.
+
+Réponse :
