@@ -1,6 +1,6 @@
 # Import des exports Pronote — compréhension à valider
 
-Analyse du 20 novembre 2026, à partir d'un export anonymisé des enseignants (noms remplacés par des initiales). Objectif : importer l'export **brut** de Pronote, avec le moins de retouches possible. Les lignes « Réponse » sont à compléter.
+Analyse du 20 novembre 2026, à partir d'exports anonymisés (noms remplacés par des initiales). Réponses du 20 novembre reportées sous chaque question. Objectif : importer l'export **brut** de Pronote, avec le moins de retouches possible. Les lignes « Réponse » sont à compléter.
 
 ## 1. Export des enseignants
 
@@ -38,7 +38,8 @@ Analyse du 20 novembre 2026, à partir d'un export anonymisé des enseignants (n
 | ---------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------- |
 | Classe entière               | FRANCAIS, MATHEMATIQUES, HISTOIRE-GEOGRAPHIE, ENS. MORAL & CIVIQUE, ANGLAIS LV1, SCIENCES VIE & TERRE, PHYSIQUE-CHIMIE, TECHNOLOGIE, ARTS PLASTIQUES, EDUCATION MUSICALE, ED.PHYSIQUE & SPORT. | Tous les élèves de la classe                         |
 | LVB (5e à 3e)                | ESPAGNOL LV2, ALLEMAND LV2                                                                                                                                                   | Les élèves de cette LVB, dans la classe              |
-| Option (à confirmer, E1)     | BRETON, LCA LATIN, LLC ANGLAIS, O2, ATHLETISME, ANGLAIS +, MATHS +                                                                                                           | Les élèves de cette option, dans la classe           |
+| Option (ATHLETISME et BRETON à confirmer, E1) | BRETON, LCA LATIN, LLC ANGLAIS, ATHLETISME                                                                                                                  | Les élèves de cette option, dans la classe           |
+| Option ignorée (décision du 20 novembre) | O2, ANGLAIS +, MATHS +                                                                                                                                     | Aucun : ces options ne font pas entrer dans l'équipe |
 | Hors équipe (à confirmer, E1) | VIE DE CLASSE, DEVOIRS FAITS, ACCOMP. AUX DEVOIRS, PARCOURS AVENIR, CDI, Suivi Inclusion                                                                                     | Aucun : ces fonctions ne font pas entrer dans l'équipe |
 
 **Type d'enseignement d'un enseignant dans une classe**, déduit de sa liste :
@@ -68,11 +69,11 @@ Analyse du 20 novembre 2026, à partir d'un export anonymisé des enseignants (n
 - **BRETON** en 5e, 4e et 3e : suite de la bilangue de 6e, donc option « Breton » à tous les niveaux ?
 - **Fonctions hors équipe** : faut-il aussi y ranger CDI et PARCOURS AVENIR ?
 
-Réponse :
+Réponse (20 novembre) : O2, ANGLAIS + et MATHS + sont des options, mais elles sont **ignorées** : elles ne font pas entrer l'enseignant dans l'équipe. Restent à confirmer : ATHLETISME (option ?), BRETON en 5e à 3e (option ?), CDI et PARCOURS AVENIR (hors équipe ?).
 
 **E2. Histoire-géographie en breton.** M. JC enseigne-t-il l'histoire-géographie en breton aux élèves bilingues ? Si oui, je propose de le traiter comme un enseignement de l'option Breton dans la classe : il entre dans l'équipe des seuls élèves bilingues. Et en 6 G, seuls 2 des 7 bilingues l'ont-ils en cours ?
 
-Réponse :
+Réponse : confirmé par l'export des élèves (groupes 3E-HGBZH et 3E-HGNONBZH) ; traitement exact retenu (P3, solution A). Reste à savoir pourquoi M. JC n'a que 2 des 7 bilingues en 6 G.
 
 **E3. « Service de notation actif ».** M. CG (éducation musicale, dans toutes les classes) et Mme RL (histoire-géographie et EMC, dans 6 classes où un autre professeur assure déjà ces matières) n'ont pas d'heures. Enseignent-ils réellement à ces classes ? Je propose :
 
@@ -83,7 +84,7 @@ Réponse :
 
 **E4. Dispositif ULIS (Mme GR).** Faut-il l'écarter des binômes, ou la rattacher aux seuls élèves ULIS ? Dans le second cas, il faudrait que l'export des élèves indique qui en fait partie.
 
-Réponse :
+Réponse (20 novembre, via P4) : les élèves ULIS sont repérés par la colonne Formation. Reste à décider si Mme GR est rattachée aux seuls élèves ULIS ou écartée des binômes.
 
 **E5. Lignes manquantes.** Avez-vous retiré des lignes en anonymisant, ou l'export brut compte-t-il aussi d'autres personnes (vie scolaire, assistants…) ? Si des lignes existent dans l'export brut, j'ai besoin d'en voir un exemple.
 
@@ -157,48 +158,48 @@ Les effectifs concordent presque partout, ce qui confirme le classement de la pa
 | Nom, prénom                  | Nom ; Prénom d'usage s'il est rempli, sinon Prénom (P7)                                                                                        |
 | Classe                       | Classe (seules les classes du niveau sont prises)                                                                                              |
 | LVB                          | Dans « Toutes les options », la valeur qui correspond à une LVB du niveau (ESPAGNOL LV2, ALLEMAND LV2)                                          |
-| Options                      | Dans « Toutes les options », les valeurs qui correspondent à une matière « option » de l'export des enseignants ; dans « Groupes », le code qui suit le tiret (O2) |
+| Options                      | Dans « Toutes les options », les valeurs qui correspondent à une matière « option » de l'export des enseignants (O2, ANGLAIS + et MATHS + ignorées) |
 | ULIS (selon E4)              | Formation se terminant par « ULIS »                                                                                                            |
 
-Les valeurs sans enseignant correspondant (ANGLAIS LV1, demi-groupes G1/G2…) sont ignorées. Les valeurs inconnues sont présentées avant l'import, avec la proposition de les ajouter aux options du niveau ou de les ignorer.
+O2 étant ignorée, la colonne « Groupes » n'est plus nécessaire : toutes les options utiles figurent dans « Toutes les options ». Les valeurs sans enseignant correspondant (ANGLAIS LV1, demi-groupes G1/G2…) sont ignorées. Les valeurs inconnues sont présentées avant l'import, avec la proposition de les ajouter aux options du niveau ou de les ignorer.
 
 ### Questions sur l'export des élèves
 
 **P1. Noms différents d'un export à l'autre.** « BRETON REG. » (élèves) et « BRETON » (enseignants) désignent la même option. Je propose un rapprochement automatique quand un nom commence par l'autre, présenté pour confirmation avant l'import. Cela vous convient-il ?
 
-Réponse :
+Réponse (20 novembre) : oui.
 
 **P2. Groupes inconnus.** Que sont « 3AEIJO-ASSEC » (6 élèves par classe) et « BAPTÊME » (3 élèves) ? Je propose d'ignorer tout groupe qui ne correspond à aucune matière de l'export des enseignants, demi-groupes G1/G2 compris.
 
-Réponse :
+Réponse (20 novembre) : groupes inconnus ignorés.
 
 **P3. Histoire-géographie en breton : faut-il être exact ?** En 3 E, les bilingues ont M. JC et pas Mme MP.
 
 - **A — exacte, recommandée** : à l'import, l'application repère qu'une discipline de classe entière est partagée entre deux enseignants, dont l'un a exactement l'effectif d'une option (M. JC : 4 = Breton). Elle propose : « M. JC reçoit les élèves de Breton, Mme MP les autres ». Il faut alors un type d'enseignement de plus, « classe entière sauf une option ».
 - **B — simple** : M. JC est rattaché à l'option Breton, Mme MP reste « classe entière ». Elle pourrait alors recevoir un bilingue qu'elle n'a pas en cours.
 
-Réponse :
+Réponse (20 novembre) : solution A (exacte).
 
 **P4. Élèves ULIS.** La colonne Formation les signale (« 3EME ULIS », 3 élèves). La colonne « Projet d'accompagnement » ne sera pas lue. Cette source vous convient-elle (voir aussi E4) ?
 
-Réponse :
+Réponse (20 novembre) : oui, la colonne Formation.
 
 **P5. Écarts entre les deux exports** (3 A et 3 E en espagnol, l'élève germaniste de 3 J). S'agit-il d'élèves suivis autrement (CNED, ULIS, dispense) ? Je propose de prendre « Toutes les options » comme référence pour la LVB de l'élève. Un contrôle signalerait ensuite l'élève dont la LVB n'a pas d'enseignant dans sa classe : l'élève de 3 J, avec seulement l'équipe de sa classe.
 
-Réponse :
+Réponse (20 novembre) : oui, « Toutes les options » fait référence, avec le contrôle proposé.
 
 **P6. Groupe réunissant deux niveaux** (« 3AE4M-ALL »). Les niveaux restent indépendants : en 3e, Mme EM fait partie de l'équipe des germanistes de 3 A et 3 E ; en 4e, de ceux de 4 M. Rien de plus à faire, d'accord ?
 
-Réponse :
+Réponse (20 novembre) : d'accord.
 
 **P7. Prénom d'usage.** Vide dans cet export. Faut-il l'utiliser à la place du prénom quand il est rempli ? Recommandé : oui (convocations).
 
-Réponse :
+Réponse (20 novembre) : oui, le prénom d'usage remplace le prénom quand il est rempli.
 
 **P8. Un export par niveau, ou un seul pour le collège ?** Ce fichier ne contient que la 3e. Avec l'import unique proposé en E7, un export de tous les élèves serait réparti entre les niveaux de la même façon. Lequel ferez-vous ?
 
-Réponse :
+Réponse (20 novembre) : un export des élèves par niveau.
 
 **P9. Colonnes sensibles.** Pouvez-vous retirer de l'export Pronote les colonnes Né(e) le, Sexe, Projet d'accompagnement, Allergies et Majeur ? Si ce n'est pas possible, l'application les ignorera de toute façon.
 
-Réponse :
+Réponse (20 novembre) : oui, les colonnes sensibles seront retirées de l'export.

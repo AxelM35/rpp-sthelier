@@ -24,7 +24,7 @@ L'import doit reconnaître la LVB et les options des élèves, ainsi que le type
 
 À défaut : reconnaissance sans tenir compte des majuscules ni des accents, avec le mot contenu (« ESPAGNOL LV2 » → Espagnol) ; une valeur inconnue est signalée avant l'import.
 
-Réponse :
+Réponse : traitée à part, voir [Import des exports Pronote](import-pronote.md).
 
 ## 2. Plusieurs enseignants de la même LVB dans une classe
 
