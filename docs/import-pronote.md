@@ -249,7 +249,7 @@ Export anonymisé du niveau 6e : 139 élèves (6 C, 6 G, 6 M, 6 N : 28 ; 6 T : 2
 | Classe | Classe entière | Option ou partage | Non rattachés |
 | ------ | -------------- | ----------------- | ------------- |
 | 6 C | 9 (dont M. MC, PP) | — | Mme LF (devoirs faits), M. AMo (anglais +), Mme EMN (maths +) |
-| 6 G | 10 (dont Mme DRD, PP) | Mme KF : Breton ; M. JC : HG pour les 2 bilingues ; Mme MH : HG pour les 26 autres | Mme LJ (devoirs faits), Mme EMN (maths +) |
+| 6 G | 9 (dont Mme DRD, PP) | Mme KF : Breton ; M. JC : HG pour les 2 bilingues ; Mme MH : HG pour les 26 autres | Mme LJ (devoirs faits), Mme EMN (maths +) |
 | 6 M | 9 (dont Mme BBo, PP) | — | Mme EMN (maths +) |
 | 6 N | 9 (dont Mme EC, PP) | — | Mme ACJ (devoirs faits), M. AMo (anglais +), Mme EMN (maths +) |
 | 6 T | 10 (dont M. AMo, PP) | — | Mme LF (devoirs faits), Mme EMN (maths +) |
