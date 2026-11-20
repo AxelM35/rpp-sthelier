@@ -2,6 +2,34 @@
 
 Analyse du 20 novembre 2026, à partir d'exports anonymisés (noms remplacés par des initiales). Réponses du 20 novembre reportées sous chaque question. Objectif : importer l'export **brut** de Pronote, avec le moins de retouches possible. Les lignes « Réponse » sont à compléter.
 
+## Synthèse des règles d'import retenues (20 novembre)
+
+Toutes les questions sont tranchées, sauf E8 (menus de Pronote, pour l'aide).
+
+**Import des enseignants** (export du collège entier, importé dans un niveau) :
+
+1. Seules les classes du niveau ouvert sont gardées (« 5 A »… en 5e).
+2. Un enseignant est reconnu d'une classe à l'autre par sa civilité et son nom (« NOM Prénom »).
+3. Un enseignant qui a « Suivi Inclusion » dans au moins une classe du fichier n'est pas importé (ULIS, écarté des binômes).
+4. Dans chaque classe, son type d'enseignement se déduit de sa liste Matière/Fonction :
+   - une discipline de classe entière : classe entière ;
+   - sinon ESPAGNOL LV2 ou ALLEMAND LV2 : LVB ;
+   - sinon BRETON, LCA LATIN, LLC ANGLAIS ou ATHLETISME : option ;
+   - seulement O2, ANGLAIS +, MATHS +, VIE DE CLASSE, DEVOIRS FAITS, ACCOMP. AUX DEVOIRS, PARCOURS AVENIR, CDI : pas rattaché à la classe.
+5. Une matière ou fonction inconnue est présentée avant l'import pour être classée.
+6. « X » dans Professeur principal : professeur principal de la classe (lot 4).
+7. Les heures sont ignorées ; « service de notation actif » vaut enseignement en classe entière.
+
+**Import des élèves** (un export par niveau) :
+
+1. Colonnes lues : Nom, Prénom d'usage (sinon Prénom), Classe, Formation, Toutes les options. Toutes les autres sont ignorées et listées dans le compte rendu.
+2. LVB : la valeur de « Toutes les options » qui est une LVB du niveau. C'est la référence, même si l'export des enseignants diffère ; un contrôle signale une LVB sans enseignant dans la classe.
+3. Options : les valeurs qui correspondent à une option de l'export des enseignants, rapprochées si l'un des noms commence par l'autre (« BRETON REG. » = « BRETON »), avec confirmation.
+4. Ignorés : O2, ANGLAIS +, MATHS +, ANGLAIS LV1, la colonne Groupes.
+5. ULIS : Formation se terminant par « ULIS ».
+
+**Discipline partagée (histoire-géographie en breton)** : quand des élèves portent une discipline de classe entière dans « Toutes les options » (« HISTOIRE-GEOGRAPHIE »), l'enseignant de cette discipline dont l'effectif correspond reçoit ces élèves, et l'autre devient « classe entière sauf ces élèves ». L'application présente ce partage pour confirmation à l'import.
+
 ## 1. Export des enseignants
 
 ### Structure du fichier
@@ -38,7 +66,7 @@ Analyse du 20 novembre 2026, à partir d'exports anonymisés (noms remplacés pa
 | ---------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------- |
 | Classe entière               | FRANCAIS, MATHEMATIQUES, HISTOIRE-GEOGRAPHIE, ENS. MORAL & CIVIQUE, ANGLAIS LV1, SCIENCES VIE & TERRE, PHYSIQUE-CHIMIE, TECHNOLOGIE, ARTS PLASTIQUES, EDUCATION MUSICALE, ED.PHYSIQUE & SPORT. | Tous les élèves de la classe                         |
 | LVB (5e à 3e)                | ESPAGNOL LV2, ALLEMAND LV2                                                                                                                                                   | Les élèves de cette LVB, dans la classe              |
-| Option (ATHLETISME et BRETON à confirmer, E1) | BRETON, LCA LATIN, LLC ANGLAIS, ATHLETISME                                                                                                                  | Les élèves de cette option, dans la classe           |
+| Option                       | BRETON, LCA LATIN, LLC ANGLAIS, ATHLETISME                                                                                                                  | Les élèves de cette option, dans la classe           |
 | Option ignorée (décision du 20 novembre) | O2, ANGLAIS +, MATHS +                                                                                                                                     | Aucun : ces options ne font pas entrer dans l'équipe |
 | Hors équipe (à confirmer, E1) | VIE DE CLASSE, DEVOIRS FAITS, ACCOMP. AUX DEVOIRS, PARCOURS AVENIR, CDI, Suivi Inclusion                                                                                     | Aucun : ces fonctions ne font pas entrer dans l'équipe |
 
@@ -69,38 +97,38 @@ Analyse du 20 novembre 2026, à partir d'exports anonymisés (noms remplacés pa
 - **BRETON** en 5e, 4e et 3e : suite de la bilangue de 6e, donc option « Breton » à tous les niveaux ?
 - **Fonctions hors équipe** : faut-il aussi y ranger CDI et PARCOURS AVENIR ?
 
-Réponse (20 novembre) : O2, ANGLAIS + et MATHS + sont des options, mais elles sont **ignorées** : elles ne font pas entrer l'enseignant dans l'équipe. Restent à confirmer : ATHLETISME (option ?), BRETON en 5e à 3e (option ?), CDI et PARCOURS AVENIR (hors équipe ?).
+Réponse (20 novembre) : O2, ANGLAIS + et MATHS + sont des options, mais elles sont **ignorées** : elles ne font pas entrer l'enseignant dans l'équipe. ATHLETISME est une option ; BRETON est l'option Breton, à tous les niveaux. CDI et PARCOURS AVENIR : rangés hors équipe, comme proposé.
 
 **E2. Histoire-géographie en breton.** M. JC enseigne-t-il l'histoire-géographie en breton aux élèves bilingues ? Si oui, je propose de le traiter comme un enseignement de l'option Breton dans la classe : il entre dans l'équipe des seuls élèves bilingues. Et en 6 G, seuls 2 des 7 bilingues l'ont-ils en cours ?
 
-Réponse : confirmé par l'export des élèves (groupes 3E-HGBZH et 3E-HGNONBZH) ; traitement exact retenu (P3, solution A). Reste à savoir pourquoi M. JC n'a que 2 des 7 bilingues en 6 G.
+Réponse : confirmé par l'export des élèves (groupes 3E-HGBZH et 3E-HGNONBZH) ; traitement exact retenu (P3, solution A). En 6 G, M. JC n'a que 2 des 7 bilingues : en 3e, les élèves concernés portent « HISTOIRE-GEOGRAPHIE » dans « Toutes les options ». C'est ce signal, et non l'effectif de breton, qui désigne les élèves de M. JC (à vérifier avec l'export des élèves de 6e).
 
 **E3. « Service de notation actif ».** M. CG (éducation musicale, dans toutes les classes) et Mme RL (histoire-géographie et EMC, dans 6 classes où un autre professeur assure déjà ces matières) n'ont pas d'heures. Enseignent-ils réellement à ces classes ? Je propose :
 
 - M. CG : classe entière, il enseigne dans toutes les classes ;
 - Mme RL : à préciser (remplaçante, stagiaire, co-intervention ?).
 
-Réponse :
+Réponse (20 novembre) : oui, tous deux enseignent à ces classes : classe entière. Une ligne sans effectif n'entre pas dans la détection d'un partage (P3).
 
 **E4. Dispositif ULIS (Mme GR).** Faut-il l'écarter des binômes, ou la rattacher aux seuls élèves ULIS ? Dans le second cas, il faudrait que l'export des élèves indique qui en fait partie.
 
-Réponse (20 novembre, via P4) : les élèves ULIS sont repérés par la colonne Formation. Reste à décider si Mme GR est rattachée aux seuls élèves ULIS ou écartée des binômes.
+Réponse (20 novembre, via P4) : les élèves ULIS sont repérés par la colonne Formation. Mme GR est **écartée des binômes**. Règle : un enseignant qui a « Suivi Inclusion » dans au moins une classe du fichier n'est pas importé ; le compte rendu d'import le signale. (Mme GR n'a pas « Suivi Inclusion » en 4 M : la règle porte donc sur tout le fichier, pas classe par classe.)
 
 **E5. Lignes manquantes.** Avez-vous retiré des lignes en anonymisant, ou l'export brut compte-t-il aussi d'autres personnes (vie scolaire, assistants…) ? Si des lignes existent dans l'export brut, j'ai besoin d'en voir un exemple.
 
-Réponse :
+Réponse (20 novembre) : oui, des lignes ont été retirées à l'anonymisation. L'export brut en contient donc d'autres : toute matière ou fonction inconnue sera présentée à l'import pour être classée.
 
 **E6. Noms dans l'export brut.** La colonne Nom contient-elle « NOM Prénom » ? Deux enseignants peuvent-ils avoir le même nom ?
 
-Réponse :
+Réponse (20 novembre) : la colonne contient « NOM Prénom » ; pas d'homonymes. Civilité et Nom suffisent à reconnaître un enseignant d'une classe à l'autre.
 
 **E7. Import unique pour tout le collège.** Le fichier couvre les 4 niveaux. Je propose de pouvoir l'importer **une seule fois depuis l'accueil** : chaque niveau reçoit ses classes et ses enseignants. Les préparations restent indépendantes ensuite. L'import par niveau resterait possible. Cela vous convient-il ?
 
-Réponse :
+Réponse (20 novembre) : non, import par niveau. Le fichier du collège entier est importé dans un niveau, qui n'en garde que ses classes.
 
 **E8. Obtention du fichier.** Quel menu de Pronote produit cet export, et ses colonnes sont-elles toujours les mêmes ? Je l'indiquerai dans l'aide de l'application.
 
-Réponse :
+Réponse (20 novembre) : en attente.
 
 ## 2. Export des élèves
 

@@ -30,6 +30,8 @@ Réponse : traitée à part, voir [Import des exports Pronote](import-pronote.md
 
 Peut-il y avoir deux professeurs d'espagnol en 5A, chacun avec une partie des élèves ?
 
+*Éclairage des exports Pronote (20 novembre) : aucun cas pour les LVB ; un seul enseignant par LVB et par classe. Le partage existe en histoire-géographie (cours en breton) et sera traité exactement (voir [import-pronote.md](import-pronote.md), P3).*
+
 - **A — recommandée si le cas est rare ou inexistant** : un seul enseignant par LVB et par classe. S'il y en a deux, les deux sont comptés dans l'équipe de tous les hispanisants de 5A, et un avertissement le signale.
 - **B** : groupes explicites, chaque élève est rattaché à son groupe (« Espagnol 1 », « Espagnol 2 »). Règle exacte, mais saisie et import plus lourds.
 
@@ -38,6 +40,8 @@ Réponse :
 ## 3. Un enseignant peut-il avoir des types différents selon les classes ?
 
 Exemple : un professeur de lettres classiques enseigne le français en 5A (classe entière) et le latin en 5B et 5C (option).
+
+*Éclairage des exports Pronote (20 novembre) : le cas existe bien. Mme AYO a FRANCAIS et LCA LATIN en 3 I, seulement LCA LATIN en 3 J, 4 C et 4 M ; Mme KF a BRETON en 3 E, 4 B, 5 P et 6 G, et FRANCAIS en 4 G. L'import déduira le type classe par classe.*
 
 - **Oui — recommandé, le cas est courant** : chaque classe cochée porte son type. À l'écran, un réglage « Enseigne en tant que » par professeur (classe entière, Espagnol, Latin…) s'applique à toutes ses classes ; un détail par classe permet de régler les exceptions.
 - **Non** : un seul type par enseignant, saisie plus simple.
