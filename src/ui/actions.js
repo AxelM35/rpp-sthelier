@@ -31,6 +31,7 @@ import { app } from './app.js';
 import { $, annoncer, confirmer, telecharger, toast } from './dom.js';
 import { afficherDialogue, chargerLignes, fermerDialogue, lireFichierImport, ouvrirDialogue } from './dialogueImport.js';
 import { fermerEnseignement, lireChoix, ouvrirEnseignement } from './dialogueEnseignement.js';
+import { choisir as choisirPronote, importer as importerPronote } from './dialoguePronote.js';
 import { DOCUMENTS } from './documents.js';
 import { LETTRES } from './vues/comparaison.js';
 import { allerAAccueil, allerAuNiveau } from './navigation.js';
@@ -459,6 +460,15 @@ export const actions = {
   },
   validerImport() {
     const imp = app.ui.import;
+    if (imp.pronote) {
+      const r = importerPronote(imp);
+      app.etat = r.etat;
+      app.ui.message = { ok: true, txt: r.message };
+      fermerDialogue();
+      app.ui.focus = 'action:ouvrirImport|' + imp.type + '|';
+      enregistrer();
+      return;
+    }
     const r = importerLignes(app.etat, imp);
     if (r.erreur) {
       toast(r.erreur);
@@ -477,7 +487,8 @@ export const actions = {
             (eleves
               ? ' doublon(s) ignoré(s) (même nom, prénom et classe).'
               : ' professeur(s) déjà présent(s) : leurs classes ont été complétées.')
-          : '.'),
+          : '.') +
+        (r.ajoutees && r.ajoutees.length ? ' Ajouté aux LVB et options du niveau : ' + r.ajoutees.join(', ') + '.' : ''),
     };
     fermerDialogue();
     app.ui.focus = 'action:ouvrirImport|' + imp.type + '|';
@@ -595,6 +606,10 @@ export const champs = {
   },
   fichierImport: (el) => el.files[0] && lireFichierImport(el.files[0]),
   colonneImport: (el) => (app.ui.import.colonnes[el.dataset.param] = Number(el.value)),
+  choixPronote(el) {
+    choisirPronote(app.ui.import, el);
+    afficherDialogue();
+  },
   optionImport(el) {
     app.ui.import[el.dataset.param] = el.checked;
     afficherDialogue();
@@ -602,5 +617,12 @@ export const champs = {
 };
 
 /** Champs qui ne modifient pas les données ou gèrent eux-mêmes l'enregistrement et le rendu. */
-export const CHAMPS_SANS_ENREGISTREMENT = new Set(['filtre', 'ouvrirFichier', 'fichierImport', 'colonneImport', 'optionImport']);
-export const CHAMPS_SANS_RENDU = new Set(['ouvrirFichier', 'fichierImport', 'colonneImport', 'optionImport']);
+export const CHAMPS_SANS_ENREGISTREMENT = new Set([
+  'filtre',
+  'ouvrirFichier',
+  'fichierImport',
+  'colonneImport',
+  'optionImport',
+  'choixPronote',
+]);
+export const CHAMPS_SANS_RENDU = new Set(['ouvrirFichier', 'fichierImport', 'colonneImport', 'optionImport', 'choixPronote']);

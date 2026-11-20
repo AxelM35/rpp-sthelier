@@ -31,6 +31,12 @@ Toutes les questions sont tranchées.
 
 **Discipline partagée (histoire-géographie en breton)** : quand des élèves portent une discipline de classe entière dans « Toutes les options » (« HISTOIRE-GEOGRAPHIE »), l'enseignant de cette discipline dont l'effectif correspond reçoit ces élèves, et l'autre devient « classe entière sauf ces élèves ». L'application présente ce partage pour confirmation à l'import.
 
+**Mise en œuvre (étape 3d)** :
+
+- l'effectif Pronote de chaque enseignement importé est conservé : l'import des élèves s'en sert pour les élèves ULIS (U1 bis) et pour signaler les écarts d'effectif d'une option ;
+- la discipline partagée est repérée dès l'import des enseignants : dans une discipline de classe entière, un seul enseignant a moins de la moitié de la classe et n'enseigne que les disciplines partagées (M. JC : histoire-géographie et EMC). Il reçoit les élèves d'une option « Histoire-géographie (groupe à part) », les autres enseignants de ces disciplines deviennent « classe entière sauf cette option ». À l'import des élèves, la valeur « HISTOIRE-GEOGRAPHIE » de « Toutes les options » désigne les élèves de cette option ;
+- une matière inconnue est proposée en « toute la classe » si un enseignant l'assure devant au moins 80 % d'une classe, sinon en « ignorée ».
+
 **Un seul bouton « Importer… »** (N2) : un export Pronote est reconnu à ses en-têtes et suit ces règles ; tout autre fichier passe par le choix des colonnes de la v1.
 
 ## 1. Export des enseignants

@@ -97,12 +97,12 @@ test('export Excel du planning : trois feuilles cohérentes', async () => {
 test('detecterColonnes reconnaît les en-têtes usuels', () => {
   assert.deepEqual(detecterColonnes('eleves', [['Division', 'Prénom', 'Nom de famille']]), {
     entete: true,
-    colonnes: { nom: 2, prenom: 1, classe: 0, fratrie: -1 },
+    colonnes: { nom: 2, prenom: 1, classe: 0, fratrie: -1, lvb: -1, options: -1 },
   });
   assert.deepEqual(detecterColonnes('profs', [['Enseignant', 'Matière', 'Classes']]).colonnes, { nom: 0, discipline: 1, classe: 2 });
   assert.deepEqual(detecterColonnes('eleves', [['Dupont', 'Marc', '6A']]), {
     entete: false,
-    colonnes: { nom: 0, prenom: 1, classe: 2, fratrie: -1 },
+    colonnes: { nom: 0, prenom: 1, classe: 2, fratrie: -1, lvb: -1, options: -1 },
   });
 });
 

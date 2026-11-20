@@ -188,6 +188,11 @@ Commencer par le design permet de valider l'aspect visuel tôt, avant de constru
     - professeur principal choisi pour chaque classe ;
     - puces des enseignants : un clic sur une classe libre l'ajoute (toute la classe) ; une classe attribuée indique son type (« 4B · Espagnol », « 4A · sauf Histoire-géographie en breton ») et un clic ouvre le dialogue de choix (toute la classe, LVB avec ou sans les élèves ULIS, option, toute la classe sauf une option, aucun enseignement) ;
     - liste des élèves : colonnes LVB, options et ULIS.
+  - **Étape 3d, import Pronote — livrée.** Le bouton « Importer… » reconnaît un export Pronote à ses en-têtes (`io/pronote.js`) et applique les règles de [import-pronote.md](import-pronote.md). Un écran de confirmation présente, avant l'import :
+    - enseignants : classes du niveau gardées, enseignements de chacun, professeurs principaux, LVB et options ajoutées au niveau, matières inconnues à classer, disciplines partagées à confirmer, enseignants écartés (« Suivi Inclusion ») et lignes non retenues ;
+    - élèves : colonnes non lues (données personnelles), LVB et options retenues, valeurs inconnues à ajouter ou ignorer, élèves ULIS et LVB classe par classe (U1 bis), écarts d'effectifs à vérifier ;
+    - aide indiquant les menus de Pronote ; rappel d'importer les enseignants d'abord.
+    Vérifié sur les exports anonymisés des quatre niveaux du collège. L'import générique lit aussi des colonnes LVB et options : les valeurs sont rapprochées des listes du niveau, une valeur inconnue y est ajoutée et signalée.
 
 ## 9. Décisions du 19 novembre 2026
 

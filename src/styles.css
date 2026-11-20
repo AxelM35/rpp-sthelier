@@ -1033,6 +1033,27 @@ label.choix:hover {
   display: flex;
   flex-wrap: wrap;
 }
+/* Écran de confirmation d'un import Pronote. */
+.import-pronote h3.import-titre {
+  margin: 18px 0 6px;
+}
+.import-pronote details {
+  margin: 4px 0;
+}
+label.case {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  padding: 4px 0;
+  cursor: pointer;
+}
+label.case input {
+  margin-top: 3px;
+}
+label.case small {
+  display: block;
+  color: var(--md-sys-color-on-surface-variant);
+}
 dialog::backdrop {
   background: rgb(0 0 0 / 0.32);
 }

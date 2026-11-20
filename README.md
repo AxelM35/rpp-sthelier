@@ -43,6 +43,7 @@ npx playwright install chromium
 - [Cahier des charges de la version 1](docs/cahier-des-charges.md)
 - [Cahier des charges de la version 2 (6e à 3e, en préparation)](docs/cahier-des-charges-v2.md)
 - [Audit du code et suivi des corrections](docs/audit.md)
+- [Import des exports Pronote : analyse et règles](docs/import-pronote.md)
 - [Fiche de traitement des données personnelles (RGPD)](docs/rgpd.md)
 
 ## Organisation du code
@@ -70,6 +71,7 @@ src/
   io/                  Imports et exports, sans navigateur
     csv.js, zip.js, xlsx.js, import.js, exports.js
     stockage.js        Clés du stockage par niveau, reprise des données de la v1 (stockage passé en paramètre)
+    pronote.js         Import des exports bruts de Pronote : reconnaissance, analyse, import (docs/import-pronote.md)
   ui/                  Interface
     app.js             État courant partagé (niveau ouvert, données, affichage)
     navigation.js      Accueil ou niveau ouvert, niveau inscrit dans l'adresse (#5e)
@@ -82,6 +84,7 @@ src/
     documents.js       Documents imprimables
     dialogueImport.js  Dialogue d'import
     dialogueEnseignement.js  Dialogue de choix de l'enseignement d'un professeur dans une classe
+    dialoguePronote.js Écran de confirmation d'un import Pronote
   main.js              Point d'entrée
   index.html           Gabarit de la page
   styles.css           Feuille de style Material 3 (typographie, formes, composants)
@@ -93,7 +96,8 @@ docs/                  Cahier des charges, audit, fiche RGPD
 tests/
   unit/                Tests des modules algos, modele, io, utils
   e2e/                 Tests de l'application construite dans un navigateur
-  fixtures/            Collèges fictifs : 6e (108 élèves, 20 professeurs), 4e avec LVB, options et ULIS ; fichiers Excel
+  fixtures/            Collèges fictifs : 6e (108 élèves, 20 professeurs), 4e avec LVB, options et ULIS ;
+                       exports Pronote fictifs (enseignants, élèves) ; fichiers Excel
 ```
 
 ### Principes

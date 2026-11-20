@@ -53,3 +53,52 @@ export const SOIREE_PAR_DEFAUT = Object.freeze({
  * à la protection des données de l'établissement.
  */
 export const CONSERVATION_JOURS = 30;
+
+/**
+ * Lecture des exports Pronote (docs/import-pronote.md). Les matières sont comparées sans accents ni
+ * différence de majuscules. Une matière absente de ces listes est présentée à l'import pour être classée ;
+ * toute matière se terminant par « LV2 » est une LVB.
+ */
+export const PRONOTE = Object.freeze({
+  /** Disciplines enseignées à toute la classe. */
+  classeEntiere: Object.freeze([
+    'FRANCAIS',
+    'MATHEMATIQUES',
+    'HISTOIRE-GEOGRAPHIE',
+    'ENS. MORAL & CIVIQUE',
+    'ANGLAIS LV1',
+    'SCIENCES VIE & TERRE',
+    'PHYSIQUE-CHIMIE',
+    'TECHNOLOGIE',
+    'ARTS PLASTIQUES',
+    'EDUCATION MUSICALE',
+    'ED.PHYSIQUE & SPORT.',
+  ]),
+  /** Options qui font entrer l'enseignant dans l'équipe des élèves qui les suivent. */
+  options: Object.freeze(['BRETON', 'LCA LATIN', 'ATHLETISME']),
+  /** Options et fonctions ignorées pour les binômes (décisions E1 et N1 du 20 novembre). */
+  ignorees: Object.freeze([
+    'O2',
+    'ANGLAIS +',
+    'MATHS +',
+    'LLC ANGLAIS',
+    'VIE DE CLASSE',
+    'DEVOIRS FAITS',
+    'ACCOMP. AUX DEVOIRS',
+    'PARCOURS AVENIR',
+    'CDI',
+    'SUIVI INCLUSION',
+  ]),
+  /** Fonction qui écarte un enseignant des binômes, dans tout le fichier (coordination ULIS, décision E4). */
+  exclusion: 'SUIVI INCLUSION',
+  /** Noms affichés dans l'application. */
+  noms: Object.freeze({
+    'ESPAGNOL LV2': 'Espagnol',
+    'ALLEMAND LV2': 'Allemand',
+    BRETON: 'Breton',
+    'BRETON REG.': 'Breton',
+    'LCA LATIN': 'Latin',
+    ATHLETISME: 'Athlétisme',
+    'HISTOIRE-GEOGRAPHIE': 'Histoire-géographie',
+  }),
+});

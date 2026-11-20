@@ -1,7 +1,9 @@
 // Import de listes d'élèves et de professeurs à partir de lignes de tableur.
 
+import { PRONOTE } from '../config.js';
 import { copierEtat } from '../modele/etat.js';
 import { nouvelId } from '../utils/texte.js';
+import { correspondance, nomAffiche, normaliser } from './pronote.js';
 
 /** Champs attendus par type d'import : [clé, libellé, motif de reconnaissance de l'en-tête]. */
 export const CHAMPS = {
@@ -10,6 +12,8 @@ export const CHAMPS = {
     ['prenom', 'Prénom', /pr[ée]nom/i],
     ['classe', 'Classe *', /classe|division/i],
     ['fratrie', 'Fratrie (code)', /fratrie|famille/i],
+    ['lvb', 'LVB', /\blvb\b|lv2|langue/i],
+    ['options', 'Options', /option/i],
   ],
   profs: [
     ['nom', 'Nom *', /nom|professeur|enseignant/i],
@@ -39,11 +43,12 @@ export function detecterColonnes(type, lignes) {
   return { entete, colonnes };
 }
 
-/** Classe portant ce nom (sans tenir compte de la casse), créée si besoin dans l'état fourni. */
-function classeParNom(etat, nom) {
+/** Classe portant ce nom (sans tenir compte de la casse ni des espaces : « 4 B » = « 4B »), créée si besoin dans l'état fourni. */
+export function classeParNom(etat, nom) {
   nom = String(nom).trim();
   if (!nom) return null;
-  let c = etat.classes.find((x) => x.nom.toLowerCase() === nom.toLowerCase());
+  const cle = (x) => x.toLowerCase().replace(/\s+/g, '');
+  let c = etat.classes.find((x) => cle(x.nom) === cle(nom));
   if (!c) {
     c = { id: nouvelId(), nom, ppId: null };
     etat.classes.push(c);
@@ -65,9 +70,23 @@ export function importerLignes(etatInitial, { type, lignes, colonnes, entete, re
   const valeur = (l, cle) => (colonnes[cle] >= 0 ? (l[colonnes[cle]] || '').trim() : '');
   let ajoutes = 0;
   let doublons = 0;
+  const resultat = {};
 
   if (type === 'eleves') {
     if (remplacer) etat.eleves = [];
+    // LVB et options : rapprochées des listes du niveau ; une valeur inconnue y est ajoutée (V2-F3).
+    const ajoutees = [];
+    const idDans = (liste, valeur, prefixe) => {
+      if (!valeur.trim() || PRONOTE.ignorees.includes(normaliser(valeur))) return null;
+      let x = correspondance(liste, valeur);
+      if (!x) {
+        x = { id: prefixe + nouvelId(), nom: nomAffiche(valeur) };
+        liste.push(x);
+        ajoutees.push(x.nom);
+      }
+      return x.id;
+    };
+    resultat.ajoutees = ajoutees;
     const cle = (nom, prenom, classeId) => (nom + '|' + prenom + '|' + classeId).toLowerCase();
     const vus = new Set(etat.eleves.map((e) => cle(e.nom, e.prenom, e.classeId)));
     donnees.forEach((l) => {
@@ -85,8 +104,15 @@ export function importerLignes(etatInitial, { type, lignes, colonnes, entete, re
         nom,
         prenom: valeur(l, 'prenom'),
         classeId: classe.id,
-        lvbId: null,
-        optionIds: [],
+        lvbId: idDans(etat.lvb, valeur(l, 'lvb'), 'lvb-'),
+        optionIds: [
+          ...new Set(
+            valeur(l, 'options')
+              .split(/[,;/|]+/)
+              .map((o) => idDans(etat.options, o, 'opt-'))
+              .filter(Boolean),
+          ),
+        ],
         ulis: false,
         fratrie: valeur(l, 'fratrie'),
         pasAvant: '',
@@ -124,5 +150,5 @@ export function importerLignes(etatInitial, { type, lignes, colonnes, entete, re
         });
     });
   }
-  return { etat, ajoutes, doublons };
+  return { etat, ajoutes, doublons, ...resultat };
 }

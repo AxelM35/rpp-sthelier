@@ -19,6 +19,8 @@
 //   'option'  les élèves de l'option refId
 //   'sauf'    toute la classe sauf les élèves de l'option refId (discipline partagée, par exemple
 //             l'histoire-géographie enseignée en breton aux élèves bilingues)
+// « effectif » (facultatif) : nombre d'élèves de la classe que l'enseignant a en cours, lu dans l'export
+// Pronote ; il sert à l'import des élèves (élèves ULIS et LVB, discipline partagée).
 // L'équipe d'un élève s'en déduit (modele/equipe.js).
 //
 // « slot » est l'indice du créneau dans la liste calculée par creneaux().
@@ -245,7 +247,9 @@ export function validerEnseignements(brut, { classes, lvb, options }) {
       x.type === 'classe' ? null : x.type === 'lvb' ? (lvb.has(x.refId) ? x.refId : undefined) : options.has(x.refId) ? x.refId : undefined;
     if (!TYPES_ENSEIGNEMENT.includes(x.type) || ref === undefined) continue;
     vus.add(x.classeId);
-    valides.push({ classeId: x.classeId, type: x.type, refId: ref, sansUlis: x.type === 'lvb' && x.sansUlis === true });
+    const ens = { classeId: x.classeId, type: x.type, refId: ref, sansUlis: x.type === 'lvb' && x.sansUlis === true };
+    if (Number.isInteger(x.effectif) && x.effectif >= 0 && x.effectif < 10000) ens.effectif = x.effectif;
+    valides.push(ens);
   }
   return valides;
 }
