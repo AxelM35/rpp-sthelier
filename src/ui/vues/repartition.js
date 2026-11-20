@@ -79,7 +79,7 @@ export function vueRepartition(points) {
     '<span class="sp"></span><button type="button" class="b p" data-action="repartir">Répartir automatiquement</button></div>' +
     '<p class="note">Pour déplacer un élève : glissez-le vers un autre binôme, ou sélectionnez-le (clic, ou touche Entrée au clavier) ' +
     'puis choisissez « Placer ici » dans la colonne voulue. ' +
-    'Un « ! » signale un élève placé chez un binôme qui ne reçoit pas sa classe.</p></div>' +
+    "Un « ! » signale un élève placé chez un binôme qui ne reçoit pas sa classe, ou dont un professeur ne l'a pas en cours.</p></div>" +
     '<div class="cols"><div class="col" data-cible="none"><h3>Non affectés <span class="badge ' +
     (nonAffectes.length ? 'warn' : 'ok') +
     '">' +

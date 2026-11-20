@@ -16,10 +16,18 @@ Projet de fiche pour le registre des activités de traitement de l'établissemen
 
 | Personnes concernées | Données                                                                                              |
 | -------------------- | ---------------------------------------------------------------------------------------------------- |
-| Élèves (6e à 3e)     | Nom, prénom, classe ; code de fratrie (facultatif) ; contraintes horaires de la famille (facultatif) |
-| Enseignants          | Nom, discipline, classes ; heures d'arrivée tardive ou de départ anticipé (facultatif)               |
+| Élèves (6e à 3e)     | Nom, prénom (ou prénom d'usage), classe ; LVB et options suivies ; scolarisation en ULIS (oui ou non) ; code de fratrie (facultatif) ; contraintes horaires de la famille (facultatif) |
+| Enseignants          | Civilité et nom, discipline, enseignements (classes, LVB, options) avec leur effectif ; professeur principal ; heures d'arrivée tardive ou de départ anticipé (facultatif) |
 
-Aucune donnée sensible au sens de l'article 9 du RGPD (santé, etc.), aucune appréciation scolaire et aucune coordonnée des familles ne sont traitées. L'application invite à ne rien saisir d'autre.
+**Indication ULIS : donnée sensible.** Savoir qu'un élève est scolarisé en ULIS révèle une situation de handicap, donnée concernant la santé au sens de l'article 9 du RGPD. Elle est nécessaire au traitement : certains enseignements (une LVB) ne sont pas suivis par les élèves ULIS, et l'élève ne doit être reçu que par des enseignants qui l'ont en cours. Mesures propres à cette donnée :
+
+- une simple case oui / non, sans précision (ni type de dispositif, ni motif) ;
+- elle n'apparaît dans aucun document imprimé ni dans aucun export Excel ou CSV : seulement à l'écran (liste des élèves) et dans le fichier de sauvegarde ;
+- elle est effacée avec les autres données (effacement d'un niveau ou de tous les niveaux).
+
+Aucune autre donnée sensible, aucune appréciation scolaire et aucune coordonnée des familles ne sont traitées. L'application invite à ne rien saisir d'autre.
+
+**Exports Pronote.** L'export des élèves contient des colonnes sensibles (date de naissance, sexe, projet d'accompagnement avec des informations médicales, allergies). L'application ne les lit pas et n'en enregistre rien ; elle les nomme à l'import et invite à les retirer de l'export dans Pronote. Seules sont lues les colonnes Nom, Prénom, Prénom d'usage, Classe, Formation (pour l'ULIS) et Toutes les options.
 
 ## Destinataires
 
@@ -59,5 +67,7 @@ Les familles sont informées du traitement selon les modalités habituelles de l
 1. Base légale et mention d'information des familles.
 2. Durée de conservation (30 jours proposés).
 3. Inscription au registre de l'établissement.
-4. Nécessité ou non d'une analyse d'impact : traitement limité, sans donnée sensible ni profilage, mais concernant des mineurs.
+4. Nécessité ou non d'une analyse d'impact : traitement limité, sans profilage, mais concernant des mineurs et comprenant une donnée sensible (indication ULIS).
+6. Indication ULIS : confirmer qu'elle peut être traitée dans cet outil (mission d'intérêt public, article 9.2.g du RGPD à vérifier), avec les mesures ci-dessus.
+7. Exports Pronote : rappeler aux utilisateurs de retirer les colonnes sensibles de l'export et de supprimer le fichier exporté après l'import.
 5. Postes autorisés à utiliser l'outil (poste partagé de salle des professeurs ou poste personnel professionnel).

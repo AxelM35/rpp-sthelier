@@ -174,7 +174,7 @@ Commencer par le design permet de valider l'aspect visuel tôt, avant de constru
   - **Sauvegardes** : le niveau est enregistré dans le fichier et figure dans son nom (`rencontres-parents-profs-5e.json`, `planning-rencontres-5e.xlsx`). Depuis l'accueil, « Ouvrir une sauvegarde » range le fichier dans son niveau (confirmation si ce niveau contient déjà des données). Dans un niveau, une sauvegarde d'un autre niveau est refusée. Un fichier de la v1 est une sauvegarde de 6e.
   - **Reprise de la v1** (V2-F11) : format de données version 2 (champ `niveau`). Au premier lancement, les données de la v1 enregistrées dans le navigateur deviennent le niveau 6e, avec leurs dates de sauvegarde, et les anciennes clés sont supprimées. Des données illisibles sont mises de côté ; un 6e déjà rempli n'est jamais écrasé.
   - **Documents** : l'en-tête des plannings indique le niveau (début de V2-F9). Une nouvelle classe est nommée selon le niveau (5A, 5B…).
-- **Lot 3 — en cours sur `v2-dev`.**
+- **Lot 3 — livré sur `v2-dev`.**
   - **Étape 3a, modèle et équipe — livrée.** Format de données version 3, avec migration depuis la version 2 : listes de LVB et d'options par niveau ; pour l'élève, LVB, options et ULIS ; pour l'enseignant, un enseignement par classe (classe entière, LVB avec ou sans les élèves ULIS, option, ou classe entière sauf une option) ; professeur principal de chaque classe. Le module `modele/equipe.js` calcule l'équipe d'un élève (section 4.4). Les algorithmes raisonnent encore par classe jusqu'à l'étape 3b ; les plannings générés vérifient déjà la règle V2-R2 dans les tests.
   - **Étape 3b, algorithmes et contrôles — livrée.**
     - **Calcul par groupes** : les élèves d'une même classe qui ont la même équipe forment un groupe (`algos/groupes.js`). Proposition des binômes, répartition et comparaison de propositions raisonnent par groupe : un binôme ne reçoit que des élèves dont ses deux enseignants font partie de l'équipe (V2-R2, V2-R10). Quand tout est enseigné à la classe entière, chaque classe forme un seul groupe : sur six situations de 6e, binômes, répartition et horaires sont identiques à ceux de la version 1, et le temps de calcul est inchangé.
@@ -193,6 +193,7 @@ Commencer par le design permet de valider l'aspect visuel tôt, avant de constru
     - élèves : colonnes non lues (données personnelles), LVB et options retenues, valeurs inconnues à ajouter ou ignorer, élèves ULIS et LVB classe par classe (U1 bis), écarts d'effectifs à vérifier ;
     - aide indiquant les menus de Pronote ; rappel d'importer les enseignants d'abord.
     Vérifié sur les exports anonymisés des quatre niveaux du collège. L'import générique lit aussi des colonnes LVB et options : les valeurs sont rapprochées des listes du niveau, une valeur inconnue y est ajoutée et signalée.
+  - **Étape 3e, finition — livrée.** Parcours complet vérifié dans le navigateur (import Pronote des enseignants et des élèves, génération, tous les onglets) en thème clair, sombre et sur téléphone. Fiche RGPD mise à jour : l'indication ULIS est une donnée sensible (article 9), traitée en simple case oui / non, absente des documents et des exports ; colonnes sensibles des exports Pronote jamais lues. Textes d'aide de l'application mis à jour.
 
 ## 9. Décisions du 19 novembre 2026
 

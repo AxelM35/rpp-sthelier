@@ -16,7 +16,8 @@ function premiersPas() {
     (app.etat.eleves.length ? '' : ' open') +
     '><summary>Premiers pas</summary><ol>' +
     "<li><b>Soirée</b> : fixez la date, les heures de début et de fin, la durée d'un rendez-vous et les pauses. Le nombre de créneaux se calcule seul.</li>" +
-    '<li><b>Données</b> : importez les élèves et les professeurs (fichier CSV ou Excel, ou copier-coller), puis cochez les classes de chaque professeur.</li>' +
+    "<li><b>Données</b> : importez les exports Pronote, d'abord les enseignants, puis les élèves (ou un autre fichier CSV ou Excel). " +
+    "Vérifiez les langues et options, le professeur principal de chaque classe et l'enseignement de chaque professeur.</li>" +
     "<li><b>Binômes</b> : cliquez « Tout générer ». Les binômes que vous composez vous-même sont conservés, l'application complète le reste.</li>" +
     '<li><b>Répartition</b> et <b>Planning</b> : ajustez à la main si besoin ; le cadenas protège un rendez-vous.</li>' +
     '<li><b>Documents</b> : imprimez les plannings et les convocations, ou exportez le planning en Excel.</li>' +
@@ -128,8 +129,9 @@ function donneesPersonnelles() {
     '<ul class="liste">' +
     "<li><b>Où sont-elles ?</b> Uniquement dans ce navigateur, sur cet ordinateur, chaque niveau séparément. L'application ne les envoie nulle part. " +
     'Toute personne qui utilise ce navigateur avec la même session peut y accéder : sur un poste partagé, effacez-les après usage.</li>' +
-    '<li><b>Lesquelles ?</b> Nom, prénom et classe des élèves, code de fratrie, contraintes horaires des familles, ' +
-    "noms et classes des professeurs. Ne saisissez rien d'autre (pas de motif de rendez-vous ni de commentaire sur un élève).</li>" +
+    '<li><b>Lesquelles ?</b> Nom, prénom et classe des élèves, LVB et options, scolarisation en ULIS, code de fratrie, contraintes horaires des familles, ' +
+    "noms et enseignements des professeurs. L'indication ULIS est une donnée sensible : elle ne figure sur aucun document ni export. " +
+    "Ne saisissez rien d'autre (pas de motif de rendez-vous ni de commentaire sur un élève).</li>" +
     '<li><b>Fichiers.</b> Les sauvegardes, les exports Excel et CSV et les documents imprimés contiennent ces données : ' +
     'rangez-les dans un espace professionnel protégé et supprimez-les quand ils ne servent plus.</li>' +
     '<li><b>Combien de temps ?</b> Effacez-les au plus tard ' +
