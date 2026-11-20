@@ -27,6 +27,7 @@ Toutes les questions sont tranchées, sauf E8 (menus de Pronote, pour l'aide).
 3. Options : les valeurs qui correspondent à une option de l'export des enseignants, rapprochées si l'un des noms commence par l'autre (« BRETON REG. » = « BRETON »), avec confirmation.
 4. Ignorés : O2, ANGLAIS +, MATHS +, ANGLAIS LV1, la colonne Groupes.
 5. ULIS : Formation se terminant par « ULIS ».
+6. Élèves homonymes : deux lignes d'un même fichier sont toujours deux élèves, même avec les mêmes nom, prénom et classe. Le dédoublonnage (fichier importé deux fois) ne compare le fichier qu'aux élèves déjà saisis, ligne à ligne.
 
 **Discipline partagée (histoire-géographie en breton)** : quand des élèves portent une discipline de classe entière dans « Toutes les options » (« HISTOIRE-GEOGRAPHIE »), l'enseignant de cette discipline dont l'effectif correspond reçoit ces élèves, et l'autre devient « classe entière sauf ces élèves ». L'application présente ce partage pour confirmation à l'import.
 
@@ -101,7 +102,7 @@ Réponse (20 novembre) : O2, ANGLAIS + et MATHS + sont des options, mais elles s
 
 **E2. Histoire-géographie en breton.** M. JC enseigne-t-il l'histoire-géographie en breton aux élèves bilingues ? Si oui, je propose de le traiter comme un enseignement de l'option Breton dans la classe : il entre dans l'équipe des seuls élèves bilingues. Et en 6 G, seuls 2 des 7 bilingues l'ont-ils en cours ?
 
-Réponse : confirmé par l'export des élèves (groupes 3E-HGBZH et 3E-HGNONBZH) ; traitement exact retenu (P3, solution A). En 6 G, M. JC n'a que 2 des 7 bilingues : en 3e, les élèves concernés portent « HISTOIRE-GEOGRAPHIE » dans « Toutes les options ». C'est ce signal, et non l'effectif de breton, qui désigne les élèves de M. JC (à vérifier avec l'export des élèves de 6e).
+Réponse : confirmé par l'export des élèves (groupes 3E-HGBZH et 3E-HGNONBZH) ; traitement exact retenu (P3, solution A). En 6 G, M. JC n'a que 2 des 7 bilingues : en 3e, les élèves concernés portent « HISTOIRE-GEOGRAPHIE » dans « Toutes les options ». C'est ce signal, et non l'effectif de breton, qui désigne les élèves de M. JC Vérifié avec l'export des élèves de 6e : en 6 G, 2 élèves ont « HISTOIRE-GEOGRAPHIE » en option, soit l'effectif de M. JC (partie 3).
 
 **E3. « Service de notation actif ».** M. CG (éducation musicale, dans toutes les classes) et Mme RL (histoire-géographie et EMC, dans 6 classes où un autre professeur assure déjà ces matières) n'ont pas d'heures. Enseignent-ils réellement à ces classes ? Je propose :
 
@@ -231,3 +232,26 @@ Réponse (20 novembre) : un export des élèves par niveau.
 **P9. Colonnes sensibles.** Pouvez-vous retirer de l'export Pronote les colonnes Né(e) le, Sexe, Projet d'accompagnement, Allergies et Majeur ? Si ce n'est pas possible, l'application les ignorera de toute façon.
 
 Réponse (20 novembre) : oui, les colonnes sensibles seront retirées de l'export.
+
+## 3. Vérification avec l'export des élèves de 6e
+
+Export anonymisé du niveau 6e : 139 élèves (6 C, 6 G, 6 M, 6 N : 28 ; 6 T : 27), mêmes colonnes que l'export de 3e. Les effectifs des classes sont ceux de l'export des enseignants.
+
+- **Options** : en 6e, seuls 2 élèves de 6 G ont une option utile (BRETON REG.), avec HISTOIRE-GEOGRAPHIE et ENS. MORAL & CIVIQUE. ANGLAIS + (24) et MATHS + (18) n'apparaissent que dans les groupes (« 6-ANG+ », « 6-MATHS+ ») et sont ignorés.
+- **Breton** : Mme KF a un effectif de 7 en 6 G parce que son groupe réunit 6 G et 5 P (« 6G-5P-BZH » : 2 + 5). L'appartenance à l'option se lit donc côté élèves, jamais dans l'effectif de l'enseignant.
+- **Histoire-géographie en breton (6 G)** : 2 élèves l'ont en option, M. JC a 2 élèves, Mme MH 26 = les autres. La règle du partage s'applique sans ambiguïté.
+- **Prénom d'usage** : rempli pour 7 élèves (P7).
+- **Homonymes** : deux paires d'élèves de 6 G ont les mêmes nom, prénom et classe (initiales de l'anonymisation), mais sont bien des élèves différents. D'où la règle 6 de l'import des élèves.
+- **Colonnes sensibles** : encore présentes dans cet export (P9).
+
+**Résultat de la simulation des règles sur la 6e** (enseignants rattachés à chaque classe) :
+
+| Classe | Classe entière | Option ou partage | Non rattachés |
+| ------ | -------------- | ----------------- | ------------- |
+| 6 C | 9 (dont M. MC, PP) | — | Mme LF (devoirs faits), M. AMo (anglais +), Mme EMN (maths +) |
+| 6 G | 10 (dont Mme DRD, PP) | Mme KF : Breton ; M. JC : HG pour les 2 bilingues ; Mme MH : HG pour les 26 autres | Mme LJ (devoirs faits), Mme EMN (maths +) |
+| 6 M | 9 (dont Mme BBo, PP) | — | Mme EMN (maths +) |
+| 6 N | 9 (dont Mme EC, PP) | — | Mme ACJ (devoirs faits), M. AMo (anglais +), Mme EMN (maths +) |
+| 6 T | 10 (dont M. AMo, PP) | — | Mme LF (devoirs faits), Mme EMN (maths +) |
+
+Aucune matière inconnue en 6e.
