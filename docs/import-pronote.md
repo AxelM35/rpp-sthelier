@@ -103,4 +103,102 @@ Réponse :
 
 ## 2. Export des élèves
 
-À recevoir. Il doit permettre de savoir quels élèves suivent ESPAGNOL LV2, ALLEMAND LV2, BRETON, LCA LATIN, LLC ANGLAIS, O2, ATHLETISME… (et ULIS selon la réponse à E4), et comment s'écrivent les noms de classes.
+Analyse d'un export anonymisé du niveau 3e (128 élèves, classes 3 A, 3 E, 3 I, 3 J, 3 O).
+
+### Données personnelles : colonnes à ne jamais importer
+
+L'export contient des **données de santé** (« Projet d'accompagnement » : PAI médicaux, PPS… ; « Allergies »), ainsi que la date de naissance et le sexe. L'application n'en a pas besoin.
+
+- L'application ne lira que **Nom, Prénom, Prénom d'usage, Classe, Formation, Groupes, Toutes les options**. Les autres colonnes sont ignorées, jamais enregistrées, et leur nom est affiché à l'import (« colonnes ignorées »).
+- Il est préférable de **retirer ces colonnes de l'export dans Pronote**, pour que ces données ne circulent pas dans un fichier (question P9).
+- Les fichiers reçus pour l'analyse restent hors du dépôt. Les tests utiliseront un jeu fictif de même structure.
+
+### Structure du fichier
+
+- **Une seule feuille, une ligne par élève**, avec une ligne d'en-tête. 128 élèves, puis 408 lignes vides en fin de feuille, que le lecteur de l'application écarte déjà.
+- **Classe** : même écriture que l'export des enseignants (« 3 E »). Le rapprochement est direct.
+- **Formation** : « 3EME » (106), « 3EME SECTION SPORTIVE » (15), « 3EME BILINGUE » (4), « 3EME ULIS » (3).
+- **Toutes les options** : liste séparée par des virgules. Elle donne la LV1, la LV2 et les options : ANGLAIS LV1 (128), ESPAGNOL LV2 (121), ALLEMAND LV2 (7), LLC ANGLAIS (39), LCA LATIN (22), ATHLETISME (15), BRETON REG. (4), et HISTOIRE-GEOGRAPHIE (4) et ENS. MORAL & CIVIQUE (4) pour les bilingues.
+- **Groupes** : liste de codes « classes-groupe ». Le préfixe énumère les classes réunies : « 3AEIJO-O2 » couvre les 5 classes de 3e ; « 3AE4M-ALL » réunit 3 A, 3 E et 4 M.
+
+  | Groupe(s)                    | Élèves                   | Sens                                            |
+  | ---------------------------- | ------------------------ | ----------------------------------------------- |
+  | 3A-ESP, 3E-ESP               | 20, 25                   | Espagnol LV2                                    |
+  | 3AE4M-ALL                    | 6                        | Allemand LV2 (avec la 4 M)                      |
+  | 3E-BZH                       | 4                        | Breton                                          |
+  | 3E-HGBZH, 3E-HGNONBZH        | 4, 22                    | Histoire-géographie en breton / en français     |
+  | 3IJ-LCALA                    | 22                       | Latin                                           |
+  | 3AEIJO-SE-G1, 3AEIJO-SEG2    | 20, 19 (= 39 LLC)        | LLC anglais (section européenne), deux groupes  |
+  | 3AJ-SA                       | 15                       | Section sportive athlétisme                     |
+  | 3AEIJO-O2                    | 22                       | **O2 : n'existe que dans les groupes**          |
+  | 3X-G1, 3X-G2                 | moitiés de classe        | Demi-groupes, sans enseignant propre            |
+  | 3AEIJO-ASSEC                 | 30 (6 par classe)        | Inconnu (P2)                                    |
+  | BAPTÊME                      | 3                        | Inconnu (P2)                                    |
+
+### Recoupement avec l'export des enseignants
+
+Les effectifs concordent presque partout, ce qui confirme le classement de la partie 1 :
+
+- **LLC ANGLAIS** : 5, 9, 9, 10, 6 élèves par classe = effectif de Mme BBo et de Mme ATT dans chaque classe ;
+- **O2** : 5, 7, 4, 2, 4 = effectif de Mme EC ou Mme AVG ;
+- **LCA LATIN** (3 J : 12), **ATHLETISME** (3 J : 8), **ALLEMAND LV2** (3 A : 5, 3 E : 1), **BRETON** (3 E : 4) ;
+- **histoire-géographie en 3 E** : M. JC a les 4 bilingues (groupe 3E-HGBZH), Mme MP les 22 autres (3E-HGNONBZH). Cela répond à E2 : M. JC enseigne bien l'histoire-géographie en breton.
+
+Écarts relevés :
+
+- 3 A : 21 élèves ont ESPAGNOL LV2 dans leurs options, mais 20 sont dans le groupe 3A-ESP et Mme JLR en a 20 ;
+- 3 E : 25 hispanisants, M. ECG en a 23 ;
+- 3 J : 1 élève a ALLEMAND LV2, mais aucun enseignant d'allemand n'intervient en 3 J (le groupe d'allemand ne couvre que 3 A, 3 E et 4 M) ; M. ECG a 25 élèves en espagnol, soit toute la classe.
+
+### Lecture prévue
+
+| Information de l'application | Source dans l'export                                                                                                                           |
+| ---------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------- |
+| Nom, prénom                  | Nom ; Prénom d'usage s'il est rempli, sinon Prénom (P7)                                                                                        |
+| Classe                       | Classe (seules les classes du niveau sont prises)                                                                                              |
+| LVB                          | Dans « Toutes les options », la valeur qui correspond à une LVB du niveau (ESPAGNOL LV2, ALLEMAND LV2)                                          |
+| Options                      | Dans « Toutes les options », les valeurs qui correspondent à une matière « option » de l'export des enseignants ; dans « Groupes », le code qui suit le tiret (O2) |
+| ULIS (selon E4)              | Formation se terminant par « ULIS »                                                                                                            |
+
+Les valeurs sans enseignant correspondant (ANGLAIS LV1, demi-groupes G1/G2…) sont ignorées. Les valeurs inconnues sont présentées avant l'import, avec la proposition de les ajouter aux options du niveau ou de les ignorer.
+
+### Questions sur l'export des élèves
+
+**P1. Noms différents d'un export à l'autre.** « BRETON REG. » (élèves) et « BRETON » (enseignants) désignent la même option. Je propose un rapprochement automatique quand un nom commence par l'autre, présenté pour confirmation avant l'import. Cela vous convient-il ?
+
+Réponse :
+
+**P2. Groupes inconnus.** Que sont « 3AEIJO-ASSEC » (6 élèves par classe) et « BAPTÊME » (3 élèves) ? Je propose d'ignorer tout groupe qui ne correspond à aucune matière de l'export des enseignants, demi-groupes G1/G2 compris.
+
+Réponse :
+
+**P3. Histoire-géographie en breton : faut-il être exact ?** En 3 E, les bilingues ont M. JC et pas Mme MP.
+
+- **A — exacte, recommandée** : à l'import, l'application repère qu'une discipline de classe entière est partagée entre deux enseignants, dont l'un a exactement l'effectif d'une option (M. JC : 4 = Breton). Elle propose : « M. JC reçoit les élèves de Breton, Mme MP les autres ». Il faut alors un type d'enseignement de plus, « classe entière sauf une option ».
+- **B — simple** : M. JC est rattaché à l'option Breton, Mme MP reste « classe entière ». Elle pourrait alors recevoir un bilingue qu'elle n'a pas en cours.
+
+Réponse :
+
+**P4. Élèves ULIS.** La colonne Formation les signale (« 3EME ULIS », 3 élèves). La colonne « Projet d'accompagnement » ne sera pas lue. Cette source vous convient-elle (voir aussi E4) ?
+
+Réponse :
+
+**P5. Écarts entre les deux exports** (3 A et 3 E en espagnol, l'élève germaniste de 3 J). S'agit-il d'élèves suivis autrement (CNED, ULIS, dispense) ? Je propose de prendre « Toutes les options » comme référence pour la LVB de l'élève. Un contrôle signalerait ensuite l'élève dont la LVB n'a pas d'enseignant dans sa classe : l'élève de 3 J, avec seulement l'équipe de sa classe.
+
+Réponse :
+
+**P6. Groupe réunissant deux niveaux** (« 3AE4M-ALL »). Les niveaux restent indépendants : en 3e, Mme EM fait partie de l'équipe des germanistes de 3 A et 3 E ; en 4e, de ceux de 4 M. Rien de plus à faire, d'accord ?
+
+Réponse :
+
+**P7. Prénom d'usage.** Vide dans cet export. Faut-il l'utiliser à la place du prénom quand il est rempli ? Recommandé : oui (convocations).
+
+Réponse :
+
+**P8. Un export par niveau, ou un seul pour le collège ?** Ce fichier ne contient que la 3e. Avec l'import unique proposé en E7, un export de tous les élèves serait réparti entre les niveaux de la même façon. Lequel ferez-vous ?
+
+Réponse :
+
+**P9. Colonnes sensibles.** Pouvez-vous retirer de l'export Pronote les colonnes Né(e) le, Sexe, Projet d'accompagnement, Allergies et Majeur ? Si ce n'est pas possible, l'application les ignorera de toute façon.
+
+Réponse :
