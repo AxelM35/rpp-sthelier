@@ -5,6 +5,7 @@ import { readFile } from 'node:fs/promises';
 import { createRequire } from 'node:module';
 import { after, test } from 'node:test';
 import { college } from '../fixtures/college.js';
+import { college4e } from '../fixtures/college4e.js';
 import { fermer, lireEtat, onglet, ouvrir } from './navigateur.js';
 
 after(fermer);
@@ -82,4 +83,53 @@ for (const theme of ['light', 'dark']) {
       [],
     );
   });
+}
+
+/** 4e de test avec des élèves prioritaires ; la professeure principale de 4A n'est présente que sur 3 créneaux. */
+function quatriemePrioritaires() {
+  const etat = college4e();
+  etat.classes.forEach((c) =>
+    etat.eleves
+      .filter((e) => e.classeId === c.id)
+      .filter((e, i) => i % 5 === 0)
+      .slice(0, 5)
+      .forEach((e) => (e.prioritaire = true)),
+  );
+  etat.profs.find((p) => p.id === etat.classes[0].ppId).dispoA = '17:45';
+  return etat;
+}
+
+for (const theme of ['light', 'dark']) {
+  test(
+    'génération avec élèves prioritaires : repli signalé, comparaison, WCAG 2.1 AA, thème ' + (theme === 'light' ? 'clair' : 'sombre'),
+    async () => {
+      const page = await ouvrir({ etat: quatriemePrioritaires(), niveau: '4e', theme });
+      await onglet(page, 'binomes');
+      await page.click('[data-action=toutGenerer]');
+      const etat = await lireEtat(page, '4e');
+      const pp = (e) => etat.classes.find((c) => c.id === e.classeId).ppId;
+      const prio = etat.eleves.filter((e) => e.prioritaire);
+      assert.ok(
+        prio.every((e) => e.binomeId && e.slot != null),
+        'tous les élèves prioritaires ont un rendez-vous',
+      );
+      const horsPP = prio.filter((e) => !etat.binomes.find((b) => b.id === e.binomeId).profIds.includes(pp(e)));
+      assert.ok(horsPP.length > 0 && horsPP.every((e) => e.classeId === 'c4A'));
+      assert.match(await page.textContent('#main > .msg'), /élève\(s\) prioritaire\(s\) reçu\(s\) par un autre binôme/);
+      assert.match(await page.textContent('#main'), /n’est présent que sur 3 créneau\(x\) pour les 5 élève\(s\) prioritaire\(s\) de 4A/);
+      assert.match(await page.textContent('#main'), /★ Prioritaires/);
+
+      await page.click('[data-action=comparerPropositions]');
+      assert.match(await page.textContent('.proposition'), /élève\(s\) prioritaire\(s\) reçu\(s\) sans leur professeur principal/);
+      await page.addScriptTag({ content: AXE });
+      const r = await page.evaluate((o) => axe.run(document, o), WCAG);
+      assert.deepEqual(
+        r.violations.map((v) => v.id + ' (' + v.nodes.length + ')'),
+        [],
+      );
+      await onglet(page, 'repartition');
+      assert.match(await page.textContent('#main'), /prioritaire\(s\) reçu\(s\) par un binôme sans leur professeur principal/);
+      assert.deepEqual(page.erreurs, []);
+    },
+  );
 }

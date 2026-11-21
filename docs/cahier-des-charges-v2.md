@@ -206,6 +206,13 @@ Commencer par le design permet de valider l'aspect visuel tôt, avant de constru
     - Un nouvel import des élèves (Pronote ou fichier) garde l'indication des élèves déjà présents, reconnus à leur nom, prénom et classe.
     - Contrôles (onglet Données) : élèves prioritaires dans une classe sans professeur principal ; plus de 5 élèves prioritaires dans une classe (après un changement de classe). Les deux sont des points à corriger.
     - Fiche RGPD et encadré « Données personnelles » complétés.
+  - **Étape 4c, élèves prioritaires : calcul et contrôles — livrée.**
+    - **Groupes** : les élèves prioritaires d'une classe qui a un professeur principal forment des groupes à part, que seul un binôme comprenant ce professeur peut recevoir (V2-R11).
+    - **Proposition des binômes** : dans chaque classe qui a des élèves prioritaires, la première paire formée comprend le professeur principal, s'il est libre, dans les deux modes ; une construction sur deux favorise un partenaire qui peut recevoir ses élèves prioritaires. Aucune paire n'immobilise le professeur principal d'une autre classe qui attend les siens, sauf si elle peut aussi les recevoir. Le score compte double un élève prioritaire sans place et pénalise un élève prioritaire reçu sans son professeur principal, plus qu'un binôme de plus, moins qu'une famille sans rendez-vous.
+    - **Répartition** (V2-F6) : les élèves prioritaires sont placés avant tous les autres, même quand la capacité est insuffisante. Faute de place chez le binôme du professeur principal (présence partielle, binôme conservé plein, pas de binôme), les derniers par ordre alphabétique sont reçus par un autre binôme de leur équipe (décision 3) ; le compte rendu le dit.
+    - **Comparaison de propositions** et **couverture** (groupe « ★ Prioritaires ») suivent les mêmes règles.
+    - **Contrôles** (section 6.3) : professeur principal sans binôme ; binôme du professeur principal (ou professeur principal sans binôme) présent sur moins de créneaux que d'élèves prioritaires ; élèves prioritaires reçus par un binôme sans leur professeur principal.
+    - **Résultats inchangés sans élève prioritaire** : sur neuf situations (6e et 4e, modes « tous » et « min », présences partielles, binôme conservé, capacité insuffisante), binômes, répartition, horaires, variantes et couverture sont identiques à ceux de l'étape 4b, en un temps de calcul inchangé.
 
 ## 9. Décisions du 19 novembre 2026
 

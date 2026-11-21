@@ -13,10 +13,11 @@ import {
   nomEleve,
   profsDuBinome,
   trouverBinome,
+  trouverProf,
 } from '../modele/acces.js';
 import { concerne, dansEquipe, nomReference } from '../modele/equipe.js';
 import { formaterHeure } from '../utils/texte.js';
-import { capacite, creneaux, familleDisponible, profDisponible } from './creneaux.js';
+import { capacite, creneaux, disponibilites, familleDisponible, profDisponible } from './creneaux.js';
 import { chargesActuelles, ecartCharges } from './equilibre.js';
 import { compatibles, grouperEleves, limitesDuBinome } from './groupes.js';
 import { cleFratrie } from './horaires.js';
@@ -106,13 +107,40 @@ function controlerEquipes(etat, ajouter) {
 }
 
 /**
- * Élèves prioritaires du professeur principal, côté données (V2-R11, décisions 2b et 2c du lot 4) : classe sans
- * professeur principal, plus de PRIORITAIRES_MAX élèves prioritaires dans une classe.
+ * Élèves prioritaires du professeur principal (V2-R11, section 6.3, décisions 2b, 2c et 3 du lot 4) : classe sans
+ * professeur principal ; plus de PRIORITAIRES_MAX élèves prioritaires dans une classe ; professeur principal sans
+ * binôme ou présent sur trop peu de créneaux ; élève prioritaire reçu par un binôme sans son professeur principal.
  */
-function controlerPrioritaires(etat, ajouter) {
+function controlerPrioritaires(etat, ajouter, liste) {
   for (const c of etat.classes) {
     const eleves = etat.eleves.filter((e) => e.prioritaire && e.classeId === c.id);
     if (!eleves.length) continue;
+    const pp = c.ppId && trouverProf(etat, c.ppId);
+    if (pp) {
+      const b = etat.binomes.find((x) => x.profIds.includes(pp.id));
+      const prioritaires = eleves.length + ' élève(s) prioritaire(s) de ' + c.nom;
+      if (etat.binomes.length && !b) {
+        ajouter(
+          'avertissement',
+          pp.nom + ', professeur principal de ' + c.nom + ', n’a pas de binôme pour recevoir ses ' + prioritaires + '.',
+          'binomes',
+        );
+      }
+      const profs = b ? profsDuBinome(etat, b) : [pp];
+      const presents = disponibilites(profs, liste).filter(Boolean).length;
+      if (liste.length && presents < Math.min(eleves.length, PRIORITAIRES_MAX)) {
+        ajouter(
+          'avertissement',
+          (b ? 'Le binôme ' + libelleBinome(etat, b) : pp.nom) +
+            ' n’est présent que sur ' +
+            presents +
+            ' créneau(x) pour les ' +
+            prioritaires +
+            ' : les autres seront reçus par un autre binôme.',
+          b ? 'binomes' : 'donnees',
+        );
+      }
+    }
     if (!c.ppId) {
       ajouter(
         'avertissement',
@@ -154,7 +182,7 @@ export function controler(etat) {
   }
 
   controlerEquipes(etat, ajouter);
-  controlerPrioritaires(etat, ajouter);
+  controlerPrioritaires(etat, ajouter, liste);
 
   // Binômes
   const pris = new Set();
@@ -234,6 +262,21 @@ export function controler(etat) {
   // Répartition
   const nonAffectes = etat.eleves.filter((e) => !e.binomeId);
   if (nonAffectes.length) ajouter('avertissement', nonAffectes.length + ' élève(s) sans binôme.', 'repartition');
+  const sansPP = etat.eleves.filter((e) => {
+    const b = e.prioritaire && trouverBinome(etat, e.binomeId);
+    const pp = b && etat.classes.find((c) => c.id === e.classeId).ppId;
+    return b && pp && !b.profIds.includes(pp);
+  });
+  if (sansPP.length) {
+    ajouter(
+      'avertissement',
+      sansPP.length +
+        ' élève(s) prioritaire(s) reçu(s) par un binôme sans leur professeur principal : ' +
+        quelquesEleves(etat, sansPP) +
+        '.',
+      'repartition',
+    );
+  }
   const charges = ecartCharges(chargesActuelles(etat));
   if (etat.eleves.some((e) => e.binomeId) && charges.ecart > ECART_CHARGE_VISE) {
     ajouter(

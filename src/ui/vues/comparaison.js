@@ -20,6 +20,9 @@ function indicateurs(v, i) {
     n.profsSansBinome ? n.profsSansBinome + ' professeur(s) sans binôme' : 'Tous les professeurs mobilisés',
     n.sansPlace ? '<span class="badge bad">' + n.sansPlace + ' élève(s) sans place</span>' : 'Tous les élèves ont une place',
   ];
+  if (n.horsPP) {
+    lignes.push('<span class="badge warn">' + n.horsPP + ' élève(s) prioritaire(s) reçu(s) sans leur professeur principal</span>');
+  }
   if (i > 0) lignes.push(v.differences + ' binôme(s) différent(s) de la proposition A');
   return '<ul class="indicateurs">' + lignes.map((l) => '<li>' + l + '</li>').join('') + '</ul>';
 }

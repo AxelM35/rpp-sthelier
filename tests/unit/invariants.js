@@ -2,7 +2,7 @@
 
 import assert from 'node:assert/strict';
 import { creneaux, familleDisponible, profDisponible } from '../../src/algos/creneaux.js';
-import { classesDuProf, profsDuBinome, trouverBinome } from '../../src/modele/acces.js';
+import { classesPossibles, profsDuBinome, trouverBinome } from '../../src/modele/acces.js';
 import { dansEquipe } from '../../src/modele/equipe.js';
 
 export function verifierPlanning(etat, { complet = true } = {}) {
@@ -13,7 +13,8 @@ export function verifierPlanning(etat, { complet = true } = {}) {
     for (const p of profsDuBinome(etat, b)) {
       assert.ok(!profsVus.has(p.id), p.nom + ' appartient à un seul binôme');
       profsVus.add(p.id);
-      for (const c of b.classeIds) assert.ok(classesDuProf(p).includes(c), p.nom + ' enseigne dans les classes de son binôme');
+      // Classes où il enseigne, et celle dont il est professeur principal (section 4.4).
+      for (const c of b.classeIds) assert.ok(classesPossibles(etat, p).includes(c), p.nom + ' peut recevoir les classes de son binôme');
     }
   }
   const cases = new Set();

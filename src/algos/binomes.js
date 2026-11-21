@@ -2,8 +2,9 @@
 //
 // Principe : on construit de nombreuses compositions possibles (de façon gloutonne, avec un peu de
 // hasard) et on garde la meilleure selon un score qui pénalise, par ordre d'importance :
-// les élèves sans place, le nombre de binômes (ou de professeurs inoccupés), le déséquilibre
-// des charges et le nombre de binômes glissants.
+// les élèves sans place, les élèves prioritaires reçus sans leur professeur principal, le nombre de binômes
+// (ou de professeurs inoccupés), le déséquilibre des charges et le nombre de binômes glissants.
+// Le professeur principal d'une classe qui a des élèves prioritaires est toujours placé dans un binôme (V2-R11).
 
 import { ESSAIS_PROPOSITION, GRAINE_PROPOSITION } from '../config.js';
 import {
@@ -20,8 +21,7 @@ import { creerAlea } from '../utils/alea.js';
 import { comparer, nouvelId } from '../utils/texte.js';
 import { capacite, creneaux, disponibilites } from './creneaux.js';
 import { ecartCharges } from './equilibre.js';
-import { binomeLimite, compatibles, grouperEleves, recevable } from './groupes.js';
-import { calculerQuotas } from './quotas.js';
+import { binomeLimite, compatibles, grouperEleves, quotasAvecRepli, recevable } from './groupes.js';
 
 /**
  * Binômes conservés par une nouvelle proposition : ceux marqués « Conservé »
@@ -92,12 +92,19 @@ function explorer(etatInitial, { alea, essais }) {
       classeIds,
     );
 
+  // Professeur principal (entrée de « profs ») à placer en premier dans chaque classe qui a des élèves prioritaires.
+  const ppDe = {};
+  groupes.forEach((g) => {
+    if (g.pp) ppDe[g.classeId] = profs.find((o) => o.p.id === g.pp) || null;
+  });
+
   const fixes = binomesConserves(etat);
   const profsFixes = new Set(fixes.flatMap((b) => b.profIds));
   const disponibles = profs.filter((o) => !profsFixes.has(o.p.id));
 
-  // Une construction gloutonne. « bruit » perturbe les choix, « pGliss » règle la tendance aux glissants.
-  function construire(bruit, pGliss) {
+  // Une construction gloutonne. « bruit » perturbe les choix, « pGliss » règle la tendance aux glissants,
+  // « poidsPrio » favorise, pour le professeur principal, un partenaire qui peut recevoir ses élèves prioritaires.
+  function construire(bruit, pGliss, poidsPrio) {
     const reste = { ...n }; // élèves restant à couvrir par groupe (négatif : groupe impossible à couvrir)
     const rc = {}; // élèves restant à couvrir par classe (somme des restes positifs de ses groupes)
     classes.forEach((c) => (rc[c] = groupesDe[c].reduce((t, g) => t + n[g.id], 0)));
@@ -110,6 +117,8 @@ function explorer(etatInitial, { alea, essais }) {
       return t;
     };
     const servable = (a, b, c) => somme(groupesPaire(a, b, c));
+    // Élèves prioritaires que la paire peut recevoir (nul sans professeur principal dans la paire).
+    const servablePrio = (a, b, c) => somme(groupesPaire(a, b, c).filter((g) => g.pp));
     // Retire jusqu'à « max » élèves des groupes de la liste (ceux qu'une paire peut recevoir dans la classe c).
     const prendre = (c, max, liste) => {
       let pris = 0;
@@ -141,27 +150,45 @@ function explorer(etatInitial, { alea, essais }) {
       const candidats = [...libres].filter((o) => o.cs.includes(c));
       const total = resteClasse(c);
       let meilleur = null;
-      for (let i = 0; i < candidats.length; i++) {
-        for (let j = i + 1; j < candidats.length; j++) {
-          const a = candidats[i];
-          const b = candidats[j];
-          const k = capPaire(a, b);
-          if (!k) continue;
-          const utiles = servable(a, b, c);
-          if (!utiles) continue;
-          const autres = communes(a, b).filter((o) => o !== c && servable(a, b, o) > 0);
-          let score;
-          if (utiles >= k) {
-            score = k * 3 - (souplesse(a, c) + souplesse(b, c));
-          } else {
-            const libre = k - utiles;
-            const glisse = pGliss && autres.length ? Math.max(...autres.map((o) => Math.min(libre, servable(a, b, o)))) : 0;
-            score = k * 3 + glisse * 2 - (souplesse(a, c) + souplesse(b, c)) * (glisse ? 0.3 : 1);
+      // Élèves prioritaires (V2-R11). Premier passage : si la classe en a encore à couvrir, la paire comprend leur
+      // professeur principal (s'il est libre) ; et aucune paire n'immobilise le professeur principal d'une autre classe
+      // qui attend les siens, sauf si elle peut aussi les recevoir. À défaut de paire possible, choix habituel.
+      const pp = ppDe[c];
+      const exiger = pp && libres.has(pp) && groupesDe[c].some((g) => g.pp && reste[g.id] > 0);
+      const enAttente = new Map(); // professeur principal libre d'une autre classe → cette classe
+      for (const [x, o] of Object.entries(ppDe)) {
+        if (x !== c && o && o !== pp && libres.has(o) && groupesDe[x].some((g) => g.pp && reste[g.id] > 0)) enAttente.set(o, x);
+      }
+      const bloque = (a, b) => [a, b].some((o) => enAttente.has(o) && !(o.cs.includes(c) && servablePrio(a, b, enAttente.get(o)) > 0));
+      const contraint = exiger || enAttente.size > 0;
+      for (const strict of contraint ? [true, false] : [false]) {
+        if (meilleur) break;
+        for (let i = 0; i < candidats.length; i++) {
+          for (let j = i + 1; j < candidats.length; j++) {
+            const a = candidats[i];
+            const b = candidats[j];
+            if (strict && ((exiger && a !== pp && b !== pp) || bloque(a, b))) continue;
+            const k = capPaire(a, b);
+            if (!k) continue;
+            const utiles = servable(a, b, c);
+            if (!utiles) continue;
+            const autres = communes(a, b).filter((o) => o !== c && servable(a, b, o) > 0);
+            let score;
+            if (utiles >= k) {
+              score = k * 3 - (souplesse(a, c) + souplesse(b, c));
+            } else {
+              const libre = k - utiles;
+              const glisse = pGliss && autres.length ? Math.max(...autres.map((o) => Math.min(libre, servable(a, b, o)))) : 0;
+              score = k * 3 + glisse * 2 - (souplesse(a, c) + souplesse(b, c)) * (glisse ? 0.3 : 1);
+            }
+            // Une paire limitée à une LVB ou une option laisse des élèves de la classe qu'une autre paire aurait reçus.
+            score -= Math.max(0, Math.min(k, total) - utiles) * 3;
+            // Partenaire du professeur principal qui peut recevoir ses élèves prioritaires (V2-R11). Une construction
+            // sur deux seulement : le score départage ensuite élèves prioritaires reçus ailleurs et élèves sans place.
+            if (poidsPrio) score += Math.min(k, servablePrio(a, b, c)) * poidsPrio;
+            score += alea() * bruit;
+            if (!meilleur || score > meilleur.score) meilleur = { score, a, b, k, autres };
           }
-          // Une paire limitée à une LVB ou une option laisse des élèves de la classe qu'une autre paire aurait reçus.
-          score -= Math.max(0, Math.min(k, total) - utiles) * 3;
-          score += alea() * bruit;
-          if (!meilleur || score > meilleur.score) meilleur = { score, a, b, k, autres };
         }
       }
       if (!meilleur) {
@@ -214,27 +241,35 @@ function explorer(etatInitial, { alea, essais }) {
     }
 
     bins.forEach((b, i) => (b.id = 'b' + i));
-    const q = quotasParClasse(
-      calculerQuotas(
-        bins.map((b) => ({ id: b.id, cap: b.cap, classeIds: b.classeIds.flatMap((c) => groupesBin(b, c).map((g) => g.id)) })),
-        n,
-      ),
+    const parId = new Map(bins.map((b) => [b.id, b]));
+    // Repli des élèves prioritaires chez un autre binôme de leur équipe (décision 3 du lot 4) : la paire peut recevoir
+    // leur équipe, et la règle 4c s'applique comme pour les autres groupes (sauf binôme conservé).
+    const peutRepli = (x, r) => {
+      const b = parId.get(x.id);
+      const ids = b.fixe ? b.fixe.profIds : paire(b.profs[0], b.profs[1]);
+      return recevable(r, ids, b.classeIds) && (b.fixe || compatibles(etat, b.profs[0].p, b.profs[1].p, r.classeId));
+    };
+    const qg = quotasAvecRepli(
+      bins.map((b) => ({ id: b.id, cap: b.cap, classeIds: b.classeIds.flatMap((c) => groupesBin(b, c).map((g) => g.id)) })),
       groupes,
+      peutRepli,
     );
+    const q = quotasParClasse(qg, qg.groupes);
     const glissants = bins.filter((b) => b.classeIds.length > 1).length;
     const ecart = ecartCharges(bins.map((b) => ({ n: q.charge[b.id], cap: b.cap, limite: b.limite }))).ecart;
     const score =
-      q.manque * 1e5 +
+      (q.manque + qg.manquePrio) * 1e5 + // un élève prioritaire sans place compte double
+      qg.horsPP * 1000 +
       (mode === 'min' ? bins.length : libres.size) * 100 +
       Math.max(0, ecart - 2) * 300 +
       Math.max(0, ecart - 1) * 40 +
       glissants * 10 +
       ecart;
-    return { bins, q, score, libres: libres.size };
+    return { bins, q, score, libres: libres.size, horsPP: qg.horsPP };
   }
 
   const candidats = [];
-  for (let i = 0; i < essais; i++) candidats.push(construire(i ? 4 : 0, [1, 0, 0.5][i % 3]));
+  for (let i = 0; i < essais; i++) candidats.push(construire(i ? 4 : 0, [1, 0, 0.5][i % 3], Math.floor(i / 3) % 2 ? 0 : 6));
   candidats.sort((a, b) => a.score - b.score); // tri stable : à score égal, l'ordre de construction est conservé
   return { candidats, fixes: fixes.map((b) => b.id) };
 }
@@ -303,6 +338,7 @@ function materialiser(etatInitial, candidat, idsFixes) {
     chargeMin: Math.min(...charges),
     chargeMax: Math.max(...charges),
     sansPlace: candidat.q.manque,
+    horsPP: candidat.horsPP,
   };
 
   const { glissants } = indicateurs;
@@ -310,6 +346,11 @@ function materialiser(etatInitial, candidat, idsFixes) {
     etat.binomes.length + ' binômes proposés' + (glissants ? ' dont ' + glissants + ' glissant' + (glissants > 1 ? 's' : '') : '') + '. ';
   const verrous = etat.eleves.filter((e) => e.verrou).length;
   if (fixes.size) txt += fixes.size + ' binôme(s) conservé(s)' + (verrous ? ', avec ' + verrous + ' rendez-vous verrouillé(s)' : '') + '. ';
+  if (candidat.horsPP) {
+    txt +=
+      candidat.horsPP +
+      ' élève(s) prioritaire(s) reçu(s) par un autre binôme que celui de leur professeur principal, faute de place chez lui. ';
+  }
   if (candidat.q.manque) {
     txt +=
       'Capacité insuffisante : ' +

@@ -5,13 +5,14 @@ import { copierEtat } from '../modele/etat.js';
 import { comparer } from '../utils/texte.js';
 import { capacite, creneaux } from './creneaux.js';
 import { chargesActuelles, ecartCharges } from './equilibre.js';
-import { groupesDuBinome, grouperEleves } from './groupes.js';
-import { calculerQuotas } from './quotas.js';
+import { groupesDuBinome, grouperEleves, quotasAvecRepli, repliPour } from './groupes.js';
 
 /**
  * Affecte chaque élève non verrouillé à un binôme qui peut le recevoir : sa classe fait partie des classes du binôme
  * et les deux professeurs appartiennent à son équipe (règle V2-R2). Les charges sont équilibrées ; les élèves de
- * chaque groupe (classe et équipe identiques) sont distribués par ordre alphabétique. Renvoie { etat, rapport }.
+ * chaque groupe (classe et équipe identiques) sont distribués par ordre alphabétique. Les élèves prioritaires sont
+ * placés en premier chez le binôme de leur professeur principal ; faute de place, chez un autre binôme de leur équipe
+ * (V2-R11, V2-F6, décision 3 du lot 4). Renvoie { etat, rapport } ; rapport.horsPP est la phrase sur ces derniers.
  */
 export function repartirEleves(etatInitial) {
   const etat = copierEtat(etatInitial);
@@ -29,16 +30,15 @@ export function repartirEleves(etatInitial) {
     }
   });
   const groupes = grouperEleves(etat, aPlacer);
-  const besoins = Object.fromEntries(groupes.map((g) => [g.id, g.eleves.length]));
   const bins = etat.binomes.map((b) => ({
     id: b.id,
     classeIds: groupesDuBinome(etat, b, groupes),
     cap: capacite(profsDuBinome(etat, b), liste),
   }));
 
-  const q = calculerQuotas(bins, besoins, base);
+  const q = quotasAvecRepli(bins, groupes, repliPour(etat), base);
   const ordre = etat.binomes.slice().sort((a, b) => comparer(libelleBinome(etat, a), libelleBinome(etat, b)));
-  groupes.forEach((g) => {
+  q.groupes.forEach((g) => {
     const eleves = g.eleves.slice().sort(comparerEleves);
     let i = 0;
     ordre.forEach((b) => {
@@ -47,10 +47,17 @@ export function repartirEleves(etatInitial) {
   });
 
   const reste = etat.eleves.filter((e) => !e.binomeId).length;
+  const horsPP = q.horsPP
+    ? ' ' + q.horsPP + ' élève(s) prioritaire(s) reçu(s) par un autre binôme que celui de leur professeur principal, faute de place.'
+    : '';
   if (reste) {
     return {
       etat,
-      rapport: { ok: false, txt: reste + ' élève(s) sans binôme : la capacité des binômes qui peuvent les recevoir est insuffisante.' },
+      rapport: {
+        ok: false,
+        txt: reste + ' élève(s) sans binôme : la capacité des binômes qui peuvent les recevoir est insuffisante.' + horsPP,
+        horsPP,
+      },
     };
   }
   const c = ecartCharges(chargesActuelles(etat));
@@ -59,6 +66,7 @@ export function repartirEleves(etatInitial) {
     (c.min === c.max ? c.max : 'de ' + c.min + ' à ' + c.max) +
     ' élèves par binôme' +
     (c.limites ? ', hors ' + c.limites + ' binôme(s) limité(s) à une LVB ou une option' : '') +
-    (c.reduit ? ' (moins pour les binômes dont un professeur est présent sur une partie de la soirée).' : '.');
-  return { etat, rapport: { ok: true, txt } };
+    (c.reduit ? ' (moins pour les binômes dont un professeur est présent sur une partie de la soirée).' : '.') +
+    horsPP;
+  return { etat, rapport: { ok: true, txt, horsPP } };
 }

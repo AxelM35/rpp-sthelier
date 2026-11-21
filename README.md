@@ -61,7 +61,7 @@ src/
   algos/               Cœur métier, sans navigateur : fonctions testables
     creneaux.js        Créneaux de la soirée, disponibilités
     reglages.js        Aide au réglage de la capacité (durée ou heure de fin proposée)
-    groupes.js         Groupes d'élèves de même équipe (unités du calcul), compatibilité des paires, couverture
+    groupes.js         Groupes d'élèves de même équipe (unités du calcul), élèves prioritaires et leur repli, couverture
     quotas.js          Nombre d'élèves de chaque groupe par binôme
     binomes.js         Proposition automatique des binômes
     repartition.js     Affectation des élèves

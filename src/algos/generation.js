@@ -13,7 +13,9 @@ export function completerGeneration(b) {
   const r = repartirEleves(b.etat);
   const h = planifierHoraires(r.etat);
   const ok = b.rapport.ok && r.rapport.ok && h.rapport.ok;
-  const txt = [b.rapport.txt, r.rapport.ok ? '' : r.rapport.txt, h.rapport.txt].filter(Boolean).join(' ');
+  // La proposition signale déjà les élèves prioritaires reçus sans leur professeur principal.
+  const repartition = r.rapport.ok ? '' : r.rapport.txt.replace(r.rapport.horsPP, '');
+  const txt = [b.rapport.txt, repartition, h.rapport.txt].filter(Boolean).join(' ');
   return { etat: h.etat, rapport: { ok, txt } };
 }
 

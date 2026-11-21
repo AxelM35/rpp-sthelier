@@ -816,6 +816,13 @@ ul.binomes-proposes {
   margin: 0;
   padding-left: 18px;
 }
+ul.indicateurs .badge {
+  display: inline;
+  white-space: normal;
+  line-height: 20px;
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+}
 ul.binomes-proposes {
   font-size: 13px;
 }

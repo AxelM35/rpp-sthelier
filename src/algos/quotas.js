@@ -9,12 +9,13 @@
  * @param {Array<{id, classeIds, cap}>} binomes  binômes avec leur capacité
  * @param {Object<string, number>} besoins       élèves à placer par classe
  * @param {Object<string, number>} [base]        élèves déjà placés (verrouillés) par binôme
+ * @param {Set<string>} [enPremier]              classes (groupes) à placer avant les autres : élèves prioritaires
  * @returns {{x, charge, nonPlaces, manque}}
  *   x[idBinome][idClasse] : nombre d'élèves de la classe attribués au binôme
  *   charge[idBinome]      : total d'élèves du binôme (base comprise)
  *   nonPlaces[idClasse]   : élèves sans place faute de capacité
  */
-export function calculerQuotas(binomes, besoins, base = {}) {
+export function calculerQuotas(binomes, besoins, base = {}, enPremier = new Set()) {
   const charge = {};
   const x = {};
   const parClasse = {};
@@ -54,9 +55,9 @@ export function calculerQuotas(binomes, besoins, base = {}) {
     return false;
   }
 
-  // Les classes servies par le moins de binômes d'abord.
+  // Les élèves prioritaires d'abord (V2-F6), puis les classes servies par le moins de binômes.
   Object.keys(besoins)
-    .sort((a, b) => (parClasse[a] || []).length - (parClasse[b] || []).length)
+    .sort((a, b) => enPremier.has(b) - enPremier.has(a) || (parClasse[a] || []).length - (parClasse[b] || []).length)
     .forEach((c) => {
       for (let i = 0; i < besoins[c]; i++) {
         if (!placer(c, new Set())) nonPlaces[c] = (nonPlaces[c] || 0) + 1;
