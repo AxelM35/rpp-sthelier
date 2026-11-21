@@ -82,3 +82,19 @@ export const classeDuPP = (etat, profId) => etat.classes.find((c) => c.ppId === 
 
 /** Élèves prioritaires d'une classe (V2-R11). */
 export const prioritairesDe = (etat, classeId) => etat.eleves.filter((e) => e.prioritaire && e.classeId === classeId);
+
+/**
+ * LVB et options d'un élève, pour les documents et les exports (V2-F10) : { lvb: 'Espagnol', options: 'Latin, Breton' }.
+ * Jamais l'indication ULIS, donnée de santé (fiche RGPD).
+ */
+export function lvbOptionsEleve(etat, e) {
+  const lvb = e.lvbId ? etat.lvb.find((x) => x.id === e.lvbId) : null;
+  return {
+    lvb: lvb ? lvb.nom : '',
+    options: e.optionIds
+      .map((id) => etat.options.find((o) => o.id === id))
+      .filter(Boolean)
+      .map((o) => o.nom)
+      .join(', '),
+  };
+}

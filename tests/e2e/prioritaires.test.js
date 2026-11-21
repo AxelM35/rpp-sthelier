@@ -133,3 +133,56 @@ for (const theme of ['light', 'dark']) {
     },
   );
 }
+
+test('signalement : étoile sur les vignettes, alerte si reçu sans son professeur principal (V2-F6 bis)', async () => {
+  const page = await ouvrir({ etat: quatriemePrioritaires(), niveau: '4e' });
+  await onglet(page, 'binomes');
+  await page.click('[data-action=toutGenerer]');
+  const etat = await lireEtat(page, '4e');
+  const pp = (e) => etat.classes.find((c) => c.id === e.classeId).ppId;
+  const avec = etat.eleves.find((e) => e.prioritaire && etat.binomes.find((b) => b.id === e.binomeId).profIds.includes(pp(e)));
+  const sans = etat.eleves.find((e) => e.prioritaire && !etat.binomes.find((b) => b.id === e.binomeId).profIds.includes(pp(e)));
+  for (const id of ['repartition', 'planning']) {
+    await onglet(page, id);
+    const v = page.locator('[data-eleve="' + avec.id + '"]');
+    assert.equal(await v.locator('.prio').textContent(), '★ ', id);
+    assert.match(await v.locator('.el-btn').getAttribute('aria-label'), /, prioritaire/);
+    assert.doesNotMatch(await v.getAttribute('class'), /\bpb\b/);
+    const w = page.locator('[data-eleve="' + sans.id + '"]');
+    assert.match(await w.getAttribute('class'), /\bpb\b/, id + ' : alerte');
+    assert.match(await w.locator('.el-btn').getAttribute('aria-label'), /attention : élève prioritaire reçu sans son professeur principal/);
+  }
+  const autre = etat.eleves.find((e) => !e.prioritaire);
+  assert.equal(await page.locator('[data-eleve="' + autre.id + '"] .prio').count(), 0);
+  assert.deepEqual(page.erreurs, []);
+});
+
+test('documents : planning par binôme avec les élèves prioritaires ; LVB et options du planning par classe (V2-F10)', async () => {
+  const page = await ouvrir({ etat: quatriemePrioritaires(), niveau: '4e' });
+  await onglet(page, 'binomes');
+  await page.click('[data-action=toutGenerer]');
+  await onglet(page, 'documents');
+  await page.click('[data-action=choisirDocument][data-id=binomes]');
+  assert.match(await page.textContent('.papier'), /★ Élève prioritaire : rendez-vous demandé par le professeur principal/);
+  assert.equal(await page.locator('[data-champ=lvbOptions]').count(), 0, 'case réservée au planning par classe');
+
+  await page.click('[data-action=choisirDocument][data-id=classes]');
+  assert.doesNotMatch(await page.textContent('.papier'), /★|LVB et options/);
+  await page.check('[data-champ=lvbOptions]');
+  await page.locator('.papier th', { hasText: 'LVB et options' }).first().waitFor();
+  assert.equal((await lireEtat(page, '4e')).opt.lvbOptions, true, 'choix mémorisé pour le niveau');
+  assert.match(await page.textContent('.papier'), /Espagnol · Latin/);
+  assert.doesNotMatch(await page.textContent('.papier'), /ULIS/);
+
+  await onglet(page, 'planning');
+  await page.click('[data-action=vuePlanning][data-id=classe]');
+  assert.equal(await page.isChecked('[data-champ=lvbOptions]'), true);
+  assert.equal(await page.locator('.doc th', { hasText: 'LVB et options' }).count(), 5);
+  await page.addScriptTag({ content: AXE });
+  const r = await page.evaluate((o) => axe.run(document, o), WCAG);
+  assert.deepEqual(
+    r.violations.map((v) => v.id + ' (' + v.nodes.length + ')'),
+    [],
+  );
+  assert.deepEqual(page.erreurs, []);
+});

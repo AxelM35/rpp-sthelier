@@ -626,6 +626,7 @@ export const champs = {
   prof: (el) => (trouverProf(app.etat, el.dataset.id)[el.dataset.param] = el.value.trim()),
   binome: (el) => (trouverBinome(app.etat, el.dataset.id)[el.dataset.param] = el.value.trim()),
   option: (el) => (app.etat.opt[el.dataset.param] = el.value),
+  lvbOptions: (el) => (app.etat.opt.lvbOptions = el.checked),
   profBinome(el) {
     const { etat } = app;
     const b = trouverBinome(etat, el.dataset.id);

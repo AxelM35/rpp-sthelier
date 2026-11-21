@@ -82,7 +82,7 @@ src/
     evenements.js      Branchement des événements (clic, clavier, glisser-déposer)
     vues/              Un module par onglet, et l'écran d'accueil (accueil.js)
     composants.js      Fragments HTML communs
-    documents.js       Documents imprimables
+    documents.js       Documents imprimables (plannings général, par classe, par binôme ; convocations)
     dialogueImport.js  Dialogue d'import
     dialogueEnseignement.js  Dialogue de choix de l'enseignement d'un professeur dans une classe
     dialoguePronote.js Écran de confirmation d'un import Pronote

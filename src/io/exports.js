@@ -1,4 +1,7 @@
 // Contenu des exports du planning (Excel et CSV), sous forme de tableaux de lignes.
+//
+// Ils indiquent le niveau (V2-F9) et, pour chaque élève, sa LVB et ses options (V2-F10). Jamais l'indication ULIS
+// (donnée de santé) ni l'indication « prioritaire » (décision 4 du lot 4).
 
 import { creneaux } from '../algos/creneaux.js';
 import {
@@ -7,18 +10,20 @@ import {
   comparerEleves,
   elevesDuBinome,
   libelleBinome,
+  lvbOptionsEleve,
   nomClasse,
   nomEleve,
   profsDuBinome,
   trouverBinome,
 } from '../modele/acces.js';
+import { titreSoiree } from '../modele/niveaux.js';
 import { comparer, formaterHeure } from '../utils/texte.js';
 import { ecrireCSV } from './csv.js';
 import { creerClasseur } from './xlsx.js';
 
 const parHoraire = (a, b) => (a.slot == null ? 999 : a.slot) - (b.slot == null ? 999 : b.slot) || comparerEleves(a, b);
 
-/** Trois feuilles : planning général (heures × binômes), liste par classe, liste par binôme. */
+/** Trois feuilles : planning général (heures × binômes), liste par classe, liste par binôme ; titre avec le niveau. */
 export function feuillesPlanning(etat) {
   const liste = creneaux(etat.soiree);
   const binomes = etat.binomes;
@@ -42,7 +47,7 @@ export function feuillesPlanning(etat) {
     ),
   );
 
-  const parClasse = [['Classe', 'Nom', 'Prénom', 'Heure', 'Professeur 1', 'Professeur 2', 'Salle']];
+  const parClasse = [['Classe', 'Nom', 'Prénom', 'LVB', 'Options', 'Heure', 'Professeur 1', 'Professeur 2', 'Salle']];
   classesTriees(etat).forEach((c) =>
     etat.eleves
       .filter((e) => e.classeId === c.id)
@@ -50,28 +55,33 @@ export function feuillesPlanning(etat) {
       .forEach((e) => {
         const b = trouverBinome(etat, e.binomeId);
         const p = b ? profsDuBinome(etat, b) : [];
-        parClasse.push([c.nom, e.nom, e.prenom, heure(e), p[0] ? p[0].nom : '', p[1] ? p[1].nom : '', b ? b.salle : '']);
+        const x = lvbOptionsEleve(etat, e);
+        parClasse.push([c.nom, e.nom, e.prenom, x.lvb, x.options, heure(e), p[0] ? p[0].nom : '', p[1] ? p[1].nom : '', b ? b.salle : '']);
       }),
   );
 
-  const parBinome = [['Binôme', 'Salle', 'Heure', 'Nom', 'Prénom', 'Classe']];
+  const parBinome = [['Binôme', 'Salle', 'Heure', 'Nom', 'Prénom', 'Classe', 'LVB', 'Options']];
   binomes.forEach((b) =>
     elevesDuBinome(etat, b)
       .sort(parHoraire)
-      .forEach((e) => parBinome.push([libelleBinome(etat, b), b.salle, heure(e), e.nom, e.prenom, nomClasse(etat, e.classeId)])),
+      .forEach((e) => {
+        const x = lvbOptionsEleve(etat, e);
+        parBinome.push([libelleBinome(etat, b), b.salle, heure(e), e.nom, e.prenom, nomClasse(etat, e.classeId), x.lvb, x.options]);
+      }),
   );
 
+  const titre = titreSoiree(etat);
   return [
-    { nom: 'Planning général', lignes: general, largeurs: [9].concat(binomes.map(() => 26)) },
-    { nom: 'Par classe', lignes: parClasse, largeurs: [9, 20, 16, 9, 22, 22, 9] },
-    { nom: 'Par binôme', lignes: parBinome, largeurs: [36, 9, 9, 20, 16, 9] },
+    { nom: 'Planning général', titre, lignes: general, largeurs: [9].concat(binomes.map(() => 26)) },
+    { nom: 'Par classe', titre, lignes: parClasse, largeurs: [9, 20, 16, 12, 20, 9, 22, 22, 9] },
+    { nom: 'Par binôme', titre, lignes: parBinome, largeurs: [36, 9, 9, 20, 16, 9, 12, 20] },
   ];
 }
 
 /** Classeur Excel du planning (Uint8Array). */
 export const classeurPlanning = (etat) => creerClasseur(feuillesPlanning(etat));
 
-/** Export CSV : une ligne par élève, triée par classe puis nom. */
+/** Export CSV : une ligne par élève, triée par classe puis nom ; le niveau en première colonne (V2-F9). */
 export function csvPlanning(etat) {
   const liste = creneaux(etat.soiree);
   const lignes = etat.eleves
@@ -80,15 +90,21 @@ export function csvPlanning(etat) {
     .map((e) => {
       const b = trouverBinome(etat, e.binomeId);
       const p = b ? profsDuBinome(etat, b) : [];
+      const x = lvbOptionsEleve(etat, e);
       return [
+        etat.niveau,
         nomClasse(etat, e.classeId),
         e.nom,
         e.prenom,
+        x.lvb,
+        x.options,
         e.slot != null && liste[e.slot] ? formaterHeure(liste[e.slot].d) : '',
         b ? b.salle : '',
         p[0] ? p[0].nom : '',
         p[1] ? p[1].nom : '',
       ];
     });
-  return ecrireCSV([['Classe', 'Nom', 'Prénom', 'Heure', 'Salle', 'Professeur 1', 'Professeur 2']].concat(lignes));
+  return ecrireCSV(
+    [['Niveau', 'Classe', 'Nom', 'Prénom', 'LVB', 'Options', 'Heure', 'Salle', 'Professeur 1', 'Professeur 2']].concat(lignes),
+  );
 }

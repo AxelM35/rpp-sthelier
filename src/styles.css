@@ -908,6 +908,14 @@ td.over {
 .alerte {
   font-weight: 700;
 }
+/* Étoile d'un élève prioritaire (vignettes, planning par binôme). */
+.doc .prio {
+  font-weight: 700;
+}
+.doc .legende-doc {
+  margin: 6px 0 0;
+  font-size: 11px;
+}
 .dest {
   display: block;
   width: 100%;

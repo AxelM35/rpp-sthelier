@@ -13,7 +13,7 @@ import {
 } from '../../modele/acces.js';
 import { echapper, formaterHeure } from '../../utils/texte.js';
 import { app } from '../app.js';
-import { aria, blocControles, ICONES, optionsClasses, vignetteEleve } from '../composants.js';
+import { aria, blocControles, caseLvbOptions, ICONES, optionsClasses, vignetteEleve } from '../composants.js';
 import { documentParBinome, documentParClasse } from '../documents.js';
 
 function boutonCadenas(e) {
@@ -172,7 +172,9 @@ export function vuePlanning(points) {
         '" data-action="basculerCompact" aria-pressed="' +
         ui.compact +
         '">Colonnes compactes</button>'
-      : '') +
+      : ui.vuePlanning === 'classe'
+        ? caseLvbOptions()
+        : '') +
     '<span class="sp"></span><button type="button" class="b" data-action="exporterExcel">Exporter en Excel (.xlsx)</button>' +
     '<button type="button" class="b" data-action="effacerHoraires">Effacer les horaires non verrouillés</button>' +
     '<button type="button" class="b p" data-action="planifier">Générer les horaires</button></div></div>';
@@ -181,7 +183,7 @@ export function vuePlanning(points) {
       grille(filtre) +
       '<p class="note">Pour déplacer un rendez-vous : glissez l\'élève vers une autre case, ou sélectionnez-le (clic, ou touche Entrée) puis choisissez « Placer ici » ; ' +
       "choisir un autre élève échange les deux rendez-vous. Le cadenas protège un rendez-vous lors d'une nouvelle génération. " +
-      'Cases hachurées : un professeur du binôme est absent sur ce créneau.</p>';
+      'Cases hachurées : un professeur du binôme est absent sur ce créneau. ★ : élève prioritaire, reçu par son professeur principal.</p>';
   } else if (ui.vuePlanning === 'classe') {
     h += '<div class="card doc">' + documentParClasse(etat, filtre) + '</div>';
   } else {

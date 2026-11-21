@@ -31,3 +31,15 @@ export const nomFichier = (base, niveau, extension) => base + '-' + niveau + '.'
 
 /** Chiffre du niveau, utilisé pour nommer une nouvelle classe (« 5 » pour la 5e). */
 export const chiffreNiveau = (niveau) => niveau.replace(/\D/g, '');
+
+/** « mardi 1 décembre 2026 » ou '' si la date n'est pas renseignée. */
+export function dateEnClair(etat) {
+  const d = etat.soiree.date;
+  if (!d) return '';
+  const x = new Date(d + 'T12:00');
+  return isNaN(x) ? '' : x.toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+}
+
+/** Titre des documents et des exports, avec le niveau (V2-F9) : « Collège — Rencontres parents-professeurs de 5e — date ». */
+export const titreSoiree = (etat) =>
+  [etat.soiree.etab, 'Rencontres parents-professeurs de ' + etat.niveau, dateEnClair(etat)].filter(Boolean).join(' — ');

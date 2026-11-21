@@ -12,7 +12,7 @@ const TYPE = 'application/vnd.openxmlformats-officedocument.spreadsheetml';
 /** Type MIME d'un classeur .xlsx. */
 export const MIME_XLSX = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
 
-// Styles : 0 normal, 1 en-tête (gras, fond gris, bordure), 2 cellule bordée.
+// Styles : 0 normal, 1 en-tête (gras, fond gris, bordure), 2 cellule bordée, 3 titre (gras).
 const STYLES =
   '<fonts count="2"><font><sz val="11"/><name val="Calibri"/></font><font><b/><sz val="11"/><name val="Calibri"/></font></fonts>' +
   '<fills count="3"><fill><patternFill patternType="none"/></fill><fill><patternFill patternType="gray125"/></fill>' +
@@ -21,10 +21,11 @@ const STYLES =
   '<border><left style="thin"><color auto="1"/></left><right style="thin"><color auto="1"/></right>' +
   '<top style="thin"><color auto="1"/></top><bottom style="thin"><color auto="1"/></bottom><diagonal/></border></borders>' +
   '<cellStyleXfs count="1"><xf numFmtId="0" fontId="0" fillId="0" borderId="0"/></cellStyleXfs>' +
-  '<cellXfs count="3"><xf numFmtId="0" fontId="0" fillId="0" borderId="0" xfId="0"/>' +
+  '<cellXfs count="4"><xf numFmtId="0" fontId="0" fillId="0" borderId="0" xfId="0"/>' +
   '<xf numFmtId="0" fontId="1" fillId="2" borderId="1" xfId="0" applyFont="1" applyFill="1" applyBorder="1" applyAlignment="1">' +
   '<alignment horizontal="center" vertical="center" wrapText="1"/></xf>' +
-  '<xf numFmtId="0" fontId="0" fillId="0" borderId="1" xfId="0" applyBorder="1" applyAlignment="1"><alignment vertical="center" wrapText="1"/></xf></cellXfs>' +
+  '<xf numFmtId="0" fontId="0" fillId="0" borderId="1" xfId="0" applyBorder="1" applyAlignment="1"><alignment vertical="center" wrapText="1"/></xf>' +
+  '<xf numFmtId="0" fontId="1" fillId="0" borderId="0" xfId="0" applyFont="1"/></cellXfs>' +
   '<cellStyles count="1"><cellStyle name="Normal" xfId="0" builtinId="0"/></cellStyles>';
 
 /** Texte sûr pour XML : échappé, sans caractères de contrôle interdits. */
@@ -38,7 +39,8 @@ export function lettreColonne(i) {
 }
 
 /**
- * feuilles : [{ nom, lignes: [[valeur…]], largeurs: [nombre…] }] ; la première ligne est un en-tête figé.
+ * feuilles : [{ nom, lignes: [[valeur…]], largeurs: [nombre…], titre }] ; la première ligne est un en-tête figé.
+ * « titre » (facultatif) : texte écrit en gras au-dessus de l'en-tête.
  * Toutes les valeurs sont écrites comme du texte (jamais comme des formules). Renvoie un Uint8Array.
  */
 export function creerClasseur(feuilles) {
@@ -103,7 +105,8 @@ export function creerClasseur(feuilles) {
     const colonnes = f.largeurs
       .map((w, j) => '<col min="' + (j + 1) + '" max="' + (j + 1) + '" width="' + w + '" customWidth="1"/>')
       .join('');
-    const lignes = f.lignes
+    const entete = f.titre ? 1 : 0; // indice de la ligne d'en-tête
+    const lignes = (f.titre ? [[f.titre]].concat(f.lignes) : f.lignes)
       .map(
         (l, k) =>
           '<row r="' +
@@ -116,7 +119,7 @@ export function creerClasseur(feuilles) {
                 lettreColonne(j) +
                 (k + 1) +
                 '" t="inlineStr" s="' +
-                (k ? 2 : 1) +
+                (k < entete ? 3 : k === entete ? 1 : 2) +
                 '"><is><t xml:space="preserve">' +
                 texteXml(v) +
                 '</t></is></c>',
@@ -130,7 +133,11 @@ export function creerClasseur(feuilles) {
       XML +
         '<worksheet ' +
         NS +
-        '><sheetViews><sheetView workbookViewId="0"><pane ySplit="1" topLeftCell="A2" activePane="bottomLeft" state="frozen"/></sheetView></sheetViews>' +
+        '><sheetViews><sheetView workbookViewId="0"><pane ySplit="' +
+        (entete + 1) +
+        '" topLeftCell="A' +
+        (entete + 2) +
+        '" activePane="bottomLeft" state="frozen"/></sheetView></sheetViews>' +
         '<cols>' +
         colonnes +
         '</cols><sheetData>' +

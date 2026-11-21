@@ -13,7 +13,8 @@
 //   eleves   [{ id, nom, prenom, classeId, lvbId, optionIds:[], ulis, prioritaire,
 //               fratrie, pasAvant, pasApres, binomeId, slot, verrou }]
 //            prioritaire : élève reçu par le binôme du professeur principal de sa classe (V2-R11)
-//   opt      { mode: 'tous' | 'min' }
+//   opt      { mode: 'tous' | 'min', lvbOptions }
+//            lvbOptions : le planning par classe affiche la LVB et les options des élèves (V2-F10)
 //
 // Enseignement d'un professeur dans une classe (au plus un par classe), selon son type :
 //   'classe'  toute la classe (refId : null)
@@ -79,7 +80,7 @@ export function etatVide(niveau = NIVEAUX[0]) {
     eleves: [],
     profs: [],
     binomes: [],
-    opt: { mode: 'tous' },
+    opt: { mode: 'tous', lvbOptions: false },
   };
 }
 
@@ -181,7 +182,7 @@ export function valider(brut) {
       return { debut: heure(p.debut) || '18:30', duree: Math.max(0, Math.round(Number(p.duree)) || 0) };
     }),
   };
-  etat.opt = { mode: s.opt && s.opt.mode === 'min' ? 'min' : 'tous' };
+  etat.opt = { mode: s.opt && s.opt.mode === 'min' ? 'min' : 'tous', lvbOptions: Boolean(s.opt && s.opt.lvbOptions === true) };
 
   const nommes = (v, nom) =>
     liste(v, nom).map((x) => {

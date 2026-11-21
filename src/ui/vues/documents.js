@@ -2,6 +2,7 @@
 
 import { aCorriger } from '../../algos/controles.js';
 import { app } from '../app.js';
+import { caseLvbOptions } from '../composants.js';
 import { DOCUMENTS } from '../documents.js';
 
 const NOMS_ONGLETS = { soiree: 'Soirée', donnees: 'Données', binomes: 'Binômes', repartition: 'Répartition', planning: 'Planning' };
@@ -36,6 +37,7 @@ export function vueDocuments(points) {
       )
       .join('') +
     '</div>' +
+    (ui.document === 'classes' ? caseLvbOptions() : '') +
     '<span class="sp"></span><button type="button" class="b" data-action="exporterCSV">Exporter en CSV</button>' +
     '<button type="button" class="b p" data-action="imprimer">Imprimer / PDF</button></div>' +
     '<p class="muted" style="margin-top:8px">Pour obtenir un PDF, choisissez « Enregistrer au format PDF » dans la fenêtre d\'impression. ' +

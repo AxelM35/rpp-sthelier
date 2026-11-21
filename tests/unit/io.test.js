@@ -41,7 +41,8 @@ test('export CSV du planning : une ligne par élève, formules neutralisées', (
   etat.eleves[0].nom = '=1+1';
   const lignes = csvPlanning(etat).split('\r\n');
   assert.equal(lignes.length, etat.eleves.length + 1);
-  assert.ok(lignes[0].startsWith('﻿"Classe";"Nom"'));
+  assert.ok(lignes[0].startsWith('﻿"Niveau";"Classe";"Nom";"Prénom";"LVB";"Options"'));
+  assert.ok(lignes[1].startsWith('"6e";"6A";'), 'niveau sur chaque ligne (V2-F9)');
   assert.ok(lignes.some((l) => l.includes('"\'=1+1"')));
 });
 

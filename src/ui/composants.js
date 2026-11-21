@@ -8,6 +8,7 @@
 //   data-eleve         vignette d'élève déplaçable
 
 import { creneaux } from '../algos/creneaux.js';
+import { ppExige } from '../algos/groupes.js';
 import { nomClasse, nomEleve, profsDuBinome } from '../modele/acces.js';
 import { dansEquipe } from '../modele/equipe.js';
 import { echapper, formaterHeure } from '../utils/texte.js';
@@ -104,14 +105,23 @@ export function blocControles(points, onglets) {
 
 /**
  * Vignette d'un élève, déplaçable à la souris et sélectionnable au clavier.
- * b : binôme qui l'accueille (pour signaler une classe non reçue ou un professeur qui n'a pas l'élève en cours) ;
- * extra : HTML ajouté (cadenas).
+ * b : binôme qui l'accueille (pour signaler une classe non reçue, un professeur qui n'a pas l'élève en cours, ou un
+ * élève prioritaire reçu sans son professeur principal) ; extra : HTML ajouté (cadenas).
+ * Un élève prioritaire est marqué d'une étoile (V2-F6 bis).
  */
 export function vignetteEleve(e, b, extra = '') {
   const { etat, ui } = app;
   const horsClasse = b && !b.classeIds.includes(e.classeId);
   const horsEquipe = b && !horsClasse && profsDuBinome(etat, b).some((p) => !dansEquipe(etat, p, e));
-  const alerte = horsClasse ? 'Classe non reçue par ce binôme' : horsEquipe ? "Un professeur du binôme n'a pas cet élève en cours" : '';
+  const pp = b && ppExige(etat, e);
+  const horsPP = pp && !b.profIds.includes(pp);
+  const alerte = horsClasse
+    ? 'Classe non reçue par ce binôme'
+    : horsEquipe
+      ? "Un professeur du binôme n'a pas cet élève en cours"
+      : horsPP
+        ? 'Élève prioritaire reçu sans son professeur principal'
+        : '';
   const choisi = ui.selection === e.id;
   const liste = creneaux(etat.soiree);
   const heure = b && e.slot != null && liste[e.slot] ? formaterHeure(liste[e.slot].d) : '';
@@ -119,6 +129,7 @@ export function vignetteEleve(e, b, extra = '') {
     nomEleve(e) +
     ', ' +
     nomClasse(etat, e.classeId) +
+    (e.prioritaire ? ', prioritaire' : '') +
     (heure ? ', ' + heure : '') +
     (e.verrou ? ', verrouillé' : '') +
     (alerte ? ', attention : ' + alerte.charAt(0).toLowerCase() + alerte.slice(1) : '') +
@@ -142,6 +153,7 @@ export function vignetteEleve(e, b, extra = '') {
     aria(libelle) +
     '>' +
     '<span>' +
+    (e.prioritaire ? '<span class="prio" aria-hidden="true" title="Élève prioritaire">★ </span>' : '') +
     echapper(nomEleve(e)) +
     '</span>' +
     (alerte ? '<span class="alerte" aria-hidden="true" title="' + echapper(alerte) + '">!</span>' : '') +
@@ -150,5 +162,14 @@ export function vignetteEleve(e, b, extra = '') {
     '</small></button>' +
     extra +
     '</div>'
+  );
+}
+
+/** Case « Afficher la LVB et les options » du planning par classe (V2-F10), mémorisée pour le niveau. */
+export function caseLvbOptions() {
+  return (
+    '<label class="case"><input type="checkbox" data-champ="lvbOptions"' +
+    (app.etat.opt.lvbOptions ? ' checked' : '') +
+    '> Afficher la LVB et les options</label>'
   );
 }

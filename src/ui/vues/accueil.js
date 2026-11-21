@@ -4,7 +4,7 @@ import { NIVEAUX } from '../../config.js';
 import { resumerNiveau } from '../../modele/niveaux.js';
 import { echapper } from '../../utils/texte.js';
 import { dateCourte } from '../dom.js';
-import { dateEnClair } from '../documents.js';
+import { dateEnClair } from '../../modele/niveaux.js';
 import { copieDeSecoursPresente, etatSauvegarde, lireNiveau } from '../stockage.js';
 
 const pluriel = (n, mot) => n + ' ' + mot + (n > 1 ? 's' : '');

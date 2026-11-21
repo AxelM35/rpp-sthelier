@@ -212,7 +212,13 @@ Commencer par le design permet de valider l'aspect visuel tôt, avant de constru
     - **Répartition** (V2-F6) : les élèves prioritaires sont placés avant tous les autres, même quand la capacité est insuffisante. Faute de place chez le binôme du professeur principal (présence partielle, binôme conservé plein, pas de binôme), les derniers par ordre alphabétique sont reçus par un autre binôme de leur équipe (décision 3) ; le compte rendu le dit.
     - **Comparaison de propositions** et **couverture** (groupe « ★ Prioritaires ») suivent les mêmes règles.
     - **Contrôles** (section 6.3) : professeur principal sans binôme ; binôme du professeur principal (ou professeur principal sans binôme) présent sur moins de créneaux que d'élèves prioritaires ; élèves prioritaires reçus par un binôme sans leur professeur principal.
+    - **Arbitrage** : si le professeur principal n'est présent que sur une partie de la soirée, lui associer un enseignant de toute la classe recevrait plus d'élèves prioritaires, mais immobiliserait cet enseignant ; le score préfère alors recevoir toutes les familles (exemple du jeu de test de 4e : 4 élèves prioritaires reçus ailleurs, 1 élève sans place, au lieu de 2 et 5).
     - **Résultats inchangés sans élève prioritaire** : sur neuf situations (6e et 4e, modes « tous » et « min », présences partielles, binôme conservé, capacité insuffisante), binômes, répartition, horaires, variantes et couverture sont identiques à ceux de l'étape 4b, en un temps de calcul inchangé.
+  - **Étape 4d, signalement et documents — livrée.**
+    - **Élèves prioritaires signalés** (V2-F6 bis) par une étoile dans la répartition, le planning et le planning par binôme, et dans le nom lu par les lecteurs d'écran ; une vignette « ! » signale un élève prioritaire reçu sans son professeur principal. Selon la décision 4, l'étoile figure aussi sur le planning par binôme imprimé (avec une légende), jamais sur le planning général, le planning par classe, les convocations ni les exports.
+    - **Planning par binôme** ajouté à l'onglet Documents, pour l'imprimer.
+    - **Niveau partout** (V2-F9) : convocations (« Rencontre parents-professeurs de 5e du … ») ; ligne de titre (établissement, niveau, date) en haut de chaque feuille Excel ; colonne « Niveau » en tête du CSV.
+    - **LVB et options** (V2-F10) : case « Afficher la LVB et les options » du planning par classe (onglet Documents et vue « Par classe » du Planning), mémorisée pour le niveau ; colonnes « LVB » et « Options » dans les feuilles « Par classe » et « Par binôme » de l'export Excel et dans le CSV. Jamais l'indication ULIS.
 
 ## 9. Décisions du 19 novembre 2026
 
