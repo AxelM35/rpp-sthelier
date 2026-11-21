@@ -42,7 +42,7 @@ Ce document complète le [cahier des charges de la version 1](cahier-des-charges
 
 | Paramètre          | Contenu                                                                                                                                |
 | ------------------ | -------------------------------------------------------------------------------------------------------------------------------------- |
-| Soirée             | Date, début, fin, pauses, **durée d'un rendez-vous** (par défaut : 15 min).                                                            |
+| Soirée             | Date, début, fin, pauses, **durée d'un rendez-vous** (par défaut : 10 min en 6e, 15 min aux autres niveaux ; de 5 à 60 min).                                                            |
 | Langues vivantes B | Liste des LVB du niveau. Par défaut : espagnol et allemand en 5e, 4e et 3e ; aucune en 6e.                                             |
 | Options            | Liste des options du niveau, modifiable. Par défaut : « Breton » à tous les niveaux (option bilingue, décision du 20 novembre) ; l'import des enseignants complète la liste (latin, athlétisme…). |
 
@@ -194,6 +194,11 @@ Commencer par le design permet de valider l'aspect visuel tôt, avant de constru
     - aide indiquant les menus de Pronote ; rappel d'importer les enseignants d'abord.
     Vérifié sur les exports anonymisés des quatre niveaux du collège. L'import générique lit aussi des colonnes LVB et options : les valeurs sont rapprochées des listes du niveau, une valeur inconnue y est ajoutée et signalée.
   - **Étape 3e, finition — livrée.** Parcours complet vérifié dans le navigateur (import Pronote des enseignants et des élèves, génération, tous les onglets) en thème clair, sombre et sur téléphone. Fiche RGPD mise à jour : l'indication ULIS est une donnée sensible (article 9), traitée en simple case oui / non, absente des documents et des exports ; colonnes sensibles des exports Pronote jamais lues. Textes d'aide de l'application mis à jour.
+- **Lot 4 — en cours sur `v2-dev`.** Découpage et décisions du 21 novembre : [questions du lot 4](questions-lot4.md).
+  - **Étape 4a, durée des rendez-vous par niveau (V2-R12) — livrée.**
+    - Une soirée neuve dure 10 minutes en 6e et 15 minutes aux autres niveaux (`DUREE_PAR_NIVEAU` dans `config.js`). Les préparations existantes, dont la 6e reprise de la v1, gardent leur durée.
+    - Toute durée entière de 5 à 60 minutes (12 minutes, par exemple), au lieu de pas de 5 minutes.
+    - Aide au réglage (`algos/reglages.js`) : quand les binômes possibles ne suffisent pas à recevoir tous les élèves, la carte « Capacité » l'explique et propose, chacun avec un bouton « Appliquer », la durée ronde la plus longue qui suffit et l'heure de fin nécessaire avec la durée actuelle (pauses comprises, 22 h au plus). Sur la 6e réelle : 10 minutes, ou fin à 20 h 30. Le calcul est un minimum ; « Tout générer » donne le résultat exact. Après application, un planning existant est à refaire, ce que le message rappelle.
 
 ## 9. Décisions du 19 novembre 2026
 
@@ -211,6 +216,8 @@ Commencer par le design permet de valider l'aspect visuel tôt, avant de constru
 | Options ignorées pour les binômes (20 novembre) | ANGLAIS +, MATHS +, O2 et LLC ANGLAIS ne font entrer aucun enseignant dans l'équipe d'un élève. |
 | Élève sans LVB (20 novembre)                  | Rien pour un élève ULIS ; simple information pour les autres.                                                                                                                                                                               |
 | Import Pronote (20 novembre)                  | Les exports bruts des enseignants et des élèves sont lus directement ; règles détaillées dans [import-pronote.md](import-pronote.md).                                                                                                      |
+
+| Lot 4 (21 novembre)                           | Décisions sur les élèves prioritaires, la durée des rendez-vous et les documents : voir [questions du lot 4](questions-lot4.md). Un enseignant n'est jamais professeur principal de deux classes. |
 
 ### Point restant
 

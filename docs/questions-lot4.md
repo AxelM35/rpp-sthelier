@@ -1,8 +1,8 @@
-# Lot 4 — Questions de conception
+# Lot 4 — Questions de conception (tranchées le 21 novembre 2026)
 
-Questions posées le 20 novembre 2026, avant de commencer le lot 4 (élèves prioritaires du professeur principal, durée des rendez-vous par niveau, documents). Le détail des exigences est dans le [cahier des charges v2](cahier-des-charges-v2.md) : V2-R11, V2-R12, V2-F4 bis, V2-F6, V2-F6 bis, V2-F9, V2-F10 et section 6.3.
+Questions posées le 20 novembre 2026, tranchées le 21 novembre, avant de commencer le lot 4 (élèves prioritaires du professeur principal, durée des rendez-vous par niveau, documents). Le détail des exigences est dans le [cahier des charges v2](cahier-des-charges-v2.md) : V2-R11, V2-R12, V2-F4 bis, V2-F6, V2-F6 bis, V2-F9, V2-F10 et section 6.3.
 
-Pour répondre, compléter les lignes « Réponse » (ou répondre dans la conversation). Une réponse « d'accord » retient la proposition recommandée.
+Toutes les questions sont tranchées ; les réponses figurent sous chacune.
 
 ## Découpage proposé
 
@@ -30,7 +30,7 @@ Les exports Pronote n'indiquent pas les élèves prioritaires.
 - **A — recommandée** : saisie seule, par la case à cocher de la liste des élèves, avec un compteur par classe (« 3 / 5 prioritaires »). Un nouvel import des élèves conserve l'indication des élèves déjà présents (même nom, prénom et classe).
 - **B** : comme A, et l'import générique (CSV ou Excel) lit aussi une colonne facultative « Prioritaire » (« oui », « x » ou « 1 »).
 
-Réponse :
+Réponse (21 novembre) : A — saisie seule ; un nouvel import des élèves conserve l'indication.
 
 ## 2. Limite de 5 élèves
 
@@ -38,11 +38,11 @@ Réponse :
 - **2b.** Classe sans professeur principal désigné : **recommandé : la case reste permise** (limite de 5 dans la classe) et un contrôle signale l'absence de professeur principal. Ainsi, l'ordre de saisie importe peu.
 - **2c.** Le refus au sixième élève (V2-F4 bis) vaut pour la case à cocher. Si une autre modification fait dépasser la limite (élève changé de classe), **recommandé : pas de refus, mais un point à corriger**.
 
-Réponse 2a :
+Réponse 2a (21 novembre) : un enseignant n'est jamais professeur principal de deux classes. La limite est donc de 5 élèves par classe. L'application refuse de désigner un enseignant professeur principal d'une seconde classe.
 
-Réponse 2b :
+Réponse 2b (21 novembre) : d'accord — case permise, avec un point à corriger.
 
-Réponse 2c :
+Réponse 2c (21 novembre) : d'accord — pas de refus, un point à corriger.
 
 ## 3. Binôme du professeur principal sans assez de place
 
@@ -51,7 +51,7 @@ Cas possibles : professeur principal présent sur une partie de la soirée seule
 - **A — recommandée** : les élèves prioritaires restent chez le professeur principal dans la limite des places ; les autres sont reçus par un autre binôme de leur équipe, et un point à corriger le signale (« élève prioritaire reçu sans son professeur principal »). Aucune famille n'est privée de rendez-vous.
 - **B** : les élèves prioritaires en surnombre restent sans rendez-vous, avec un point à corriger.
 
-Réponse :
+Réponse (21 novembre) : A — reçus par un autre binôme de leur équipe, avec un point à corriger.
 
 ## 4. Signalement des élèves prioritaires
 
@@ -61,14 +61,14 @@ Réponse :
 - **B** : à l'écran seulement.
 - **C** : à l'écran, sur les plannings imprimés et dans les exports, jamais sur les convocations.
 
-Réponse :
+Réponse (21 novembre) : A — à l'écran et sur le planning par binôme imprimé seulement.
 
 ## 5. Convocation d'un élève prioritaire
 
 - **A — recommandée** : même texte que pour les autres familles. Le professeur principal prévient lui-même la famille s'il le juge utile.
 - **B** : une phrase en plus, par exemple « Ce rendez-vous est demandé par le professeur principal de votre enfant. »
 
-Réponse :
+Réponse (21 novembre) : A — même texte pour toutes les familles.
 
 ## 6. Durée des rendez-vous par niveau
 
@@ -82,11 +82,11 @@ Chaque niveau a déjà sa propre soirée, donc sa propre durée (onglet Soirée,
   Ce calcul suppose que tous les enseignants forment des binômes pleins : c'est un minimum. Les équipes pédagogiques, les binômes limités à une LVB ou une option et les présences partielles peuvent demander davantage ; « Tout générer » donne le résultat exact.
 - **6c. Durées possibles.** Aujourd'hui, la durée se règle par pas de 5 minutes (5, 10, 15…). Faut-il permettre toute durée en minutes, par exemple 12 minutes (15 créneaux en 6e) ? **Recommandé : oui**, de 5 à 60 minutes ; les propositions de l'aide restent des multiples de 5 quand c'est possible.
 
-Réponse 6a :
+Réponse 6a (21 novembre) : 10 minutes en 6e, 15 minutes aux autres niveaux.
 
-Réponse 6b :
+Réponse 6b (21 novembre) : d'accord — propositions chiffrées avec un bouton « Appliquer ».
 
-Réponse 6c :
+Réponse 6c (21 novembre) : d'accord — toute durée de 5 à 60 minutes.
 
 ## 7. Niveau sur les documents et les exports (V2-F9)
 
@@ -96,11 +96,11 @@ Les plannings imprimés indiquent déjà le niveau dans leur en-tête, et les no
 - **Excel** : **recommandé** : une ligne de titre en haut de chaque feuille (établissement, niveau, date), au-dessus des en-têtes de colonnes.
 - **CSV** : **recommandé** : une colonne « Niveau » en première position, pour garder une ligne par élève, facile à trier et à réimporter. Une ligne de titre gênerait les tableurs.
 
-Réponse :
+Réponse (21 novembre) : d'accord pour les trois propositions.
 
 ## 8. LVB et options dans le planning par classe (V2-F10)
 
 - **A — recommandée** : une case « Afficher la LVB et les options », non cochée par défaut, au-dessus du planning par classe (onglet Documents et vue « Par classe » de l'onglet Planning), mémorisée pour le niveau. Une colonne « LVB et options » s'ajoute alors (« Espagnol · Latin »). Les feuilles « Par classe » et « Par binôme » de l'export Excel et le CSV reçoivent deux colonnes « LVB » et « Options ». Jamais l'indication ULIS.
 - **B** : la colonne toujours affichée sur le planning par classe, sans case à cocher ; exports inchangés.
 
-Réponse :
+Réponse (21 novembre) : A — case à cocher, colonnes LVB et Options dans les exports, jamais l'indication ULIS.

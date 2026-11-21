@@ -697,6 +697,28 @@ table.couverture tr.groupe td:first-child {
   background: var(--md-sys-color-warning-container);
   color: var(--md-sys-color-on-warning-container);
 }
+/* Aide au réglage de la capacité (onglet Soirée) : une proposition par ligne, avec son bouton « Appliquer ». */
+.msg.reglages p {
+  margin: 0;
+}
+.msg.reglages .note {
+  margin-top: 8px;
+  color: inherit;
+}
+.msg.reglages ul {
+  display: grid;
+  gap: 8px;
+  margin: 10px 0 0;
+  padding: 0;
+  list-style: none;
+}
+.msg.reglages li {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 12px;
+  align-items: center;
+  justify-content: space-between;
+}
 .msg.rappel {
   display: flex;
   flex-wrap: wrap;

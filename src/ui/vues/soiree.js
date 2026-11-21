@@ -1,9 +1,10 @@
 // Onglet 1 : paramètres de la soirée, capacité, premiers pas.
 
 import { creneaux } from '../../algos/creneaux.js';
+import { bilanCapacite, profsMobilisables } from '../../algos/reglages.js';
 import { classesDuProf, classesTriees, effectifs } from '../../modele/acces.js';
-import { echapper, formaterHeure } from '../../utils/texte.js';
-import { CONSERVATION_JOURS } from '../../config.js';
+import { echapper, formaterHeure, versMinutes } from '../../utils/texte.js';
+import { CONSERVATION_JOURS, DUREE_MAX, DUREE_MIN } from '../../config.js';
 import { etatConservation } from '../../modele/confidentialite.js';
 import { app } from '../app.js';
 import { blocControles, boutonSupprimer, champ } from '../composants.js';
@@ -15,7 +16,8 @@ function premiersPas() {
     '<details class="card guide"' +
     (app.etat.eleves.length ? '' : ' open') +
     '><summary>Premiers pas</summary><ol>' +
-    "<li><b>Soirée</b> : fixez la date, les heures de début et de fin, la durée d'un rendez-vous et les pauses. Le nombre de créneaux se calcule seul.</li>" +
+    "<li><b>Soirée</b> : fixez la date, les heures de début et de fin, la durée d'un rendez-vous et les pauses. " +
+    'Le nombre de créneaux se calcule seul ; si la capacité manque, la carte « Capacité » propose une durée ou une heure de fin.</li>' +
     "<li><b>Données</b> : importez les exports Pronote, d'abord les enseignants, puis les élèves (ou un autre fichier CSV ou Excel). " +
     "Vérifiez les langues et options, le professeur principal de chaque classe et l'enseignement de chaque professeur.</li>" +
     "<li><b>Binômes</b> : cliquez « Tout générer ». Les binômes que vous composez vous-même sont conservés, l'application complète le reste.</li>" +
@@ -60,11 +62,68 @@ function parametres() {
     champ('soiree', '', 'fin', s.fin, 'time') +
     '</label>' +
     '<label class="f">Durée d\'un rendez-vous (min)' +
-    champ('soiree', '', 'duree', s.duree, 'number', 'min="5" max="60" step="5" style="width:90px"') +
+    champ('soiree', '', 'duree', s.duree, 'number', 'min="' + DUREE_MIN + '" max="' + DUREE_MAX + '" step="1" style="width:90px"') +
     '</label></div>' +
     '<h3 style="margin-top:16px">Pauses communes</h3>' +
     pauses +
     '<button type="button" class="b" data-action="ajouterPause">+ Ajouter une pause</button></div>'
+  );
+}
+
+/** Bouton « Appliquer » d'un réglage proposé (champ de la soirée, valeur). */
+const boutonReglage = (param, valeur, libelle) =>
+  '<button type="button" class="b" data-action="appliquerReglage" data-param="' +
+  param +
+  '" data-id="' +
+  echapper(valeur) +
+  '" aria-label="' +
+  echapper('Appliquer : ' + libelle) +
+  '">Appliquer</button>';
+
+/** Aide au réglage, quand les binômes possibles ne peuvent pas recevoir tous les élèves (décision 6b du 21 novembre). */
+function aideReglage(bilan) {
+  if (!bilan || bilan.suffit) return '';
+  const propositions = [];
+  if (bilan.duree) {
+    const libelle = 'rendez-vous de ' + bilan.duree.minutes + ' minutes';
+    propositions.push(
+      '<li><span><b>Rendez-vous de ' +
+        bilan.duree.minutes +
+        ' minutes</b> : ' +
+        bilan.duree.creneaux +
+        ' créneaux.</span>' +
+        boutonReglage('duree', bilan.duree.minutes, libelle) +
+        '</li>',
+    );
+  }
+  if (bilan.fin) {
+    const heure = formaterHeure(versMinutes(bilan.fin.heure));
+    propositions.push(
+      '<li><span><b>Fin à ' +
+        heure +
+        '</b>, avec la durée actuelle : ' +
+        bilan.fin.creneaux +
+        ' créneaux.</span>' +
+        boutonReglage('fin', bilan.fin.heure, 'fin à ' + heure) +
+        '</li>',
+    );
+  }
+  return (
+    '<div class="msg warn reglages" style="margin-top:10px"><p><b>Capacité insuffisante.</b> ' +
+    bilan.eleves +
+    ' élèves pour ' +
+    bilan.binomes +
+    ' binômes au plus : il faut au moins ' +
+    bilan.besoin +
+    ' créneaux par binôme, la soirée en compte ' +
+    bilan.creneaux +
+    '.</p>' +
+    (propositions.length
+      ? '<ul>' + propositions.join('') + '</ul>'
+      : '<p>Aucune durée ni heure de fin raisonnable ne suffit : complétez les équipes pédagogiques ou ajoutez une seconde soirée.</p>') +
+    '<p class="note">Ce calcul est un minimum : il suppose que tous les professeurs forment des binômes présents toute la soirée. ' +
+    'Les équipes pédagogiques, les LVB, les options et les présences partielles peuvent demander davantage ; ' +
+    '« Tout générer » (onglet Binômes) donne le résultat exact.</p></div>'
   );
 }
 
@@ -74,7 +133,7 @@ function capaciteSoiree() {
   const n = effectifs(etat);
   const S = liste.length;
   const N = etat.eleves.length;
-  const nbProfs = etat.profs.filter((p) => p.enseignements.length).length;
+  const nbProfs = profsMobilisables(etat);
   const indicateur = (valeur, texte) => '<div class="kpi"><b>' + valeur + '</b><span>' + texte + '</span></div>';
   let h =
     '<div class="card"><h2>Capacité</h2><div class="kpis">' +
@@ -90,6 +149,7 @@ function capaciteSoiree() {
       formaterHeure(liste[S - 1].f) +
       ')</p>'
     : '<div class="msg bad" style="margin-top:10px">Aucun créneau avec ces horaires.</div>';
+  if (S) h += aideReglage(bilanCapacite(etat));
   if (etat.classes.length && S) {
     h +=
       '<div class="scroll"><table class="t"><tr><th scope="col">Classe</th><th scope="col">Élèves</th>' +

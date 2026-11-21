@@ -25,7 +25,16 @@
 //
 // « slot » est l'indice du créneau dans la liste calculée par creneaux().
 
-import { CLASSES_MAX_PAR_BINOME, LISTES_PAR_DEFAUT, NIVEAUX, SOIREE_PAR_DEFAUT, VERSION_DONNEES } from '../config.js';
+import {
+  CLASSES_MAX_PAR_BINOME,
+  DUREE_MAX,
+  DUREE_MIN,
+  DUREE_PAR_NIVEAU,
+  LISTES_PAR_DEFAUT,
+  NIVEAUX,
+  SOIREE_PAR_DEFAUT,
+  VERSION_DONNEES,
+} from '../config.js';
 
 /** Types d'enseignement d'un professeur dans une classe. */
 export const TYPES_ENSEIGNEMENT = Object.freeze(['classe', 'lvb', 'option', 'sauf']);
@@ -48,12 +57,21 @@ export function listesParDefaut(niveau) {
   };
 }
 
+/** Durée d'un rendez-vous d'une soirée neuve du niveau, en minutes. */
+export const dureeParDefaut = (niveau) => DUREE_PAR_NIVEAU[niveau] || SOIREE_PAR_DEFAUT.duree;
+
+/** Durée saisie dans l'onglet Soirée, ramenée entre DUREE_MIN et DUREE_MAX (par défaut : celle du niveau). */
+export function bornerDuree(valeur, niveau) {
+  const d = Math.round(Number(valeur));
+  return d > 0 ? Math.min(DUREE_MAX, Math.max(DUREE_MIN, d)) : dureeParDefaut(niveau);
+}
+
 /** État vide d'une nouvelle préparation du niveau indiqué. */
 export function etatVide(niveau = NIVEAUX[0]) {
   return {
     v: VERSION_DONNEES,
     niveau,
-    soiree: { ...SOIREE_PAR_DEFAUT, pauses: [] },
+    soiree: { ...SOIREE_PAR_DEFAUT, duree: dureeParDefaut(niveau), pauses: [] },
     ...listesParDefaut(niveau),
     classes: [],
     eleves: [],
@@ -152,7 +170,7 @@ export function valider(brut) {
     date: DATE_VALIDE.test(so.date || '') ? so.date : '',
     debut: heure(so.debut) || SOIREE_PAR_DEFAUT.debut,
     fin: heure(so.fin) || SOIREE_PAR_DEFAUT.fin,
-    duree: Math.min(240, Math.max(1, Math.round(Number(so.duree)) || SOIREE_PAR_DEFAUT.duree)),
+    duree: Math.min(240, Math.max(1, Math.round(Number(so.duree)) || dureeParDefaut(s.niveau))),
     pauses: liste(so.pauses, 'pauses').map((p) => {
       p = objet(p, 'pauses');
       return { debut: heure(p.debut) || '18:30', duree: Math.max(0, Math.round(Number(p.duree)) || 0) };

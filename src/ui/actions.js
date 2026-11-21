@@ -4,6 +4,7 @@
 // puis réaffiche l'onglet.
 
 import { proposerBinomes, proposerVariantes } from '../algos/binomes.js';
+import { creneaux } from '../algos/creneaux.js';
 import { deposer } from '../algos/deplacement.js';
 import { completerGeneration, genererTout } from '../algos/generation.js';
 import { planifierHoraires } from '../algos/horaires.js';
@@ -20,13 +21,13 @@ import {
   trouverEleve,
   trouverProf,
 } from '../modele/acces.js';
-import { etatVide, valider } from '../modele/etat.js';
+import { bornerDuree, etatVide, valider } from '../modele/etat.js';
 import { chiffreNiveau, nomFichier, preparationVide } from '../modele/niveaux.js';
 import { lireCSV } from '../io/csv.js';
 import { classeurPlanning, csvPlanning } from '../io/exports.js';
 import { importerLignes } from '../io/import.js';
 import { MIME_XLSX } from '../io/xlsx.js';
-import { nouvelId } from '../utils/texte.js';
+import { formaterHeure, nouvelId, versMinutes } from '../utils/texte.js';
 import { app } from './app.js';
 import { $, annoncer, confirmer, telecharger, toast } from './dom.js';
 import { afficherDialogue, chargerLignes, fermerDialogue, lireFichierImport, ouvrirDialogue } from './dialogueImport.js';
@@ -270,6 +271,25 @@ export const actions = {
   // Soirée
   ajouterPause: () => app.etat.soiree.pauses.push({ debut: '18:30', duree: 15 }),
   supprimerPause: (el) => app.etat.soiree.pauses.splice(Number(el.dataset.id), 1),
+  appliquerReglage(el) {
+    const { param, id } = el.dataset;
+    const soiree = app.etat.soiree;
+    if (param === 'duree') soiree.duree = bornerDuree(id, app.niveau);
+    else if (param === 'fin' && /^\d{2}:\d{2}$/.test(id)) soiree.fin = id;
+    else return;
+    const nb = creneaux(soiree).length;
+    const planifies = app.etat.eleves.some((e) => e.slot != null);
+    app.ui.message = {
+      ok: true,
+      txt:
+        (param === 'duree' ? 'Rendez-vous de ' + soiree.duree + ' minutes' : 'Fin de la soirée à ' + formaterHeure(versMinutes(id))) +
+        ' : ' +
+        nb +
+        ' créneaux par binôme.' +
+        (planifies ? ' Relancez « Tout générer » (onglet Binômes) pour refaire le planning.' : ''),
+    };
+    app.ui.focus = 'focus:soiree||' + param;
+  },
 
   // Données
   ajouterClasse() {
@@ -554,7 +574,7 @@ export const DIALOGUE_SEUL = new Set(['ouvrirImport', 'fermerImport', 'analyserT
 export const champs = {
   soiree(el) {
     const p = el.dataset.param;
-    app.etat.soiree[p] = p === 'duree' ? Math.max(1, Number(el.value) || 15) : el.value;
+    app.etat.soiree[p] = p === 'duree' ? bornerDuree(el.value, app.niveau) : el.value;
   },
   pause(el) {
     const p = el.dataset.param;

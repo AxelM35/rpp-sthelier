@@ -9,7 +9,7 @@ Projet de fiche pour le registre des activités de traitement de l'établissemen
 | Responsable du traitement | [Chef d'établissement, nom du collège]                                                                                                                                                                          |
 | Délégué à la protection   | [DPO académique : coordonnées]                                                                                                                                                                                  |
 | Utilisateur de l'outil    | [Organisateur de la soirée, par exemple le CPE ou un professeur principal]                                                                                                                                      |
-| Finalité                  | Organiser la soirée de rencontres parents-professeurs de chaque niveau du collège (6e à 3e) : constituer les binômes d'enseignants, attribuer un rendez-vous de 15 minutes à chaque famille, produire les plannings et les convocations. |
+| Finalité                  | Organiser la soirée de rencontres parents-professeurs de chaque niveau du collège (6e à 3e) : constituer les binômes d'enseignants, attribuer à chaque famille un rendez-vous, d'une durée fixée pour chaque niveau, produire les plannings et les convocations. |
 | Base légale proposée      | Mission d'intérêt public (article 6.1.e du RGPD) : suivi de la scolarité et relations avec les familles. À confirmer par le DPO.                                                                                |
 
 ## Données traitées

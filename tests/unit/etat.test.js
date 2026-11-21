@@ -43,7 +43,7 @@ test('les références orphelines et valeurs fantaisistes sont nettoyées', () =
   etat.eleves[1].verrou = true;
   etat.profs[0].enseignements.push({ classeId: 'inconnue', type: 'classe' }, { classeId: 'c6A', type: 'classe' });
   const v = valider(etat);
-  assert.equal(v.soiree.duree, 15);
+  assert.equal(v.soiree.duree, 10); // durée par défaut de la 6e
   assert.equal(v.soiree.debut, '17:00');
   assert.equal(v.eleves.length, etat.eleves.length - 1);
   assert.deepEqual([v.eleves[0].binomeId, v.eleves[0].slot, v.eleves[0].verrou], [null, null, false]);

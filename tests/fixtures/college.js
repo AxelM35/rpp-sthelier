@@ -116,6 +116,7 @@ export function college({ effectifs = [27, 28, 26, 27], date = '2026-12-01' } = 
   const etat = etatVide();
   etat.soiree.etab = 'Collège (test)';
   etat.soiree.date = date;
+  etat.soiree.duree = 15; // durée de la version 1 (une 6e neuve part sur 10 minutes) : 12 créneaux
   etat.classes = ['6A', '6B', '6C', '6D'].map((nom) => ({ id: 'c' + nom, nom, ppId: null }));
   let i = 0;
   etat.classes.forEach((c, k) => {

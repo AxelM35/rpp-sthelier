@@ -38,7 +38,7 @@ export const GRAINE_PROPOSITION = 61113;
 /** Nombre de modifications que le bouton « Annuler » peut défaire. */
 export const HISTORIQUE_MAX = 40;
 
-/** Paramètres d'une soirée neuve. */
+/** Paramètres d'une soirée neuve. La durée d'un rendez-vous dépend du niveau (DUREE_PAR_NIVEAU). */
 export const SOIREE_PAR_DEFAUT = Object.freeze({
   etab: '',
   date: '',
@@ -46,6 +46,19 @@ export const SOIREE_PAR_DEFAUT = Object.freeze({
   fin: '20:00',
   duree: 15,
 });
+
+/**
+ * Durée d'un rendez-vous d'une soirée neuve, en minutes, par niveau (décision 6a du 21 novembre) :
+ * la 6e, plus nombreuse, part sur des rendez-vous plus courts.
+ */
+export const DUREE_PAR_NIVEAU = Object.freeze({ '6e': 10, '5e': 15, '4e': 15, '3e': 15 });
+
+/** Durées d'un rendez-vous permises dans l'onglet Soirée, en minutes (toute valeur entière entre les deux). */
+export const DUREE_MIN = 5;
+export const DUREE_MAX = 60;
+
+/** Heure de fin la plus tardive que l'aide au réglage de la capacité peut proposer. */
+export const FIN_MAX_PROPOSEE = '22:00';
 
 /**
  * Durée de conservation recommandée des données des élèves après la soirée, en jours.

@@ -60,6 +60,7 @@ src/
     equipe.js          Équipe d'un élève : enseignants qui l'ont en cours (LVB, options, ULIS, professeur principal)
   algos/               Cœur métier, sans navigateur : fonctions testables
     creneaux.js        Créneaux de la soirée, disponibilités
+    reglages.js        Aide au réglage de la capacité (durée ou heure de fin proposée)
     groupes.js         Groupes d'élèves de même équipe (unités du calcul), compatibilité des paires, couverture
     quotas.js          Nombre d'élèves de chaque groupe par binôme
     binomes.js         Proposition automatique des binômes
