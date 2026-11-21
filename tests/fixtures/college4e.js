@@ -91,6 +91,7 @@ export function college4e({ effectifs = [26, 24, 25, 26, 26], date = '2027-01-14
         prenom: PRENOMS[(i * 3) % PRENOMS.length] + ' ' + i,
         classeId: 'c' + classe,
         ...profil(classe, j),
+        prioritaire: false,
         fratrie: '',
         pasAvant: '',
         pasApres: '',

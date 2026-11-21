@@ -10,7 +10,7 @@ export const PREFIXE_STOCKAGE = 'rpp-v2-';
 export const CLE_STOCKAGE_V1 = 'rpp6-v1';
 
 /** Version du format des données (sauvegardes et stockage local). */
-export const VERSION_DONNEES = 3;
+export const VERSION_DONNEES = 4;
 
 /**
  * Langues vivantes B et options d'une nouvelle préparation, par niveau. Ces listes sont modifiables
@@ -22,6 +22,12 @@ export const LISTES_PAR_DEFAUT = Object.freeze({
   '4e': { lvb: ['Espagnol', 'Allemand'], options: ['Breton'] },
   '3e': { lvb: ['Espagnol', 'Allemand'], options: ['Breton'] },
 });
+
+/**
+ * Nombre maximal d'élèves prioritaires d'une classe, reçus par le binôme de son professeur principal (V2-R11).
+ * Un enseignant n'est professeur principal que d'une classe : la limite vaut donc par professeur principal.
+ */
+export const PRIORITAIRES_MAX = 5;
 
 /** Nombre maximal de classes reçues par un binôme (au-delà d'une : binôme « glissant »). */
 export const CLASSES_MAX_PAR_BINOME = 2;

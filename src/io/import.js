@@ -56,10 +56,17 @@ export function classeParNom(etat, nom) {
   return c;
 }
 
+/** Clé d'un élève pour reconnaître un élève déjà présent : nom, prénom et classe, sans tenir compte des majuscules. */
+export const cleEleve = (e) => (e.nom + '|' + e.prenom + '|' + e.classeId).toLowerCase();
+
+/** Clés des élèves prioritaires parmi ceux donnés. */
+export const clesPrioritaires = (eleves) => new Set(eleves.filter((e) => e.prioritaire).map(cleEleve));
+
 /**
  * Ajoute les élèves ou professeurs des lignes à l'état.
  * options : { type: 'eleves' | 'profs', lignes, colonnes, entete, remplacer }
- * Élèves : un élève déjà présent (même nom, prénom et classe) est ignoré et compté comme doublon.
+ * Élèves : un élève déjà présent (même nom, prénom et classe) est ignoré et compté comme doublon. Avec « remplacer »,
+ * un élève réimporté garde son indication « prioritaire ».
  * Professeurs : un professeur déjà présent n'est pas recréé ; ses classes sont complétées.
  * Renvoie { etat, ajoutes, doublons } ou { erreur } si les colonnes obligatoires manquent.
  */
@@ -73,6 +80,8 @@ export function importerLignes(etatInitial, { type, lignes, colonnes, entete, re
   const resultat = {};
 
   if (type === 'eleves') {
+    // Un nouvel import garde l'indication « prioritaire » des élèves déjà présents (décision 1 du lot 4).
+    const prioritaires = clesPrioritaires(etat.eleves);
     if (remplacer) etat.eleves = [];
     // LVB et options : rapprochées des listes du niveau ; une valeur inconnue y est ajoutée (V2-F3).
     const ajoutees = [];
@@ -89,13 +98,12 @@ export function importerLignes(etatInitial, { type, lignes, colonnes, entete, re
       return x.id;
     };
     resultat.ajoutees = ajoutees;
-    const cle = (nom, prenom, classeId) => (nom + '|' + prenom + '|' + classeId).toLowerCase();
-    const vus = new Set(etat.eleves.map((e) => cle(e.nom, e.prenom, e.classeId)));
+    const vus = new Set(etat.eleves.map(cleEleve));
     donnees.forEach((l) => {
       const nom = valeur(l, 'nom');
       const classe = classeParNom(etat, valeur(l, 'classe'));
       if (!nom || !classe) return;
-      const k = cle(nom, valeur(l, 'prenom'), classe.id);
+      const k = cleEleve({ nom, prenom: valeur(l, 'prenom'), classeId: classe.id });
       if (vus.has(k)) {
         doublons++;
         return;
@@ -116,6 +124,7 @@ export function importerLignes(etatInitial, { type, lignes, colonnes, entete, re
           ),
         ],
         ulis: false,
+        prioritaire: prioritaires.has(k),
         fratrie: valeur(l, 'fratrie'),
         pasAvant: '',
         pasApres: '',

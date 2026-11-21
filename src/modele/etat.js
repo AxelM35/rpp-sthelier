@@ -6,11 +6,13 @@
 //   soiree   { etab, date, debut, fin, duree, pauses:[{debut, duree}] }
 //   lvb      [{ id, nom }]          langues vivantes B du niveau
 //   options  [{ id, nom }]          options du niveau
-//   classes  [{ id, nom, ppId }]    ppId : professeur principal (id d'un professeur) ou null
+//   classes  [{ id, nom, ppId }]    ppId : professeur principal (id d'un professeur) ou null ; un enseignant
+//                                   est professeur principal d'une classe au plus
 //   profs    [{ id, nom, discipline, enseignements:[{ classeId, type, refId, sansUlis }], dispoDe, dispoA }]
 //   binomes  [{ id, fixe, profIds:[id|null, id|null], classeIds:[], salle }]
-//   eleves   [{ id, nom, prenom, classeId, lvbId, optionIds:[], ulis,
+//   eleves   [{ id, nom, prenom, classeId, lvbId, optionIds:[], ulis, prioritaire,
 //               fratrie, pasAvant, pasApres, binomeId, slot, verrou }]
+//            prioritaire : élève reçu par le binôme du professeur principal de sa classe (V2-R11)
 //   opt      { mode: 'tous' | 'min' }
 //
 // Enseignement d'un professeur dans une classe (au plus un par classe), selon son type :
@@ -112,6 +114,9 @@ const MIGRATIONS = {
         })
       : d.profs,
   }),
+  // Version 3 : ajout de l'indication « prioritaire » des élèves, fausse par défaut à la validation. Le changement
+  // de version empêche une application plus ancienne d'ouvrir le fichier en perdant cette indication.
+  3: (d) => d,
 };
 
 /** Amène des données d'une version antérieure à la version courante. */
@@ -209,7 +214,13 @@ export function valider(brut) {
     };
   });
   const profs = new Set(etat.profs.map((p) => p.id));
-  etat.classes.forEach((c) => (c.ppId = profs.has(ppIds[c.id]) ? ppIds[c.id] : null));
+  // Un enseignant n'est professeur principal que d'une classe : seule la première est gardée.
+  const pps = new Set();
+  etat.classes.forEach((c) => {
+    const pp = ppIds[c.id];
+    c.ppId = profs.has(pp) && !pps.has(pp) ? pp : null;
+    if (c.ppId) pps.add(pp);
+  });
 
   etat.binomes = liste(s.binomes, 'binômes').map((b) => {
     b = objet(b, 'binômes');
@@ -239,6 +250,7 @@ export function valider(brut) {
         lvbId: lvb.has(e.lvbId) ? e.lvbId : null,
         optionIds: [...new Set(liste(e.optionIds, "options d'un élève").filter((o) => options.has(o)))],
         ulis: e.ulis === true,
+        prioritaire: e.prioritaire === true,
         fratrie: texte(e.fratrie, 40),
         pasAvant: heure(e.pasAvant),
         pasApres: heure(e.pasApres),

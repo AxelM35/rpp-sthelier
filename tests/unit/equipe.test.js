@@ -20,6 +20,7 @@ const eleve = (id, nom, classeId, { lvbId = null, optionIds = [], ulis = false }
   lvbId,
   optionIds,
   ulis,
+  prioritaire: false,
   fratrie: '',
   pasAvant: '',
   pasApres: '',
@@ -103,7 +104,6 @@ test('équipe : un enseignant d’une autre classe n’en fait jamais partie', (
 // ---------- Format version 3 ----------
 
 test('listes par défaut du niveau (LVB et options)', () => {
-  assert.equal(VERSION_DONNEES, 3);
   assert.deepEqual(listesParDefaut('6e'), { lvb: [], options: [{ id: 'opt-breton', nom: 'Breton' }] });
   assert.deepEqual(
     listesParDefaut('5e').lvb.map((x) => x.id),
@@ -113,7 +113,7 @@ test('listes par défaut du niveau (LVB et options)', () => {
   assert.deepEqual(etatVide('3e').lvb, listesParDefaut('3e').lvb);
 });
 
-test('une préparation complète en version 3 est rechargée à l’identique', () => {
+test('une préparation complète en version 3 ou 4 est rechargée à l’identique', () => {
   const etat = quatrieme();
   assert.deepEqual(valider(JSON.parse(JSON.stringify(etat))), etat);
 });
@@ -122,7 +122,7 @@ test('migration 2 → 3 : classes des professeurs en « classe entière », list
   const etat = college();
   const v2 = { ...enFormatV1(etat), v: 2, niveau: '5e' };
   const migre = migrer(structuredClone(v2));
-  assert.equal(migre.v, 3);
+  assert.equal(migre.v, VERSION_DONNEES);
   assert.deepEqual(migre.lvb, listesParDefaut('5e').lvb);
   assert.ok(migre.profs.every((p) => !('classeIds' in p)));
 

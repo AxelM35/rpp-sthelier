@@ -1,6 +1,7 @@
 // Onglet 2 : langues et options du niveau, classes (professeur principal), professeurs (enseignements), élèves.
 
-import { classesTriees, comparerEleves, effectifs, enseignementDans, nomClasse, nomEleve } from '../../modele/acces.js';
+import { PRIORITAIRES_MAX } from '../../config.js';
+import { classesTriees, comparerEleves, effectifs, enseignementDans, nomClasse, nomEleve, prioritairesDe } from '../../modele/acces.js';
 import { nomReference } from '../../modele/equipe.js';
 import { comparer, echapper } from '../../utils/texte.js';
 import { app } from '../app.js';
@@ -56,6 +57,23 @@ function blocListes() {
   );
 }
 
+/** Compteur des élèves prioritaires d'une classe (« 3 / 5 prioritaires »), s'il y en a. */
+function badgePrioritaires(c) {
+  const k = prioritairesDe(app.etat, c.id).length;
+  if (!k) return '';
+  return (
+    '<span class="badge' +
+    (k > PRIORITAIRES_MAX ? ' bad' : ' acc') +
+    '" title="Élèves prioritaires, reçus par le professeur principal">★ ' +
+    k +
+    ' / ' +
+    PRIORITAIRES_MAX +
+    ' prioritaire' +
+    (k > 1 ? 's' : '') +
+    '</span>'
+  );
+}
+
 function blocClasses(classes, n) {
   const { etat } = app;
   const profs = etat.profs.slice().sort((a, b) => comparer(a.nom, b.nom));
@@ -74,6 +92,7 @@ function blocClasses(classes, n) {
           '<span class="badge">' +
           n[c.id] +
           ' él.</span>' +
+          badgePrioritaires(c) +
           '<select data-champ="ppClasse" data-id="' +
           c.id +
           '" ' +
@@ -86,7 +105,10 @@ function blocClasses(classes, n) {
       )
       .join('') +
     '</div><button type="button" class="b" data-action="ajouterClasse">+ Classe</button>' +
-    '<p class="note">Le professeur principal peut recevoir tous les élèves de sa classe, quelle que soit sa discipline.</p></div>'
+    '<p class="note">Le professeur principal peut recevoir tous les élèves de sa classe, quelle que soit sa discipline. ' +
+    'Il reçoit lui-même les élèves prioritaires de sa classe (' +
+    PRIORITAIRES_MAX +
+    ' au plus), à cocher dans la liste des élèves.</p></div>'
   );
 }
 
@@ -232,6 +254,13 @@ function blocEleves(classes) {
         ' ' +
         aria(q + ' en ULIS') +
         '></td>' +
+        '<td><input type="checkbox" data-champ="prioritaireEleve" data-id="' +
+        e.id +
+        '"' +
+        (e.prioritaire ? ' checked' : '') +
+        ' ' +
+        aria(q + ' prioritaire') +
+        '></td>' +
         '<td>' +
         champ('eleve', e.id, 'fratrie', e.fratrie, 'text', aria('Code fratrie de ' + q)) +
         '</td>' +
@@ -261,12 +290,15 @@ function blocEleves(classes) {
     '<div class="scroll"><table class="t"><tr><th scope="col">Nom</th><th scope="col">Prénom</th><th scope="col">Classe</th>' +
     (avecLvb ? '<th scope="col">LVB</th>' : '') +
     (avecOptions ? '<th scope="col">Options</th>' : '') +
-    '<th scope="col">ULIS</th><th scope="col">Fratrie (code)</th>' +
+    '<th scope="col">ULIS</th><th scope="col">Prioritaire</th><th scope="col">Fratrie (code)</th>' +
     '<th scope="col">Pas avant</th><th scope="col">Pas après</th><th scope="col"><span class="sr-only">Supprimer</span></th></tr>' +
     lignes +
     '</table></div>' +
     (eleves.length ? '' : '<p class="muted">Aucun élève. Importez un fichier ou ajoutez-les à la main.</p>') +
     '<p class="note"><b>LVB, options, ULIS</b> : déterminent les enseignants qui ont l\'élève en cours, donc les binômes qui peuvent le recevoir. ' +
+    '<b>Prioritaire</b> : élève que le professeur principal souhaite recevoir lui-même (' +
+    PRIORITAIRES_MAX +
+    ' au plus par classe). ' +
     '<b>Fratrie</b> : donnez le même code (par exemple le nom de famille) aux frères et sœurs pour leur attribuer des rendez-vous consécutifs. ' +
     '<b>Pas avant / Pas après</b> : contraintes horaires de la famille, à laisser vide sinon.</p></div>'
   );

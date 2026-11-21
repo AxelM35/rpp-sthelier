@@ -76,3 +76,9 @@ export function classesCommunes(etat, b) {
   const p = profsDuBinome(etat, b);
   return p.length === 2 ? classesPossibles(etat, p[0]).filter((c) => classesPossibles(etat, p[1]).includes(c)) : [];
 }
+
+/** Classe dont le professeur est le professeur principal, ou null (un enseignant l'est d'une classe au plus). */
+export const classeDuPP = (etat, profId) => etat.classes.find((c) => c.ppId === profId) || null;
+
+/** Élèves prioritaires d'une classe (V2-R11). */
+export const prioritairesDe = (etat, classeId) => etat.eleves.filter((e) => e.prioritaire && e.classeId === classeId);

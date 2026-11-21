@@ -9,12 +9,15 @@ import { deposer } from '../algos/deplacement.js';
 import { completerGeneration, genererTout } from '../algos/generation.js';
 import { planifierHoraires } from '../algos/horaires.js';
 import { repartirEleves } from '../algos/repartition.js';
-import { CLASSES_MAX_PAR_BINOME } from '../config.js';
+import { CLASSES_MAX_PAR_BINOME, PRIORITAIRES_MAX } from '../config.js';
 import {
+  classeDuPP,
   classesCommunes,
   classesTriees,
   enseignementDans,
+  nomClasse,
   nomEleve,
+  prioritairesDe,
   profsDuBinome,
   trouverBinome,
   trouverClasse,
@@ -320,6 +323,7 @@ export const actions = {
       lvbId: null,
       optionIds: [],
       ulis: false,
+      prioritaire: false,
       fratrie: '',
       pasAvant: '',
       pasApres: '',
@@ -584,7 +588,35 @@ export const champs = {
     const x = app.etat[el.dataset.param].find((o) => o.id === el.dataset.id);
     if (el.value.trim()) x.nom = el.value.trim();
   },
-  ppClasse: (el) => (trouverClasse(app.etat, el.dataset.id).ppId = el.value || null),
+  ppClasse(el) {
+    // Un enseignant n'est professeur principal que d'une classe (décision 2a du lot 4).
+    const classe = trouverClasse(app.etat, el.dataset.id);
+    const autre = el.value && classeDuPP(app.etat, el.value);
+    if (autre && autre.id !== classe.id) {
+      toast(
+        trouverProf(app.etat, el.value).nom + ' est déjà professeur principal de ' + autre.nom + ' : retirez-le d’abord de cette classe.',
+      );
+      return;
+    }
+    classe.ppId = el.value || null;
+  },
+  prioritaireEleve(el) {
+    // Au plus PRIORITAIRES_MAX élèves prioritaires par classe, donc par professeur principal (V2-F4 bis).
+    const e = trouverEleve(app.etat, el.dataset.id);
+    const autres = prioritairesDe(app.etat, e.classeId).filter((x) => x.id !== e.id);
+    if (el.checked && autres.length >= PRIORITAIRES_MAX) {
+      toast(
+        nomClasse(app.etat, e.classeId) +
+          ' compte déjà ' +
+          autres.length +
+          ' élèves prioritaires, le maximum. Décochez-en un autre pour désigner ' +
+          nomEleve(e) +
+          '.',
+      );
+      return;
+    }
+    e.prioritaire = el.checked;
+  },
   lvbEleve: (el) => (trouverEleve(app.etat, el.dataset.id).lvbId = el.value || null),
   ulisEleve: (el) => (trouverEleve(app.etat, el.dataset.id).ulis = el.checked),
   classe(el) {

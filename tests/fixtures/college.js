@@ -129,6 +129,7 @@ export function college({ effectifs = [27, 28, 26, 27], date = '2026-12-01' } = 
         lvbId: null,
         optionIds: [],
         ulis: false,
+        prioritaire: false,
         fratrie: '',
         pasAvant: '',
         pasApres: '',

@@ -29,7 +29,7 @@ function fauxStockage(initial = {}) {
 // ---------- Format des données ----------
 
 test('un état neuf porte son niveau et la version courante', () => {
-  assert.equal(VERSION_DONNEES, 3);
+  assert.equal(VERSION_DONNEES, 4);
   assert.deepEqual(NIVEAUX, ['6e', '5e', '4e', '3e']);
   assert.equal(etatVide().niveau, '6e');
   assert.equal(etatVide('4e').niveau, '4e');

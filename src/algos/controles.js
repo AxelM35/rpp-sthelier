@@ -2,7 +2,7 @@
 //
 // Chaque point : { niveau: 'bloquant' | 'avertissement' | 'info', texte, onglet }.
 
-import { ECART_CHARGE_VISE } from '../config.js';
+import { ECART_CHARGE_VISE, PRIORITAIRES_MAX } from '../config.js';
 import {
   classesPossibles,
   codeBinome,
@@ -105,6 +105,43 @@ function controlerEquipes(etat, ajouter) {
   }
 }
 
+/**
+ * Élèves prioritaires du professeur principal, côté données (V2-R11, décisions 2b et 2c du lot 4) : classe sans
+ * professeur principal, plus de PRIORITAIRES_MAX élèves prioritaires dans une classe.
+ */
+function controlerPrioritaires(etat, ajouter) {
+  for (const c of etat.classes) {
+    const eleves = etat.eleves.filter((e) => e.prioritaire && e.classeId === c.id);
+    if (!eleves.length) continue;
+    if (!c.ppId) {
+      ajouter(
+        'avertissement',
+        c.nom +
+          ' : ' +
+          eleves.length +
+          ' élève(s) prioritaire(s), mais aucun professeur principal désigné pour les recevoir. Désignez-le dans la carte « Classes ».',
+        'donnees',
+      );
+    }
+    if (eleves.length > PRIORITAIRES_MAX) {
+      ajouter(
+        'avertissement',
+        c.nom +
+          ' : ' +
+          eleves.length +
+          ' élèves prioritaires, ' +
+          PRIORITAIRES_MAX +
+          ' au plus. Décochez-en ' +
+          (eleves.length - PRIORITAIRES_MAX) +
+          ' dans la liste des élèves : ' +
+          quelquesEleves(etat, eleves) +
+          '.',
+        'donnees',
+      );
+    }
+  }
+}
+
 export function controler(etat) {
   const liste = creneaux(etat.soiree);
   const points = [];
@@ -117,6 +154,7 @@ export function controler(etat) {
   }
 
   controlerEquipes(etat, ajouter);
+  controlerPrioritaires(etat, ajouter);
 
   // Binômes
   const pris = new Set();

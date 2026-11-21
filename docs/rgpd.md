@@ -16,7 +16,7 @@ Projet de fiche pour le registre des activités de traitement de l'établissemen
 
 | Personnes concernées | Données                                                                                              |
 | -------------------- | ---------------------------------------------------------------------------------------------------- |
-| Élèves (6e à 3e)     | Nom, prénom (ou prénom d'usage), classe ; LVB et options suivies ; scolarisation en ULIS (oui ou non) ; code de fratrie (facultatif) ; contraintes horaires de la famille (facultatif) |
+| Élèves (6e à 3e)     | Nom, prénom (ou prénom d'usage), classe ; LVB et options suivies ; scolarisation en ULIS (oui ou non) ; élève prioritaire du professeur principal (oui ou non) ; code de fratrie (facultatif) ; contraintes horaires de la famille (facultatif) |
 | Enseignants          | Civilité et nom, discipline, enseignements (classes, LVB, options) avec leur effectif ; professeur principal ; heures d'arrivée tardive ou de départ anticipé (facultatif) |
 
 **Indication ULIS : donnée sensible.** Savoir qu'un élève est scolarisé en ULIS révèle une situation de handicap, donnée concernant la santé au sens de l'article 9 du RGPD. Elle est nécessaire au traitement : certains enseignements (une LVB) ne sont pas suivis par les élèves ULIS, et l'élève ne doit être reçu que par des enseignants qui l'ont en cours. Mesures propres à cette donnée :
@@ -24,6 +24,8 @@ Projet de fiche pour le registre des activités de traitement de l'établissemen
 - une simple case oui / non, sans précision (ni type de dispositif, ni motif) ;
 - elle n'apparaît dans aucun document imprimé ni dans aucun export Excel ou CSV : seulement à l'écran (liste des élèves) et dans le fichier de sauvegarde ;
 - elle est effacée avec les autres données (effacement d'un niveau ou de tous les niveaux).
+
+**Élève prioritaire.** Le professeur principal peut demander à recevoir lui-même jusqu'à 5 familles de sa classe. L'indication est une simple case oui / non, sans motif, saisie par l'organisateur (elle n'est pas lue dans les exports Pronote). Ce n'est pas une donnée de santé, mais elle peut laisser deviner des difficultés scolaires : elle n'apparaît qu'à l'écran et sur le planning imprimé du binôme qui reçoit la famille, destiné à ses deux enseignants. Elle ne figure ni sur le planning général, ni sur le planning par classe, ni sur les convocations, ni dans les exports Excel et CSV.
 
 Aucune autre donnée sensible, aucune appréciation scolaire et aucune coordonnée des familles ne sont traitées. L'application invite à ne rien saisir d'autre.
 

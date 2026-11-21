@@ -11,7 +11,7 @@ import { PRONOTE } from '../config.js';
 import { copierEtat } from '../modele/etat.js';
 import { chiffreNiveau } from '../modele/niveaux.js';
 import { nouvelId } from '../utils/texte.js';
-import { classeParNom } from './import.js';
+import { classeParNom, cleEleve, clesPrioritaires } from './import.js';
 
 /** Texte comparable : sans accents, en majuscules, espaces simplifiés. */
 export const normaliser = (s) =>
@@ -290,8 +290,15 @@ export function importerProfs(etatInitial, analyse, { remplacer = false } = {}) 
       p.enseignements = p.enseignements.filter((y) => y.classeId !== classeId).concat(ens);
     }
   }
+  // Un enseignant n'est professeur principal que d'une classe : s'il était désigné pour une autre classe du niveau,
+  // il ne l'est plus que pour celle de l'export ; si l'export le désigne deux fois, seule la première classe compte.
+  const designes = new Set();
   Object.entries(analyse.ppCles).forEach(([classe, cle]) => {
-    if (parCle.has(cle)) classes.get(classe).ppId = parCle.get(cle).id;
+    const p = parCle.get(cle);
+    if (!p || designes.has(p.id)) return;
+    designes.add(p.id);
+    etat.classes.forEach((c) => c.ppId === p.id && (c.ppId = null));
+    classes.get(classe).ppId = p.id;
   });
   return { etat, ajoutes, completes };
 }
@@ -427,6 +434,8 @@ export function analyserEleves(lignes, etat, niveau, choix = {}) {
 /** Importe l'analyse de l'export des élèves. remplacer : les élèves actuels sont retirés. */
 export function importerEleves(etatInitial, analyse, { remplacer = false } = {}) {
   const etat = copierEtat(etatInitial);
+  // Un nouvel import garde l'indication « prioritaire » des élèves déjà présents (décision 1 du lot 4).
+  const prioritaires = clesPrioritaires(etat.eleves);
   if (remplacer) etat.eleves = [];
   const ajouts = analyse.inconnues.filter((x) => x.ajouter);
   const idLvb = completerListe(
@@ -439,13 +448,12 @@ export function importerEleves(etatInitial, analyse, { remplacer = false } = {})
     ajouts.filter((x) => x.type === 'option'),
     'opt-',
   );
-  const cle = (nom, prenom, classeId) => (nom + '|' + prenom + '|' + classeId).toLowerCase();
-  const vus = new Set(etat.eleves.map((e) => cle(e.nom, e.prenom, e.classeId)));
+  const vus = new Set(etat.eleves.map(cleEleve));
   let ajoutes = 0;
   let doublons = 0;
   for (const x of analyse.eleves) {
     const classe = classeParNom(etat, x.classe);
-    const k = cle(x.nom, x.prenom, classe.id);
+    const k = cleEleve({ nom: x.nom, prenom: x.prenom, classeId: classe.id });
     if (vus.has(k)) {
       doublons++;
       continue;
@@ -459,6 +467,7 @@ export function importerEleves(etatInitial, analyse, { remplacer = false } = {})
       lvbId: x.lvb ? idLvb(x.lvb.valeur) : null,
       optionIds: [...new Set(x.options.map((o) => idOption(o.valeur)).filter(Boolean))],
       ulis: x.ulis,
+      prioritaire: prioritaires.has(k),
       fratrie: '',
       pasAvant: '',
       pasApres: '',

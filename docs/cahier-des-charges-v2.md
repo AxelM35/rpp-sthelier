@@ -199,6 +199,13 @@ Commencer par le design permet de valider l'aspect visuel tôt, avant de constru
     - Une soirée neuve dure 10 minutes en 6e et 15 minutes aux autres niveaux (`DUREE_PAR_NIVEAU` dans `config.js`). Les préparations existantes, dont la 6e reprise de la v1, gardent leur durée.
     - Toute durée entière de 5 à 60 minutes (12 minutes, par exemple), au lieu de pas de 5 minutes.
     - Aide au réglage (`algos/reglages.js`) : quand les binômes possibles ne suffisent pas à recevoir tous les élèves, la carte « Capacité » l'explique et propose, chacun avec un bouton « Appliquer », la durée ronde la plus longue qui suffit et l'heure de fin nécessaire avec la durée actuelle (pauses comprises, 22 h au plus). Sur la 6e réelle : 10 minutes, ou fin à 20 h 30. Le calcul est un minimum ; « Tout générer » donne le résultat exact. Après application, un planning existant est à refaire, ce que le message rappelle.
+  - **Étape 4b, élèves prioritaires : données et saisie — livrée.**
+    - Format de données version 4 : indication `prioritaire` (oui / non) de l'élève ; une sauvegarde plus ancienne s'ouvre sans élève prioritaire.
+    - Un enseignant n'est professeur principal que d'une classe : le choix d'un second rôle est refusé avec un message ; la validation d'un fichier et l'import Pronote des enseignants ne gardent qu'une classe.
+    - Liste des élèves : colonne « Prioritaire » (V2-F4 bis). Au-delà de 5 élèves prioritaires dans une classe, la case est refusée avec un message. La carte « Classes » affiche le compteur (« ★ 3 / 5 prioritaires »).
+    - Un nouvel import des élèves (Pronote ou fichier) garde l'indication des élèves déjà présents, reconnus à leur nom, prénom et classe.
+    - Contrôles (onglet Données) : élèves prioritaires dans une classe sans professeur principal ; plus de 5 élèves prioritaires dans une classe (après un changement de classe). Les deux sont des points à corriger.
+    - Fiche RGPD et encadré « Données personnelles » complétés.
 
 ## 9. Décisions du 19 novembre 2026
 

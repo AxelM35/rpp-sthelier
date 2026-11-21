@@ -189,7 +189,8 @@ function donneesPersonnelles() {
     '<ul class="liste">' +
     "<li><b>Où sont-elles ?</b> Uniquement dans ce navigateur, sur cet ordinateur, chaque niveau séparément. L'application ne les envoie nulle part. " +
     'Toute personne qui utilise ce navigateur avec la même session peut y accéder : sur un poste partagé, effacez-les après usage.</li>' +
-    '<li><b>Lesquelles ?</b> Nom, prénom et classe des élèves, LVB et options, scolarisation en ULIS, code de fratrie, contraintes horaires des familles, ' +
+    '<li><b>Lesquelles ?</b> Nom, prénom et classe des élèves, LVB et options, scolarisation en ULIS, élèves prioritaires du professeur principal, ' +
+    'code de fratrie, contraintes horaires des familles, ' +
     "noms et enseignements des professeurs. L'indication ULIS est une donnée sensible : elle ne figure sur aucun document ni export. " +
     "Ne saisissez rien d'autre (pas de motif de rendez-vous ni de commentaire sur un élève).</li>" +
     '<li><b>Fichiers.</b> Les sauvegardes, les exports Excel et CSV et les documents imprimés contiennent ces données : ' +

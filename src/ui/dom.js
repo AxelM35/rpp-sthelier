@@ -3,13 +3,13 @@
 export const $ = (selecteur, racine = document) => racine.querySelector(selecteur);
 
 let minuterieToast = null;
-/** Message bref en bas de l'écran (également lu par les lecteurs d'écran). */
+/** Message bref en bas de l'écran (également lu par les lecteurs d'écran), affiché le temps de le lire. */
 export function toast(texte) {
   const e = $('#toast');
   e.textContent = texte;
   e.classList.add('on');
   clearTimeout(minuterieToast);
-  minuterieToast = setTimeout(() => e.classList.remove('on'), 2600);
+  minuterieToast = setTimeout(() => e.classList.remove('on'), Math.max(2600, texte.length * 60));
 }
 
 /** Annonce destinée aux lecteurs d'écran uniquement. */
