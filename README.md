@@ -41,8 +41,8 @@ npx playwright install chromium
 ## Documentation
 
 - [Cahier des charges de la version 1](docs/cahier-des-charges.md)
-- [Cahier des charges de la version 2 (6e à 3e, en préparation)](docs/cahier-des-charges-v2.md)
-- [Audit du code et suivi des corrections](docs/audit.md)
+- [Cahier des charges de la version 2 (6e à 3e)](docs/cahier-des-charges-v2.md), avec les décisions des [lots 3](docs/questions-lot3.md) et [4](docs/questions-lot4.md)
+- [Audit du code de la version 1 et suivi des corrections](docs/audit.md)
 - [Import des exports Pronote : analyse et règles](docs/import-pronote.md)
 - [Fiche de traitement des données personnelles (RGPD)](docs/rgpd.md)
 

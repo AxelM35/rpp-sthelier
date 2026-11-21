@@ -1,6 +1,6 @@
 # Cahier des charges — Version 2 : rencontres parents-professeurs de la 6e à la 3e
 
-Version de travail du 19 novembre 2026, mise à jour avec les décisions du même jour (section 9).
+Version de travail du 19 novembre 2026, mise à jour avec les décisions des 19, 20 et 21 novembre (section 9 et [questions du lot 4](questions-lot4.md)).
 
 Ce document complète le [cahier des charges de la version 1](cahier-des-charges.md). Tout ce qui n'est pas modifié ici reste valable : binômes glissants, équilibrage des charges, fratries, verrous, comparaison de propositions, documents, exports, accessibilité, protection des données.
 
@@ -194,7 +194,7 @@ Commencer par le design permet de valider l'aspect visuel tôt, avant de constru
     - aide indiquant les menus de Pronote ; rappel d'importer les enseignants d'abord.
     Vérifié sur les exports anonymisés des quatre niveaux du collège. L'import générique lit aussi des colonnes LVB et options : les valeurs sont rapprochées des listes du niveau, une valeur inconnue y est ajoutée et signalée.
   - **Étape 3e, finition — livrée.** Parcours complet vérifié dans le navigateur (import Pronote des enseignants et des élèves, génération, tous les onglets) en thème clair, sombre et sur téléphone. Fiche RGPD mise à jour : l'indication ULIS est une donnée sensible (article 9), traitée en simple case oui / non, absente des documents et des exports ; colonnes sensibles des exports Pronote jamais lues. Textes d'aide de l'application mis à jour.
-- **Lot 4 — en cours sur `v2-dev`.** Découpage et décisions du 21 novembre : [questions du lot 4](questions-lot4.md).
+- **Lot 4 — livré sur `v2-dev`.** Découpage et décisions du 21 novembre : [questions du lot 4](questions-lot4.md).
   - **Étape 4a, durée des rendez-vous par niveau (V2-R12) — livrée.**
     - Une soirée neuve dure 10 minutes en 6e et 15 minutes aux autres niveaux (`DUREE_PAR_NIVEAU` dans `config.js`). Les préparations existantes, dont la 6e reprise de la v1, gardent leur durée.
     - Toute durée entière de 5 à 60 minutes (12 minutes, par exemple), au lieu de pas de 5 minutes.
@@ -219,6 +219,7 @@ Commencer par le design permet de valider l'aspect visuel tôt, avant de constru
     - **Planning par binôme** ajouté à l'onglet Documents, pour l'imprimer.
     - **Niveau partout** (V2-F9) : convocations (« Rencontre parents-professeurs de 5e du … ») ; ligne de titre (établissement, niveau, date) en haut de chaque feuille Excel ; colonne « Niveau » en tête du CSV.
     - **LVB et options** (V2-F10) : case « Afficher la LVB et les options » du planning par classe (onglet Documents et vue « Par classe » du Planning), mémorisée pour le niveau ; colonnes « LVB » et « Options » dans les feuilles « Par classe » et « Par binôme » de l'export Excel et dans le CSV. Jamais l'indication ULIS.
+  - **Étape 4e, fin de la version 2 — livrée.** Relecture du code du lot 4, documentation (cahier des charges, README, fiche RGPD), fichier HTML construit. Dépendances : aucune vulnérabilité connue (`npm audit`). Version 2 prête : étiquette `v2.0.0` et fusion dans `main` faites par l'organisateur.
 
 ## 9. Décisions du 19 novembre 2026
 
